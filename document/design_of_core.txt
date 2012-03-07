@@ -1,0 +1,21 @@
+
+设计目标描述
+
+
+    最初的想法是需要一个组件来描述页面各个组件之间的联动关系，需要模型化的支持，以便页面发布以后可以继续变更页面上的联动逻辑。觉得workflow是一个很适合的工具，不过在javascript领域内内有找到一个对应的opensource的工程，所以产生了自己做一个的想法。
+
+    基本思路是，activity代表一个活动，内部通过状态和事件来驱动，状态变更驱动事件，事件中变更状态，按状态机的方式运行，知道activity结束。
+
+    activity的运行代码可以访问context，context按全局、应用和activity来划分区域，做上下文的数据管理。
+
+    对activity的执行通过executor，主要是建立activity运行的上下文环境。
+
+    通过scheduler来调度运行executor。
+
+    application提供全局的配置和运行引擎的启动；
+
+    instance表示一个工作流活动的运行实例；
+
+    core部分的内容大致如此。
+
+
