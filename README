@@ -1,0 +1,10 @@
+
+This project's lience is FreeBSD & GNU Library.
+
+jWorkFlow's road map
+
+1. use M$'s AJAX as a base framework(temporary, may be changed in furture).
+2. build a workflow runtime engine for javascript.
+3. create necessary activities.
+4. create WorkFlow's designer(HTML5+JavaScript)
+5. support load from xml and run.
