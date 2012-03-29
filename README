@@ -6,7 +6,7 @@ http://jquery.org/license
 
 -------------------------------------------------------------------------------
 
-jWorkFlow's road map
+jsWorkFlow's road map
 
 1. use M$'s AJAX as a base framework(temporary, may be changed in furture).
 2. build a workflow runtime engine for javascript.
