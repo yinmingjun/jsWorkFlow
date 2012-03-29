@@ -1,6 +1,6 @@
 ﻿
 /*
- * jWorkFlow's core source code.
+ * jsWorkFlow's core source code.
  * 2012.03.06: Create By Yin Mingjun - email: yinmingjuncn@gmail.com
  * 
  * Copyright 2012,  Yin MingJun - email: yinmingjuncn@gmail.com
@@ -18,38 +18,46 @@
   *    5. Array.add
   *    
   */
-Type.registerNamespace('jWorkFlow');
+Type.registerNamespace('jsWorkFlow');
 
 //////////////////////////////////////////////////////////////////////////////////////////
-//Events，提供jWorkFlow中事件的管理
+//
+// Low level API
+//
+jsWorkFlow.setInterval = setInterval;
+jsWorkFlow.setTimeout = setTimeout;
+
+
+//////////////////////////////////////////////////////////////////////////////////////////
+//Events，提供jsWorkFlow中事件的管理
 //
 //TO 开发者：
-//    事件机制是jWorkFlow的基础，因此将事件的触发、执行和管理集中到Events类中。
+//    事件机制是jsWorkFlow的基础，因此将事件的触发、执行和管理集中到Events类中。
 //
-jWorkFlow.Events = function jWorkFlow_Events(owner) {
+jsWorkFlow.Events = function jsWorkFlow_Events(owner) {
     this._owner = owner;
     this._events = new Sys.EventHandlerList();
 };
 
-function jWorkFlow_Events$dispose() {
+function jsWorkFlow_Events$dispose() {
     this._owner = null;
     this._events = null;
 }
 
-function jWorkFlow_Events$get_events() {
+function jsWorkFlow_Events$get_events() {
     return this._events;
 }
 
-function jWorkFlow_Events$addHandler(eventName, handler) {
+function jsWorkFlow_Events$addHandler(eventName, handler) {
     this._events.addHandler(eventName, handler);
 }
 
-function jWorkFlow_Events$removeHandler(eventName, handler) {
+function jsWorkFlow_Events$removeHandler(eventName, handler) {
     this._events.removeHandler(eventName, handler);
 }
 
 //触发事件
-function jWorkFlow_Events$raiseEvent(eventName, eventArgs) {
+function jsWorkFlow_Events$raiseEvent(eventName, eventArgs) {
     var handler = this._events.getHandler(eventName);
 
     if (handler) {
@@ -57,23 +65,23 @@ function jWorkFlow_Events$raiseEvent(eventName, eventArgs) {
     }
 }
 
-jWorkFlow.Events.prototype = {
+jsWorkFlow.Events.prototype = {
     _owner: null,
     _events: null,
-    dispose: jWorkFlow_Events$dispose,
+    dispose: jsWorkFlow_Events$dispose,
     //property
-    get_events: jWorkFlow_Events$get_events,
+    get_events: jsWorkFlow_Events$get_events,
     //method
-    addHandler: jWorkFlow_Events$addHandler,
-    removeHandler: jWorkFlow_Events$removeHandler,
-    raiseEvent: jWorkFlow_Events$raiseEvent
+    addHandler: jsWorkFlow_Events$addHandler,
+    removeHandler: jsWorkFlow_Events$removeHandler,
+    raiseEvent: jsWorkFlow_Events$raiseEvent
 };
 
-jWorkFlow.Events.registerClass('jWorkFlow.Events');
+jsWorkFlow.Events.registerClass('jsWorkFlow.Events');
 
 
 //////////////////////////////////////////////////////////////////////////////////////////
-//Application，表示一个jWorkFlow的应用运行环境
+//Application，表示一个jsWorkFlow的应用运行环境
 //
 //TO 开发者：
 //    Applcation代表一个独立的运行环境，在概念上对应一个传统的进程，可以在这个观察点上关注APP的状态的变化，
@@ -82,32 +90,36 @@ jWorkFlow.Events.registerClass('jWorkFlow.Events');
 //执行。
 //    dataContext是传递给APP的启动参数，字典形式。必须是plane data object。APP会克隆后加入到applicationContext之中。
 //
-jWorkFlow.Application = function jWorkFlow_Application(instance, dataContext) {
+// TODO:
+//    Add LOG support.
+//
+jsWorkFlow.Application = function jsWorkFlow_Application(instance, dataContext) {
     //事件属于装配件，需一直存在
-    this._events = new jWorkFlow.Events(this);
+    this._events = new jsWorkFlow.Events(this);
+    this._dataContext = dataContext;
 
     //调度器属于APP的固定组成部分，activity只是使用者之一，一直可用
-    this._scheduler = new jWorkFlow.Scheduler();
+    this._scheduler = new jsWorkFlow.Scheduler();
 };
 
-function jWorkFlow_Application$get_scheduler() {
+function jsWorkFlow_Application$get_scheduler() {
     return this._scheduler;
 }
 
-function jWorkFlow_Application$get_globalContext() {
-    var ins = jWorkFlow.GlobalContext.getInstance();
+function jsWorkFlow_Application$get_globalContext() {
+    var ins = jsWorkFlow.GlobalContext.getInstance();
     return ins;
 }
 
-function jWorkFlow_Application$get_appContext() {
+function jsWorkFlow_Application$get_appContext() {
     return this._appContext;
 }
 
-function jWorkFlow_Application$get_instance() {
+function jsWorkFlow_Application$get_instance() {
     return this._instance;
 }
 
-function jWorkFlow_Application$get_currentContext() {
+function jsWorkFlow_Application$get_currentContext() {
     //return stack top
     var contextStack = this._contextStack;
     var context = contextStack[contextStack.length - 1];
@@ -115,11 +127,19 @@ function jWorkFlow_Application$get_currentContext() {
     return context;
 }
 
-function jWorkFlow_Application$run() {
+function jsWorkFlow_Application$run() {
     //应用的上下文，运行期间可用
-    this._appContext = new jWorkFlow.ApplicationContext();
+    this._appContext = new jsWorkFlow.ApplicationContext();
+
     //将dataContext放置到appContext之中
-    this._appContext.copyFrom(dataContext);
+    if(this._dataContext) {
+        var dst = this._appContext;
+
+        jQuery.each(this._dataContext, function (key, value) {
+            dst.setData(key, value);
+        }); 
+    }
+
     //activityContext栈，运行期间可用
     this._contextStack = [];
 
@@ -127,7 +147,7 @@ function jWorkFlow_Application$run() {
     this._instance.execute(this);
 }
 
-function jWorkFlow_Application$dispose() {
+function jsWorkFlow_Application$dispose() {
     this._events.dispose();
     this._scheduler.dispose();
     this._appContext.dispose();
@@ -140,18 +160,18 @@ function jWorkFlow_Application$dispose() {
 
 
 //ActivityContext栈维护
-function jWorkFlow_Application$pushContextStack(activityContext) {
+function jsWorkFlow_Application$pushContextStack(activityContext) {
     //将activityContext入栈
     this._contextStack.push(activityContext);
 }
 
-function jWorkFlow_Application$popContextStack() {
+function jsWorkFlow_Application$popContextStack() {
     //将栈顶的activityContext出栈，并返回
     var activityContext = this._contextStack.pop();
     return activityContext;
 }
 
-function jWorkFlow_Application$getValueItem(key) {
+function jsWorkFlow_Application$getDataItem(key) {
     //根据key值在activityContext栈中查找value，并返回
     //注意：除顶层外，其他层受可见性控制
 
@@ -195,8 +215,8 @@ function jWorkFlow_Application$getValueItem(key) {
 }
 
 //APP级别的数据维护接口
-function jWorkFlow_Application$getValue(key) {
-    var dataItem = this.getValueItem(key);
+function jsWorkFlow_Application$getData(key) {
+    var dataItem = this.getDataItem(key);
 
     if (dataItem) {
         return dataItem.value;
@@ -205,8 +225,8 @@ function jWorkFlow_Application$getValue(key) {
     return null;
 }
 
-function jWorkFlow_Application$setValue(key, value) {
-    var dataItem = this.getValueItem(key);
+function jsWorkFlow_Application$setData(key, value) {
+    var dataItem = this.getDataItem(key);
 
     if (dataItem) {
         dataItem.value = value;
@@ -219,7 +239,7 @@ function jWorkFlow_Application$setValue(key, value) {
 }
 
 
-jWorkFlow.Application.prototype = {
+jsWorkFlow.Application.prototype = {
     _instance: null,
     _dataContext: null,
     _appContext: null,
@@ -227,38 +247,38 @@ jWorkFlow.Application.prototype = {
     _events: null,
     _scheduler: null,
     //property
-    get_scheduler: jWorkFlow_Application$get_scheduler,
-    get_globalContext: jWorkFlow_Application$get_globalContext,
-    get_appContext: jWorkFlow_Application$get_appContext,
-    get_instance: jWorkFlow_Application$get_instance, 
-    get_currentContext: jWorkFlow_Application$get_currentContext,
+    get_scheduler: jsWorkFlow_Application$get_scheduler,
+    get_globalContext: jsWorkFlow_Application$get_globalContext,
+    get_appContext: jsWorkFlow_Application$get_appContext,
+    get_instance: jsWorkFlow_Application$get_instance, 
+    get_currentContext: jsWorkFlow_Application$get_currentContext,
     //method
-    run: jWorkFlow_Application$run,
-    dispose: jWorkFlow_Application$dispose,
+    run: jsWorkFlow_Application$run,
+    dispose: jsWorkFlow_Application$dispose,
     //ActivityContext栈维护
-    pushContextStack: jWorkFlow_Application$pushContextStack,
-    popContextStack: jWorkFlow_Application$popContextStack,
+    pushContextStack: jsWorkFlow_Application$pushContextStack,
+    popContextStack: jsWorkFlow_Application$popContextStack,
     //APP级别的数据维护接口
-    getValueItem: jWorkFlow_Application$getValueItem,
-    getValue: jWorkFlow_Application$getValue,
-    setValue: jWorkFlow_Application$setValue
+    getDataItem: jsWorkFlow_Application$getDataItem,
+    getData: jsWorkFlow_Application$getData,
+    setData: jsWorkFlow_Application$setData
 };
 
-jWorkFlow.Application.registerClass('jWorkFlow.Application');
+jsWorkFlow.Application.registerClass('jsWorkFlow.Application');
 
 //////////////////////////////////////////////////////////////////////////////////////////
-//Instance，表示一个jWorkFlow的activity组合的运行载体，主要包含rootActivity
+//Instance，表示一个jsWorkFlow的activity组合的运行载体，主要包含rootActivity
 //
 //TO 开发者：
 //    用来表示activity组装的最终结果，于activity本身并无太大的差别。
 //    Instance主要的任务是面向装配的，即如何从文档中解析和加载一个描述的Activity。
 //    Instance的执行是初始化ActivityContext的栈的数据结构，并将rootActivity调度执行。
 //
-jWorkFlow.Instance = function jWorkFlow_Instance() {
-    this._events = new jWorkFlow.Events(this);
+jsWorkFlow.Instance = function jsWorkFlow_Instance() {
+    this._events = new jsWorkFlow.Events(this);
 };
 
-function jWorkFlow_Instance$dispose() {
+function jsWorkFlow_Instance$dispose() {
     if (this._rootActivity) {
         this._rootActivity.dispose();
         this._rootActivity = null;
@@ -270,30 +290,30 @@ function jWorkFlow_Instance$dispose() {
 }
 
 //rootActivity属性
-function jWorkFlow_Instance$get_rootActivity() {
+function jsWorkFlow_Instance$get_rootActivity() {
     return this._rootActivity;
 }
 
-function jWorkFlow_Instance$set_rootActivity(value) {
+function jsWorkFlow_Instance$set_rootActivity(value) {
     this._rootActivity = value;
 }
 
 //加载一个activity描述，并解析，并放置到rootActivity之中
-function jWorkFlow_Instance$loadFromXML(xml) {
+function jsWorkFlow_Instance$loadFromXML(xml) {
 }
 
 //清除rootActivity，并清除相关的加载的数据
-function jWorkFlow_Instance$unload() {
+function jsWorkFlow_Instance$unload() {
 }
 
 //开始在APP中运行
-function jWorkFlow_Instance$execute(application) {
+function jsWorkFlow_Instance$execute(application) {
 
     //TODO:
     //检查application参数和rootActivity
     
     //Create ActivityExecutor，执行rootActivity
-    var activityExecutor = new jWorkFlow.ActivityExecutor(application, this._rootActivity);
+    var activityExecutor = new jsWorkFlow.ActivityExecutor(application, this._rootActivity);
 
     //创建delegates
     this._initEventHandler = Function.createDelegate(this, this.initEventHandler);
@@ -310,199 +330,332 @@ function jWorkFlow_Instance$execute(application) {
 
 
 //执行init相关操作
-function jWorkFlow_Instance$doInit() {
+function jsWorkFlow_Instance$doInit(eventArgs) {
     //TODO:
     //init instance
 }
 
 //执行complete相关操作
-function jWorkFlow_Instance$doComplete() {
+function jsWorkFlow_Instance$doComplete(eventArgs) {
     //TODO:
     //clear instance
 }
 
-function jWorkFlow_Instance$initEventHandler(eventArgs) {
+function jsWorkFlow_Instance$initEventHandler(eventArgs) {
     //先执行自身init相关逻辑
-    this.doInit();
+    this.doInit(eventArgs);
 
     //触发注册的init事件
     this._events.raiseEvent('init', eventArgs);
 }
 
-function jWorkFlow_Instance$add_init(handler) {
+function jsWorkFlow_Instance$add_init(handler) {
     this._events.addHandler('init', handler);
 }
 
-function jWorkFlow_Instance$remove_init(handler) {
+function jsWorkFlow_Instance$remove_init(handler) {
     this._events.removeHandler('init', handler);
 }
 
-function jWorkFlow_Instance$completeEventHandler(eventArgs) {
+function jsWorkFlow_Instance$completeEventHandler(eventArgs) {
     //触发注册的complete事件
     this._events.raiseEvent('complete', eventArgs);
 
     //执行自身complete相关逻辑
-    this.doComplete();
+    this.doComplete(eventArgs);
 }
 
-function jWorkFlow_Instance$add_complete(handler) {
+function jsWorkFlow_Instance$add_complete(handler) {
     this._events.addHandler('complete', handler);
 }
 
-function jWorkFlow_Instance$remove_complete(handler) {
+function jsWorkFlow_Instance$remove_complete(handler) {
     this._events.removeHandler('complete', handler);
 }
 
 
-jWorkFlow.Instance.prototype = {
+jsWorkFlow.Instance.prototype = {
     _rootActivity: null,
     _events: null,
     _initEventHandler: null,
     _completeEventHandler:null,
-    dispose: jWorkFlow_Instance$dispose,
+    dispose: jsWorkFlow_Instance$dispose,
     //property
-    get_rootActivity: jWorkFlow_Instance$get_rootActivity,
-    set_rootActivity: jWorkFlow_Instance$set_rootActivity,
+    get_rootActivity: jsWorkFlow_Instance$get_rootActivity,
+    set_rootActivity: jsWorkFlow_Instance$set_rootActivity,
     //method
-    loadFromXML: jWorkFlow_Instance$loadFromXML,
-    unload: jWorkFlow_Instance$unload,
-    execute: jWorkFlow_Instance$execute,
+    loadFromXML: jsWorkFlow_Instance$loadFromXML,
+    unload: jsWorkFlow_Instance$unload,
+    execute: jsWorkFlow_Instance$execute,
     //执行init相关操作
-    doInit: jWorkFlow_Instance$doInit,
+    doInit: jsWorkFlow_Instance$doInit,
     //执行complete相关操作
-    doComplete: jWorkFlow_Instance$doComplete,
+    doComplete: jsWorkFlow_Instance$doComplete,
     //events
     //init事件，做activity执行前的准备工作
-    initEventHandler: jWorkFlow_Instance$initEventHandler,
-    add_init: jWorkFlow_Instance$add_init,
-    remove_init: jWorkFlow_Instance$remove_init,
+    initEventHandler: jsWorkFlow_Instance$initEventHandler,
+    add_init: jsWorkFlow_Instance$add_init,
+    remove_init: jsWorkFlow_Instance$remove_init,
     //complete事件，做activity执行结束后的清理工作
-    completeEventHandler: jWorkFlow_Instance$completeEventHandler,
-    add_complete: jWorkFlow_Instance$add_complete,
-    remove_complete: jWorkFlow_Instance$remove_complete
+    completeEventHandler: jsWorkFlow_Instance$completeEventHandler,
+    add_complete: jsWorkFlow_Instance$add_complete,
+    remove_complete: jsWorkFlow_Instance$remove_complete
 
 };
 
-jWorkFlow.Instance.registerClass('jWorkFlow.Instance');
+jsWorkFlow.Instance.registerClass('jsWorkFlow.Instance');
 
 
 //////////////////////////////////////////////////////////////////////////////////////////
-//ActivityState，表示一个jWorkFlow活动的运行状态
+//ActivityState，表示一个jsWorkFlow活动的运行状态
 
-jWorkFlow.ActivityState = function jWorkFlow_ActivityState() {
+jsWorkFlow.ActivityState = function jsWorkFlow_ActivityState() {
     throw new Error.notImplemented();
 };
 
 //系统默认的activity的状态
-jWorkFlow.ActivityState.prototype = {
+jsWorkFlow.ActivityState.prototype = {
     none: 0,
     start: 1,
     stop: 2
 };
 
 //global 数值
-//系统保留的activity状态值
-jWorkFlow.ActivityState.min_value = 100;
+//100以内是系统保留的activity状态值，以外的状态通过类的继承关系来确定
+jsWorkFlow.ActivityState.min_value = 100;
 
-jWorkFlow.ActivityState.registerEnum('jWorkFlow.ActivityState');
+jsWorkFlow.ActivityState.registerEnum('jsWorkFlow.ActivityState');
 
 //////////////////////////////////////////////////////////////////////////////////////////
-//ActivityEventArgs，提供jWorkFlow的Activity的事件响应参数
-jWorkFlow.ActivityEventArgs = function jWorkFlow_ActivityEventArgs(context) {
+//ActivityEventArgs，提供jsWorkFlow的Activity的事件响应参数
+//
+// TO 开发者：
+//    activity相关的事件handler中传递的参数，主要是携带context参数。
+//    data是可选的参数，看事件上下文是否需要携带额外的数据
+//
+jsWorkFlow.ActivityEventArgs = function jsWorkFlow_ActivityEventArgs(context, data) {
     this._context = context;
+    this._data = data;
 };
 
-function jWorkFlow_ActivityEventArgs$dispose() {
+function jsWorkFlow_ActivityEventArgs$dispose() {
     this._context = null;
 }
 
-function jWorkFlow_ActivityEventArgs$get_context() {
+function jsWorkFlow_ActivityEventArgs$get_context() {
     return this._context;
 }
 
-jWorkFlow.ActivityEventArgs.prototype = {
+function jsWorkFlow_ActivityEventArgs$get_data() {
+    return this._data;
+}
+
+jsWorkFlow.ActivityEventArgs.prototype = {
     _context: null,
-    dispose: jWorkFlow_ActivityEventArgs$dispose,
+    _data: null,
+    dispose: jsWorkFlow_ActivityEventArgs$dispose,
     //property
-    get_context: jWorkFlow_ActivityEventArgs$get_context
+    get_context: jsWorkFlow_ActivityEventArgs$get_context,
+    get_data: jsWorkFlow_ActivityEventArgs$get_data
 };
 
-jWorkFlow.ActivityEventArgs.registerClass('jWorkFlow.ActivityEventArgs', Sys.EventArgs);
+jsWorkFlow.ActivityEventArgs.registerClass('jsWorkFlow.ActivityEventArgs', Sys.EventArgs);
 
 
 //////////////////////////////////////////////////////////////////////////////////////////
-//ActivityUtilities，提供activity帮助方法
-//每个activity都是一个状态机，通过变更状态来驱动事件，通过事件来驱动状态变更。
-jWorkFlow.ActivityUtilities = function jWorkFlow_ActivityUtilities() {
+//ActivityHelper，提供activity帮助方法
+//
+// TO 开发者：
+//    每个activity都是一个状态机，通过变更状态来驱动事件，通过事件来驱动状态变更。
+//    ActivityHelper提供activity的公共方法，$jwf是其简写名称。
+//
+jsWorkFlow.ActivityHelper = function jsWorkFlow_ActivityHelper() {
     throw Error.notImplemented();
 };
 
-jWorkFlow.ActivityUtilities.prototype = {
+jsWorkFlow.ActivityHelper.prototype = {
 };
 
 //静态的方法
-jWorkFlow.ActivityUtilities.startActivity = function jWorkFlow_ActivityUtilities$startActivity(context) {
+jsWorkFlow.ActivityHelper.startActivity = function jsWorkFlow_ActivityHelper$startActivity(context) {
     //使activity进入start状态
-    context.set_activityState(jWorkFlow.ActivityState.start);
+    context.set_activityState(jsWorkFlow.ActivityState.start);
 }
 
-jWorkFlow.ActivityUtilities.endActivity = function jWorkFlow_ActivityUtilities$endActivity(context) {
+jsWorkFlow.ActivityHelper.endActivity = function jsWorkFlow_ActivityHelper$endActivity(context) {
     //使activity进入start状态
-    context.set_activityState(jWorkFlow.ActivityState.end);
+    context.set_activityState(jsWorkFlow.ActivityState.end);
 }
 
-jWorkFlow.ActivityUtilities.registerClass('jWorkFlow.ActivityUtilities');
+//查找Local数据项helper
+jsWorkFlow.ActivityHelper.getLocalDataItem = function jsWorkFlow_ActivityHelper$getLocalDataItem(context, key) {
+    var retval = context.getDataItem();
+    return retval;
+}
+
+jsWorkFlow.ActivityHelper.getLocalData = function jsWorkFlow_ActivityHelper$getLocalData(context, key) {
+
+    var retval = context.getData(key);
+    return retval;
+}
+
+jsWorkFlow.ActivityHelper.setAppData = function jsWorkFlow_ActivityHelper$setAppData(context, key, value) {
+    context.setData(key, value);
+}
+
+//通用查找数据项helper方法(含contextStack)
+jsWorkFlow.ActivityHelper.getDataItem = function jsWorkFlow_ActivityHelper$getDataItem(context, key) {
+
+    //检查是否有本地数据
+    var retval = jsWorkFlow.ActivityHelper.getLocalDataItem(context, key);
+    if (retval) {
+        return retval;
+    }
+
+    //检查contextStack
+    var app = context.get_application();
+    retval = app.getDataItem();
+    return retval;
+}
+
+jsWorkFlow.ActivityHelper.getData = function jsWorkFlow_ActivityHelper$getData(context, key) {
+    var dataItem = jsWorkFlow.ActivityHelper.getDataItem(context, key);
+
+    var retval = null;
+    if (dataItem) {
+        retval = dataItem.value;
+    }
+
+    return retval;
+}
+
+jsWorkFlow.ActivityHelper.setData = function jsWorkFlow_ActivityHelper$setData(context, key, value) {
+    var dataItem = jsWorkFlow.ActivityHelper.getDataItem(context, key);
+
+    if (dataItem) {
+        dataItem.value = value;
+        return;
+    }
+
+    context.setData(key, value);
+}
+
+
+//查找APP数据项helper
+jsWorkFlow.ActivityHelper.getAppDataItem = function jsWorkFlow_ActivityHelper$getAppDataItem(context, key) {
+
+    var app = context.get_application();
+    var appContext = app.get_appContext();
+
+    var retval = appContext.getDataItem();
+    return retval;
+}
+
+jsWorkFlow.ActivityHelper.getAppData = function jsWorkFlow_ActivityHelper$getAppData(context, key) {
+    var dataItem = jsWorkFlow.ActivityHelper.getAppDataItem(context, key);
+
+    var retval = null;
+    if (dataItem) {
+        retval = dataItem.value;
+    }
+
+    return retval;
+}
+
+jsWorkFlow.ActivityHelper.setAppData = function jsWorkFlow_ActivityHelper$setAppData(context, key, value) {
+    var app = context.get_application();
+    var appContext = app.get_appContext();
+
+    appContext.setData(key, value);
+}
+
+//查找Global数据项helper
+jsWorkFlow.ActivityHelper.getGlobalDataItem = function jsWorkFlow_ActivityHelper$getGlobalDataItem(context, key) {
+
+    var app = context.get_application();
+    var globalContext = app.get_globalContext();
+
+    var retval = globalContext.getDataItem();
+    return retval;
+}
+
+jsWorkFlow.ActivityHelper.getGlobalData = function jsWorkFlow_ActivityHelper$getGlobalData(context, key) {
+    var dataItem = jsWorkFlow.ActivityHelper.getGlobalDataItem(context, key);
+
+    var retval = null;
+    if (dataItem) {
+        retval = dataItem.value;
+    }
+
+    return retval;
+}
+
+jsWorkFlow.ActivityHelper.setGlobalData = function jsWorkFlow_ActivityHelper$setGlobalData(context, key, value) {
+    var app = context.get_application();
+    var globalContext = app.get_globalContext();
+
+    globalContext.setData(key, value);
+}
+
+jsWorkFlow.ActivityHelper.registerClass('jsWorkFlow.ActivityHelper');
+
+//make a shortcut for ActivityHelper
+var $jwf = jsWorkFlow.ActivityHelper;
 
 //////////////////////////////////////////////////////////////////////////////////////////
-//Activity，表示一个jWorkFlow活动
+//Activity，表示一个jsWorkFlow活动
 //每个activity都是一个状态机，通过变更状态来驱动事件，通过事件来驱动状态变更。
+// 
+// TODO:
+//    Add support of designer.
 //
-//to 开发者：
+// to 开发者：
 //    activity的是一个装配装置，和我们书写一个函数类似，装配是描述一个activity提供的功能。
 //activity中的事件也是为这个目标服务，对activity的事件的设置可以看成是一个装配的过程，装配
 //好的activity可以组装到多个activity中使用。
 //    activity的运行期的数据，存储在activity context之中。
+//    Activity类是一个抽象基类，本身只提供对activity公用数据、方法的封装，不能作为activity来运行。
 //
-jWorkFlow.Activity = function jWorkFlow_Activity() {
-    this._events = new jWorkFlow.Events(this);
+jsWorkFlow.Activity = function jsWorkFlow_Activity() {
+    this._events = new jsWorkFlow.Events(this);
 };
 
-function jWorkFlow_Activity$dispose() {
+function jsWorkFlow_Activity$dispose() {
     this._events.dispose();
     this._events = null;
 }
 
-function jWorkFlow_Activity$get_name() {
+function jsWorkFlow_Activity$get_name() {
     return this._name;
 }
 
-function jWorkFlow_Activity$set_name(value) {
+function jsWorkFlow_Activity$set_name(value) {
     this._name = value;
 }
 
 //activity的状态机的启动入口，自动驱动activity的状态机进入运行状态。
-function jWorkFlow_Activity$execute(context) {
-    //context必须是jWorkFlow.ActivityContext类型
+function jsWorkFlow_Activity$execute(context) {
+    //context必须是jsWorkFlow.ActivityContext类型
     var e = Function._validateParams(arguments, [
-        { name: "context", type: jWorkFlow.ActivityContext }
+        { name: "context", type: jsWorkFlow.ActivityContext }
     ]);
 
     //使activity进入start状态
-    jWorkFlow.ActivityUtilities.startActivity(context);
+    $jwf.startActivity(context);
 
     //由于通过事件来驱动，所以要在什么地方来设置activity的结束状态
-    //通过jWorkFlow.ActivityUtilities.endActivity(context);
+    //通过$jwf.endActivity(context);
 }
 
 //通知状态变更，触发自己关心的事件变更
-function jWorkFlow_Activity$notifyStateChanged(context, oldState, curState) {
-    var eventArgs = new jWorkFlow.ActivityEventArgs(context);
+function jsWorkFlow_Activity$notifyStateChanged(context, oldState, curState) {
+    var eventArgs = new jsWorkFlow.ActivityEventArgs(context);
 
-    if (curState == jWorkFlow.ActivityState.start) {
+    if (curState == jsWorkFlow.ActivityState.start) {
         //状态迁移到start，触发start事件
         this._events.raiseEvent('start', eventArgs);
     }
-    else if (curState == jWorkFlow.ActivityState.end) {
+    else if (curState == jsWorkFlow.ActivityState.end) {
         this._events.raiseEvent('end', eventArgs);
     }
 
@@ -510,44 +663,66 @@ function jWorkFlow_Activity$notifyStateChanged(context, oldState, curState) {
 }
 
 //events
-function jWorkFlow_Activity$add_start(handler) {
+function jsWorkFlow_Activity$add_start(handler) {
     this._events.addHandler('start', handler);
 }
 
-function jWorkFlow_Activity$remove_start(handler) {
+function jsWorkFlow_Activity$remove_start(handler) {
     this._events.removeHandler('start', handler);
 }
 
-function jWorkFlow_Activity$add_stop(handler) {
+function jsWorkFlow_Activity$add_stop(handler) {
     this._events.addHandler('stop', handler);
 }
 
-function jWorkFlow_Activity$remove_stop(handler) {
+function jsWorkFlow_Activity$remove_stop(handler) {
     this._events.removeHandler('stop', handler);
 }
 
-jWorkFlow.Activity.prototype = {
+jsWorkFlow.Activity.prototype = {
     _name: null,
     _events: null,
-    dispose: jWorkFlow_Activity$dispose,
+    dispose: jsWorkFlow_Activity$dispose,
     //property
     //name，只是一个标识
-    get_name: jWorkFlow_Activity$get_name,
-    set_name: jWorkFlow_Activity$set_name,
+    get_name: jsWorkFlow_Activity$get_name,
+    set_name: jsWorkFlow_Activity$set_name,
     //method
-    execute: jWorkFlow_Activity$execute,
-    notifyStateChanged: jWorkFlow_Activity$notifyStateChanged,
+    execute: jsWorkFlow_Activity$execute,
+    notifyStateChanged: jsWorkFlow_Activity$notifyStateChanged,
     //event handler
     //基类关注的activity的状态只有start和stop，其它状态由派生类来扩展
     //start 事件
-    add_start: jWorkFlow_Activity$add_start,
-    remove_start: jWorkFlow_Activity$remove_start,
+    add_start: jsWorkFlow_Activity$add_start,
+    remove_start: jsWorkFlow_Activity$remove_start,
     //stop 事件
-    add_stop: jWorkFlow_Activity$add_stop,
-    remove_stop: jWorkFlow_Activity$remove_stop
+    add_stop: jsWorkFlow_Activity$add_stop,
+    remove_stop: jsWorkFlow_Activity$remove_stop
 };
 
-jWorkFlow.Activity.registerClass('jWorkFlow.Activity');
+jsWorkFlow.Activity.registerClass('jsWorkFlow.Activity');
+
+//////////////////////////////////////////////////////////////////////////////////////////
+//ActivityDesigner，表示一个jsWorkFlow Activity的designer的基类
+//
+// To 开发者：
+//    ActivityDesigner是所有designer的抽象基类，用于提供activity的状态和设计期，输出结果到JSON对象。
+//
+jsWorkFlow.ActivityDesigner = function jsWorkFlow_ActivityDesigner() {
+};
+
+function jsWorkFlow_ActivityDesigner$dispose() {
+}
+
+jsWorkFlow.ActivityDesigner.prototype = {
+    dispose: jsWorkFlow_ActivityDesigner$dispose
+    //property
+    //method
+};
+
+jsWorkFlow.ActivityDesigner.registerClass('jsWorkFlow.ActivityDesigner');
+
+
 
 //////////////////////////////////////////////////////////////////////////////////////////
 //ContextBase，context的基础类，提供一致的数据管理方法
@@ -557,16 +732,26 @@ jWorkFlow.Activity.registerClass('jWorkFlow.Activity');
 //    可以根据defaultVisibilityIsPublic的true、false改变缺省的可见性
 //    提供基础getDataItem、getData、setData和copyFrom方法
 //
-jWorkFlow.ContextBase = function jWorkFlow_ContextBase(defaultVisibilityIsPublic) {
+jsWorkFlow.ContextBase = function jsWorkFlow_ContextBase(defaultVisibilityIsPublic) {
     this._defaultVisibilityIsPublic = !!defaultVisibilityIsPublic;
+    this._data = {};
 };
 
-function jWorkFlow_ContextBase$dispose() {
+function jsWorkFlow_ContextBase$dispose() {
     this._data = null;
 }
 
+function jsWorkFlow_ContextBase$clear() {
+    this._data = {};
+}
+
+//是否包含key
+function jsWorkFlow_ContextBase$containKey(key) {
+    return this._data.hasOwnProperty(key);
+}
+
 //获取&设置context中的数据
-function jWorkFlow_ContextBase$getDataItem(key) {
+function jsWorkFlow_ContextBase$getDataItem(key) {
     var item = null;
 
     if (this._data.hasOwnProperty(key)) {
@@ -576,7 +761,7 @@ function jWorkFlow_ContextBase$getDataItem(key) {
     return item;
 }
 
-function jWorkFlow_ContextBase$getData(key) {
+function jsWorkFlow_ContextBase$getData(key) {
 
     var retval = null;
     var item = this.getDataItem(key);
@@ -589,7 +774,7 @@ function jWorkFlow_ContextBase$getData(key) {
 }
 
 //visibilitySwitch是可见性的切换开关，如果为false，表示不切换，如果为true，表示切换到和默认不同的可见性
-function jWorkFlow_ContextBase$setData(key, value, visibilitySwitch) {
+function jsWorkFlow_ContextBase$setData(key, value, visibilitySwitch) {
     var isPublic = (!!visibilitySwitch) ? !this._defaultVisibilityIsPublic : this._defaultVisibilityIsPublic;
 
     var item = { key: key,
@@ -601,54 +786,56 @@ function jWorkFlow_ContextBase$setData(key, value, visibilitySwitch) {
 }
 
 //从源字典中复制数据
-function jWorkFlow_ContextBase$copyFrom(srcDict, deepClone) {
+function jsWorkFlow_ContextBase$copyFrom(srcDict, deepClone) {
     //depend on JQuery
     jQuery.extend.extend(!!deepClone, this._data, srcDict); 
 }
 
 
-jWorkFlow.ContextBase.prototype = {
+jsWorkFlow.ContextBase.prototype = {
     _defaultVisibilityIsPublic: false,
     _data: null,
-    dispose: jWorkFlow_ContextBase$dispose,
+    dispose: jsWorkFlow_ContextBase$dispose,
     //method
     //获取&设置context中的数据
-    getDataItem: jWorkFlow_ContextBase$getDataItem,
-    getData: jWorkFlow_ContextBase$getData,
-    setData: jWorkFlow_ContextBase$setData,
-    copyFrom: jWorkFlow_ContextBase$copyFrom
+    clear: jsWorkFlow_ContextBase$clear,
+    containKey: jsWorkFlow_ContextBase$containKey,
+    getDataItem: jsWorkFlow_ContextBase$getDataItem,
+    getData: jsWorkFlow_ContextBase$getData,
+    setData: jsWorkFlow_ContextBase$setData,
+    copyFrom: jsWorkFlow_ContextBase$copyFrom
     //property
 };
 
-jWorkFlow.ContextBase.registerClass('jWorkFlow.ContextBase');
+jsWorkFlow.ContextBase.registerClass('jsWorkFlow.ContextBase');
 
 
 //////////////////////////////////////////////////////////////////////////////////////////
-//GlobalContext，表示一个jWorkFlow活动全局的运行上下文的运行环境，数据的生命周期可以跨instance
+//GlobalContext，表示一个jsWorkFlow活动全局的运行上下文的运行环境，数据的生命周期可以跨instance
 //
 //to 开发者：
 //    GlobalContext提供全局共享的数据，和javascript引擎是相同的生命周期，为所有application共享的数据。
 //    默认可见性为public。
-jWorkFlow.GlobalContext = function jWorkFlow_GlobalContext() {
-    jWorkFlow.GlobalContext.initializeBase(this, [true]);
+jsWorkFlow.GlobalContext = function jsWorkFlow_GlobalContext() {
+    jsWorkFlow.GlobalContext.initializeBase(this, [true]);
 };
 
-function jWorkFlow_GlobalContext$dispose() {
-    jWorkFlow.GlobalContext.callBaseMethod(this, 'dispose');
+function jsWorkFlow_GlobalContext$dispose() {
+    jsWorkFlow.GlobalContext.callBaseMethod(this, 'dispose');
 }
 
-jWorkFlow.GlobalContext.prototype = {
-    dispose: jWorkFlow_GlobalContext$dispose
+jsWorkFlow.GlobalContext.prototype = {
+    dispose: jsWorkFlow_GlobalContext$dispose
     //property
 };
 
-jWorkFlow.GlobalContext._instance = new jWorkFlow.GlobalContext();
+jsWorkFlow.GlobalContext._instance = new jsWorkFlow.GlobalContext();
 
-jWorkFlow.GlobalContext.getInstance = function jWorkFlow_GlobalContext$getInstance() {
-    return jWorkFlow.GlobalContext._instance;
+jsWorkFlow.GlobalContext.getInstance = function jsWorkFlow_GlobalContext$getInstance() {
+    return jsWorkFlow.GlobalContext._instance;
 };
 
-jWorkFlow.GlobalContext.registerClass('jWorkFlow.GlobalContext', jWorkFlow.ContextBase);
+jsWorkFlow.GlobalContext.registerClass('jsWorkFlow.GlobalContext', jsWorkFlow.ContextBase);
 
 //////////////////////////////////////////////////////////////////////////////////////////
 //ApplicationContext，应用级别的上下文，数据的生命周期可以跨Activity
@@ -657,75 +844,81 @@ jWorkFlow.GlobalContext.registerClass('jWorkFlow.GlobalContext', jWorkFlow.Conte
 //    ApplicationContext表示应用程序的运行上下文环境，用于管理应用级别共享的数据，于ActivityContext不同，
 //ApplicationContext中的数据默认是对包含的activity开放的。
 //
-jWorkFlow.ApplicationContext = function jWorkFlow_ApplicationContext() {
-    jWorkFlow.ApplicationContext.initializeBase(this, [true]);
+jsWorkFlow.ApplicationContext = function jsWorkFlow_ApplicationContext() {
+    jsWorkFlow.ApplicationContext.initializeBase(this, [true]);
 };
 
-function jWorkFlow_ApplicationContext$dispose() {
-    jWorkFlow.ApplicationContext.callBaseMethod(this, 'dispose');
+function jsWorkFlow_ApplicationContext$dispose() {
+    jsWorkFlow.ApplicationContext.callBaseMethod(this, 'dispose');
 }
 
-jWorkFlow.ApplicationContext.prototype = {
-    dispose: jWorkFlow_ApplicationContext$dispose
+jsWorkFlow.ApplicationContext.prototype = {
+    dispose: jsWorkFlow_ApplicationContext$dispose
     //property
     //method
 };
 
-jWorkFlow.ApplicationContext.registerClass('jWorkFlow.ApplicationContext', jWorkFlow.ContextBase);
+jsWorkFlow.ApplicationContext.registerClass('jsWorkFlow.ApplicationContext', jsWorkFlow.ContextBase);
 
 
 //////////////////////////////////////////////////////////////////////////////////////////
-//ActivityContext，表示一个jWorkFlow活动的运行上下文,数据依附于所在的活动
+//ActivityContext，表示一个jsWorkFlow活动的运行上下文,数据依附于所在的活动
 //
 //to 开发者：
 //    ActivityContext是Activity运行数据的载体，会存储Activity的数据和运行状态，以及获取Activity运行开始、结束的通知。
 //ActivityContext中的数据通过字典来管理，使用简单的key-value对，在数据的可见性上，默认是私有（不能跨层级访问），也可
 //以设置为public（自己包含的那些activity能访问这些数据）。
 //    在应用程序的级别通过ActivityContext栈管理ActivityContext。
+//    Activity的执行结果放置到ActivityContext的result属性上，可以由上级的执行者来获取。
 //
-jWorkFlow.ActivityContext = function jWorkFlow_ActivityContext(application, activity, executor) {
-    jWorkFlow.ActivityContext.initializeBase(this);
+jsWorkFlow.ActivityContext = function jsWorkFlow_ActivityContext(application, activity, executor) {
+    jsWorkFlow.ActivityContext.initializeBase(this);
 
     this._application = application;
     this._executor = executor;
     this._activity = activity;
-    this._activityState = jWorkFlow.ActivityState.none;
+    this._activityState = jsWorkFlow.ActivityState.none;
     this._args = {};
     this._result = null;
 
 };
 
-function jWorkFlow_ActivityContext$dispose() {
+function jsWorkFlow_ActivityContext$dispose() {
     this._application = null;
     this._executor = null;
     this._activity = null;
     this._args = null;
     this._result = null;
 
-    jWorkFlow.ActivityContext.callBaseMethod(this, 'dispose');
+    jsWorkFlow.ActivityContext.callBaseMethod(this, 'dispose');
 }
 
 //获取传递给activity的参数
-function jWorkFlow_ActivityContext$getParam(name) {
+function jsWorkFlow_ActivityContext$getParam(name) {
     return this._args[name];
 }
 
 //和activityContext关联的application
-function jWorkFlow_ActivityContext$get_application() {
+function jsWorkFlow_ActivityContext$get_application() {
     return this._application;
 }
 
 //和activityContext关联的activity
-function jWorkFlow_ActivityContext$get_activity() {
+function jsWorkFlow_ActivityContext$get_activity() {
     return this._activity;
 }
 
+//executor
+function jsWorkFlow_ActivityContext$get_executor() {
+    return this._executor;
+}
+
 //获取&设置activity的状态
-function jWorkFlow_ActivityContext$get_activityState() {
+function jsWorkFlow_ActivityContext$get_activityState() {
     return this._activityState;
 }
 
-function jWorkFlow_ActivityContext$set_activityState(value) {
+function jsWorkFlow_ActivityContext$set_activityState(value) {
     var oldState = this._activityState;
 
     //状态相同不触发状态变更
@@ -735,71 +928,81 @@ function jWorkFlow_ActivityContext$set_activityState(value) {
 
     this._activityState = value;
 
-    //通知activity状态变更，activity得到基类会处理jWorkFlow.ActivityState.start和jWorkFlow.ActivityState.end
+    //通知activity状态变更，activity得到基类会处理jsWorkFlow.ActivityState.start和jsWorkFlow.ActivityState.end
     this._activity.notifyStateChanged(this, oldState, value);
 
-    //如果activity的当前状态为jWorkFlow.ActivityState.end，表示活动以及结束，触发activityExecutor的complete事件
-    if (value == jWorkFlow.ActivityState.end) {
-        var eventArgs = new jWorkFlow.ActivityEventArgs(this);
+    //如果activity的当前状态为jsWorkFlow.ActivityState.end，表示活动以及结束，触发activityExecutor的complete事件
+    if (value == jsWorkFlow.ActivityState.end) {
+        var eventArgs = new jsWorkFlow.ActivityEventArgs(this);
         this._executor.raiseCompleteEvent(eventArgs);
     }
 }
 
 //获取&设置activity的返回值
-function jWorkFlow_ActivityContext$get_result() {
+function jsWorkFlow_ActivityContext$get_result() {
     return this._result;
 }
 
-function jWorkFlow_ActivityContext$set_result(value) {
+function jsWorkFlow_ActivityContext$set_result(value) {
     this._result = value;
 }
 
 
-jWorkFlow.ActivityContext.prototype = {
+jsWorkFlow.ActivityContext.prototype = {
     _application: null,
     _activity: null,
     _executor: null,
-    _activityState: jWorkFlow.ActivityState.none,
+    _activityState: jsWorkFlow.ActivityState.none,
     _args: null,
     _result: null,
-    dispose: jWorkFlow_ActivityContext$dispose,
+    dispose: jsWorkFlow_ActivityContext$dispose,
     //method
     //获取传递给activity的参数
-    getParam: jWorkFlow_ActivityContext$getParam,
+    getParam: jsWorkFlow_ActivityContext$getParam,
 
     //property
     //和activityContext关联的application
-    get_application: jWorkFlow_ActivityContext$get_application,
+    get_application: jsWorkFlow_ActivityContext$get_application,
     //和activityContext关联的activity
-    get_activity: jWorkFlow_ActivityContext$get_activity,
+    get_activity: jsWorkFlow_ActivityContext$get_activity,
+    //executor
+    get_executor: jsWorkFlow_ActivityContext$get_executor,
+
     //获取&设置activity的状态
-    get_activityState: jWorkFlow_ActivityContext$get_activityState,
-    set_activityState: jWorkFlow_ActivityContext$set_activityState,
+    get_activityState: jsWorkFlow_ActivityContext$get_activityState,
+    set_activityState: jsWorkFlow_ActivityContext$set_activityState,
     //获取&设置activity的返回值
-    get_result: jWorkFlow_ActivityContext$get_result,
-    set_result: jWorkFlow_ActivityContext$set_result
+    get_result: jsWorkFlow_ActivityContext$get_result,
+    set_result: jsWorkFlow_ActivityContext$set_result
 
 
 };
 
-jWorkFlow.ActivityContext.registerClass('jWorkFlow.ActivityContext', jWorkFlow.ContextBase);
+jsWorkFlow.ActivityContext.registerClass('jsWorkFlow.ActivityContext', jsWorkFlow.ContextBase);
 
 //////////////////////////////////////////////////////////////////////////////////////////
-//ActivityExecutor，表示一个jWorkFlow的Activity的执行器，提供activity的执行上下文
+//ActivityExecutor，表示一个jsWorkFlow的Activity的执行器，提供activity的执行上下文
 //
 // TO 开发者：
 //    ActivityExecutor表示activity的运行的上下文，包含运行activity所需的所有运行期的
 //支撑组件，包括application，当前的activity，以及对activity运行状态的初始化和complete事件。
 //ActivityExecutor是对activity运行期的支持类，activity组件的作者使用。
+//    ActivityExecutor的事件面向activity的作者，提供了preInit, init, complete, postComplete
+//几个事件，事件参数都是ActivityEventArgs类型，携带当前的Activity对应的ActivityContext。
+//    事件的触发时机如下：
+//    (1) preInit发生在doInit之前，也就是ActivityContext还没进入到contextStack。
+//    (2) init发生在doInit之后，执行环境已经准备就绪。
+//    (3) complete发生在doComplete之前，执行环境还在。
+//    (4) postComplete发生在doComplete之后，执行环境以及完全清除。
 //
-jWorkFlow.ActivityExecutor = function jWorkFlow_ActivityExecutor(application, activity) {
+jsWorkFlow.ActivityExecutor = function jsWorkFlow_ActivityExecutor(application, activity) {
     this._application = application;
     this._activity = activity;
     this._activityContext = null;
-    this._events = new jWorkFlow.Events(this);
+    this._events = new jsWorkFlow.Events(this);
 };
 
-function jWorkFlow_ActivityExecutor$dispose() {
+function jsWorkFlow_ActivityExecutor$dispose() {
     this._activityContext.dispose();
     this._events.dispose();
 
@@ -809,9 +1012,13 @@ function jWorkFlow_ActivityExecutor$dispose() {
     this._events = null;
 }
 
+function jsWorkFlow_ActivityExecutor$get_activityContext() {
+    return this._activityContext;
+}
+
 //内部使用，job的callback的handler
-function jWorkFlow_ActivityExecutor$doJobCallback(jobItem) {
-    var eventArgs = new jWorkFlow.ActivityEventArgs(this._activityContext);
+function jsWorkFlow_ActivityExecutor$doJobCallback(jobItem) {
+    var eventArgs = new jsWorkFlow.ActivityEventArgs(this._activityContext);
 
     //执行前先触发executor的init事件，用于准备activity的执行环境
     this.raiseInitEvent(eventArgs);
@@ -825,9 +1032,9 @@ function jWorkFlow_ActivityExecutor$doJobCallback(jobItem) {
 }
 
 //executor的执行入口点
-function jWorkFlow_ActivityExecutor$execute() {
+function jsWorkFlow_ActivityExecutor$execute() {
     //创建activity的context
-    this._activityContext = new jWorkFlow.ActivityContext(application, activity, this);
+    this._activityContext = new jsWorkFlow.ActivityContext(application, activity, this);
 
     //将activity的执行做成一个job，放到scheduler中执行。
     var callback = Function.createDelegate(this, this.doJobCallback);
@@ -835,165 +1042,205 @@ function jWorkFlow_ActivityExecutor$execute() {
     var scheduler = this._application.get_scheduler();
 
     //创建job对象
-    var job = new jWorkFlow.Job(callback, null);
+    var job = new jsWorkFlow.Job(callback, null);
 
     //将job放到scheduler中执行
     scheduler.scheduleJob(job);
 }
 
 //执行init相关操作
-function jWorkFlow_ActivityExecutor$doInit() {
-    //TODO:
+function jsWorkFlow_ActivityExecutor$doInit(eventArgs) {
     //push activity context
+    this._application.pushContextStack(this._activityContext);
+
+    //TODO:
+    //    Binding params here!
 }
 
 //执行complete相关操作
-function jWorkFlow_ActivityExecutor$doComplete() {
+function jsWorkFlow_ActivityExecutor$doComplete(eventArgs) {
     //TODO:
+    //    put result here!
+
     //pop activity context
+    this._application.popContextStack();
+
 }
 
-function jWorkFlow_ActivityExecutor$raiseInitEvent(eventArgs) {
+//触发init相关事件
+function jsWorkFlow_ActivityExecutor$raiseInitEvent(eventArgs) {
+    //触发注册的preInit事件
+    this._events.raiseEvent('preInit', eventArgs);
+
     //先执行自身init相关逻辑
-    this.doInit();
+    this.doInit(eventArgs);
 
     //触发注册的init事件
     this._events.raiseEvent('init', eventArgs);
 }
 
-function jWorkFlow_ActivityExecutor$add_init(handler) {
-    this._events.addHandler('init', handler);
-}
-
-function jWorkFlow_ActivityExecutor$remove_init(handler) {
-    this._events.removeHandler('init', handler);
-}
-
-function jWorkFlow_ActivityExecutor$raiseCompleteEvent(eventArgs) {
+//触发complete相关事件
+function jsWorkFlow_ActivityExecutor$raiseCompleteEvent(eventArgs) {
     //触发注册的complete事件
     this._events.raiseEvent('complete', eventArgs);
 
     //执行自身complete相关逻辑
-    this.doComplete();
+    this.doComplete(eventArgs);
+
+    //触发注册的postComplete事件
+    this._events.raiseEvent('postComplete', eventArgs);
 }
 
-function jWorkFlow_ActivityExecutor$add_complete(handler) {
+
+
+function jsWorkFlow_ActivityExecutor$add_preInit(handler) {
+    this._events.addHandler('preInit', handler);
+}
+
+function jsWorkFlow_ActivityExecutor$remove_preInit(handler) {
+    this._events.removeHandler('preInit', handler);
+}
+
+function jsWorkFlow_ActivityExecutor$add_init(handler) {
+    this._events.addHandler('init', handler);
+}
+
+function jsWorkFlow_ActivityExecutor$remove_init(handler) {
+    this._events.removeHandler('init', handler);
+}
+
+function jsWorkFlow_ActivityExecutor$add_complete(handler) {
     this._events.addHandler('complete', handler);
 }
 
-function jWorkFlow_ActivityExecutor$remove_complete(handler) {
+function jsWorkFlow_ActivityExecutor$remove_complete(handler) {
     this._events.removeHandler('complete', handler);
 }
 
+function jsWorkFlow_ActivityExecutor$add_postComplete(handler) {
+    this._events.addHandler('postComplete', handler);
+}
 
-jWorkFlow.ActivityExecutor.prototype = {
+function jsWorkFlow_ActivityExecutor$remove_postComplete(handler) {
+    this._events.removeHandler('postComplete', handler);
+}
+
+jsWorkFlow.ActivityExecutor.prototype = {
     _application: null,
     _activity: null,
     _activityContext: null,
     _events: null,
     //应该包含activity，提供activity的执行的上下文环境
-    dispose: jWorkFlow_ActivityExecutor$dispose,
+    dispose: jsWorkFlow_ActivityExecutor$dispose,
 
     //property
+    get_activityContext: jsWorkFlow_ActivityExecutor$get_activityContext,
     //method
     //内部使用，job的callback的handler
-    doJobCallback: jWorkFlow_ActivityExecutor$doJobCallback,
+    doJobCallback: jsWorkFlow_ActivityExecutor$doJobCallback,
     //executor的执行入口点
-    execute: jWorkFlow_ActivityExecutor$execute,
+    execute: jsWorkFlow_ActivityExecutor$execute,
     //执行init相关操作
-    doInit: jWorkFlow_ActivityExecutor$doInit,
+    doInit: jsWorkFlow_ActivityExecutor$doInit,
     //执行complete相关操作
-    doComplete: jWorkFlow_ActivityExecutor$doComplete,
+    doComplete: jsWorkFlow_ActivityExecutor$doComplete,
     //events
+    //事件触发
+    raiseInitEvent: jsWorkFlow_ActivityExecutor$raiseInitEvent,
+    raiseCompleteEvent: jsWorkFlow_ActivityExecutor$raiseCompleteEvent,
+    //preInit事件，做activity执行前的准备工作
+    add_preInit: jsWorkFlow_ActivityExecutor$add_preInit,
+    remove_preInit: jsWorkFlow_ActivityExecutor$remove_preInit,
     //init事件，做activity执行前的准备工作
-    raiseInitEvent: jWorkFlow_ActivityExecutor$raiseInitEvent,
-    add_init: jWorkFlow_ActivityExecutor$add_init,
-    remove_init: jWorkFlow_ActivityExecutor$remove_init,
+    add_init: jsWorkFlow_ActivityExecutor$add_init,
+    remove_init: jsWorkFlow_ActivityExecutor$remove_init,
     //complete事件，做activity执行结束后的清理工作
-    raiseCompleteEvent: jWorkFlow_ActivityExecutor$raiseCompleteEvent,
-    add_complete: jWorkFlow_ActivityExecutor$add_complete,
-    remove_complete: jWorkFlow_ActivityExecutor$remove_complete
+    add_complete: jsWorkFlow_ActivityExecutor$add_complete,
+    remove_complete: jsWorkFlow_ActivityExecutor$remove_complete,
+    //postComplete事件，做activity执行结束后的清理工作
+    add_postComplete: jsWorkFlow_ActivityExecutor$add_postComplete,
+    remove_postComplete: jsWorkFlow_ActivityExecutor$remove_postComplete
 };
 
-jWorkFlow.ActivityExecutor.registerClass('jWorkFlow.ActivityExecutor');
+jsWorkFlow.ActivityExecutor.registerClass('jsWorkFlow.ActivityExecutor');
 
 //////////////////////////////////////////////////////////////////////////////////////////
-//Job，提供jWorkFlow的Scheduler的执行项目
+//Job，提供jsWorkFlow的Scheduler的执行项目
 //
 //to 开发者：
 //    Job代表一个需要运行调度的作业，描述执行体包含的内容。
 //    其构造参数包含callback和context，表示需要执行的方法和传递给方法的参数。
-jWorkFlow.Job = function jWorkFlow_Job(callback, context) {
+jsWorkFlow.Job = function jsWorkFlow_Job(callback, context) {
 
     this._callback = callback;
     this._context = context;
 };
 
-function jWorkFlow_Job$dispose() {
+function jsWorkFlow_Job$dispose() {
 }
 
-function jWorkFlow_Job$get_context() {
+function jsWorkFlow_Job$get_context() {
     return this._context;
 }
 
-function jWorkFlow_Job$get_result() {
+function jsWorkFlow_Job$get_result() {
     return this._result;
 }
 
-function jWorkFlow_Job$set_result(value) {
+function jsWorkFlow_Job$set_result(value) {
     this._result = value;
 }
 
-function jWorkFlow_Job$execute() {
+function jsWorkFlow_Job$execute() {
     //执行工作项目
     if (this._callback) {
         this._callback(this);
     }
 }
 
-jWorkFlow.Job.prototype = {
+jsWorkFlow.Job.prototype = {
     //work item中应该包含ActivityExecutor，Job通过它来执行activity
     _callback: null,
     _context: null,
     _result: null,
-    dispose: jWorkFlow_Job$dispose,
-    get_context: jWorkFlow_Job$get_context,
-    get_result: jWorkFlow_Job$get_result,
-    set_result: jWorkFlow_Job$set_result,
-    execute: jWorkFlow_Job$execute
+    dispose: jsWorkFlow_Job$dispose,
+    get_context: jsWorkFlow_Job$get_context,
+    get_result: jsWorkFlow_Job$get_result,
+    set_result: jsWorkFlow_Job$set_result,
+    execute: jsWorkFlow_Job$execute
     //property
 };
 
-jWorkFlow.Job.registerClass('jWorkFlow.Job');
+jsWorkFlow.Job.registerClass('jsWorkFlow.Job');
 
 //////////////////////////////////////////////////////////////////////////////////////////
-//Scheduler，提供jWorkFlow的Instance的调度器
+//Scheduler，提供jsWorkFlow的Instance的调度器
 //
 //to 开发者：
 //    Scheduler是workflow的任务的执行引擎，驱动job的执行。
 //    Scheduler在application中启动和初始化，可以通过事件关注其状态的变化，可以在外部控制其启动、停止、暂停等。
-jWorkFlow.Scheduler = function jWorkFlow_Scheduler() {
-    this._events = new jWorkFlow.Events(this);
+jsWorkFlow.Scheduler = function jsWorkFlow_Scheduler() {
+    this._events = new jsWorkFlow.Events(this);
 };
 
 //const
 //调度每100 ms执行一次
-jWorkFlow.Scheduler.interval_timer = 100;
+jsWorkFlow.Scheduler.interval_timer = 100;
 
 
-function jWorkFlow_Scheduler$get_isRunning() {
+function jsWorkFlow_Scheduler$get_isRunning() {
     return this._isRunning;
 }
 
-function jWorkFlow_Scheduler$get_isStopPending() {
+function jsWorkFlow_Scheduler$get_isStopPending() {
     return this._isStopPending;
 }
 
-function jWorkFlow_Scheduler$get_isPausing() {
+function jsWorkFlow_Scheduler$get_isPausing() {
     return this._isPausing;
 }
 
-function jWorkFlow_Scheduler$dispose() {
+function jsWorkFlow_Scheduler$dispose() {
 
     if (this._isRunning) {
         this.stop(true);
@@ -1004,10 +1251,10 @@ function jWorkFlow_Scheduler$dispose() {
 }
 
 //将job放到运行队列
-function jWorkFlow_Scheduler$scheduleJob(job) {
-    //Job必须是jWorkFlow.Job类型
+function jsWorkFlow_Scheduler$scheduleJob(job) {
+    //Job必须是jsWorkFlow.Job类型
     var e = Function._validateParams(arguments, [
-        { name: "job", type: jWorkFlow.Job }
+        { name: "job", type: jsWorkFlow.Job }
     ]);
 
     //运行状态（含pausing）下可以将job加入到执行队列
@@ -1019,7 +1266,7 @@ function jWorkFlow_Scheduler$scheduleJob(job) {
 }
 
 //run job的时间片的执行函数
-function jWorkFlow_Scheduler$doExecJobInterval() {
+function jsWorkFlow_Scheduler$doExecJobInterval() {
     if (this._isPausing) {
         return;
     }
@@ -1046,7 +1293,7 @@ function jWorkFlow_Scheduler$doExecJobInterval() {
         //检查运行时间
         var curTime = (new Date()).getTime();
 
-        if ((curTime - startTime) > jWorkFlow.Scheduler.interval_timer) {
+        if ((curTime - startTime) > jsWorkFlow.Scheduler.interval_timer) {
             //运行时间过长了！需要终止运行，给其他操作让出CPU资源。
             break;
         }
@@ -1062,14 +1309,14 @@ function jWorkFlow_Scheduler$doExecJobInterval() {
 }
 
 //默认start直接进入运行状态，如果isPausing为true，表示启动后处于暂停状态
-function jWorkFlow_Scheduler$start(isPausing) {
+function jsWorkFlow_Scheduler$start(isPausing) {
     if (this._isRunning) {
         throw Error.invalidOperation("Scheduler is already running!");
     }
 
     //start schedule engine
     var handler = Function.createDelegate(this, this.doExecJobInterval);
-    this._intervalID = setInterval(handler, jWorkFlow.Scheduler.interval_timer);
+    this._intervalID = jsWorkFlow.setInterval(handler, jsWorkFlow.Scheduler.interval_timer);
 
     this._isRunning = true;
     this._isStopPending = false;
@@ -1080,7 +1327,7 @@ function jWorkFlow_Scheduler$start(isPausing) {
 
 }
 
-function jWorkFlow_Scheduler$pause() {
+function jsWorkFlow_Scheduler$pause() {
 
     //如果没运行，或正在停止，不允许设置为暂停
     if (!this._isRunning || this._isStopPending) {
@@ -1093,7 +1340,7 @@ function jWorkFlow_Scheduler$pause() {
     this._events.raiseEvent('pause', Sys.EventArgs.Empty);
 }
 
-function jWorkFlow_Scheduler$resume() {
+function jsWorkFlow_Scheduler$resume() {
 
     if (!this._isRunning || this._isStopPending) {
         throw Error.invalidOperation("Scheduler is not running!");
@@ -1104,7 +1351,7 @@ function jWorkFlow_Scheduler$resume() {
 }
 
 //forceStopNow参数如果为true，表示是强制停止，不管是否有正在运行的任务。
-function jWorkFlow_Scheduler$stop(forceStopNow) {
+function jsWorkFlow_Scheduler$stop(forceStopNow) {
     if (!this._isRunning) {
         throw Error.invalidOperation("Scheduler is not running!");
         return;
@@ -1146,39 +1393,39 @@ function jWorkFlow_Scheduler$stop(forceStopNow) {
 }
 
 //events
-function jWorkFlow_Scheduler$add_start(handler) {
+function jsWorkFlow_Scheduler$add_start(handler) {
     this._events.addHandler('start', handler);
 }
 
-function jWorkFlow_Scheduler$remove_start(handler) {
+function jsWorkFlow_Scheduler$remove_start(handler) {
     this._events.removeHandler('start', handler);
 }
 
-function jWorkFlow_Scheduler$add_pause(handler) {
+function jsWorkFlow_Scheduler$add_pause(handler) {
     this._events.addHandler('pause', handler);
 }
 
-function jWorkFlow_Scheduler$remove_pause(handler) {
+function jsWorkFlow_Scheduler$remove_pause(handler) {
     this._events.removeHandler('pause', handler);
 }
 
-function jWorkFlow_Scheduler$add_resume(handler) {
+function jsWorkFlow_Scheduler$add_resume(handler) {
     this._events.addHandler('resume', handler);
 }
 
-function jWorkFlow_Scheduler$remove_resume(handler) {
+function jsWorkFlow_Scheduler$remove_resume(handler) {
     this._events.removeHandler('resume', handler);
 }
 
-function jWorkFlow_Scheduler$add_stop(handler) {
+function jsWorkFlow_Scheduler$add_stop(handler) {
     this._events.addHandler('stop', handler);
 }
 
-function jWorkFlow_Scheduler$remove_stop(handler) {
+function jsWorkFlow_Scheduler$remove_stop(handler) {
     this._events.removeHandler('stop', handler);
 }
 
-jWorkFlow.Scheduler.prototype = {
+jsWorkFlow.Scheduler.prototype = {
     _events: null,
     _isRunning: false,
     _isStopPending: false,
@@ -1186,30 +1433,30 @@ jWorkFlow.Scheduler.prototype = {
     _jobQueue: null,
     _intervalID: -1,
     //property
-    get_isRunning: jWorkFlow_Scheduler$get_isRunning,
-    get_isStopPending: jWorkFlow_Scheduler$get_isStopPending,
-    get_isPausing: jWorkFlow_Scheduler$get_isPausing,
+    get_isRunning: jsWorkFlow_Scheduler$get_isRunning,
+    get_isStopPending: jsWorkFlow_Scheduler$get_isStopPending,
+    get_isPausing: jsWorkFlow_Scheduler$get_isPausing,
     //method
-    dispose: jWorkFlow_Scheduler$dispose,
-    scheduleJob: jWorkFlow_Scheduler$scheduleJob,
+    dispose: jsWorkFlow_Scheduler$dispose,
+    scheduleJob: jsWorkFlow_Scheduler$scheduleJob,
     //内部执行
-    doExecJobInterval: jWorkFlow_Scheduler$doExecJobInterval,
+    doExecJobInterval: jsWorkFlow_Scheduler$doExecJobInterval,
     //运行状态控制
-    start: jWorkFlow_Scheduler$start,
-    pause: jWorkFlow_Scheduler$pause,
-    resume: jWorkFlow_Scheduler$resume,
-    stop: jWorkFlow_Scheduler$stop,
+    start: jsWorkFlow_Scheduler$start,
+    pause: jsWorkFlow_Scheduler$pause,
+    resume: jsWorkFlow_Scheduler$resume,
+    stop: jsWorkFlow_Scheduler$stop,
     //event
-    add_start: jWorkFlow_Scheduler$add_start,
-    remove_start: jWorkFlow_Scheduler$remove_start,
-    add_pause: jWorkFlow_Scheduler$add_pause,
-    remove_pause: jWorkFlow_Scheduler$remove_pause,
-    add_resume: jWorkFlow_Scheduler$add_resume,
-    remove_resume: jWorkFlow_Scheduler$remove_resume,
-    add_stop: jWorkFlow_Scheduler$add_stop,
-    remove_stop: jWorkFlow_Scheduler$remove_stop
+    add_start: jsWorkFlow_Scheduler$add_start,
+    remove_start: jsWorkFlow_Scheduler$remove_start,
+    add_pause: jsWorkFlow_Scheduler$add_pause,
+    remove_pause: jsWorkFlow_Scheduler$remove_pause,
+    add_resume: jsWorkFlow_Scheduler$add_resume,
+    remove_resume: jsWorkFlow_Scheduler$remove_resume,
+    add_stop: jsWorkFlow_Scheduler$add_stop,
+    remove_stop: jsWorkFlow_Scheduler$remove_stop
 };
 
 
-jWorkFlow.Scheduler.registerClass('jWorkFlow.Scheduler');
+jsWorkFlow.Scheduler.registerClass('jsWorkFlow.Scheduler');
 
