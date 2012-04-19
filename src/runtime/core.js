@@ -18,6 +18,7 @@
   *    5. Array.add
   *    
   */
+
 Type.registerNamespace('jsWorkFlow');
 
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -127,6 +128,16 @@ function jsWorkFlow_Application$get_currentContext() {
     return context;
 }
 
+function jsWorkFlow_Application$get_errorStrategy() {
+    return this._errorStrategy;
+}
+
+function jsWorkFlow_Application$set_errorStrategy(value) {
+    this._errorStrategy = value;
+}
+
+
+
 function jsWorkFlow_Application$run() {
     //应用的上下文，运行期间可用
     this._appContext = new jsWorkFlow.ApplicationContext();
@@ -145,6 +156,32 @@ function jsWorkFlow_Application$run() {
 
     //通过instance的execute开始执行
     this._instance.execute(this);
+}
+
+//强制停止
+function jsWorkFlow_Application$forceStop() {
+    //forceStop
+    //clean all jobs.
+    var jobQueue = this._jobQueue;
+
+    for (var i = 0, ilen = jobQueue.length; i < ilen; i++) {
+
+        var job = jobQueue.shift();
+
+        try {
+            //释放job
+            job.dispose();
+        } catch (e) {
+            //TODO:
+            //    log error here!
+        }
+    }
+
+    //设置运行状态为stop
+    this._isRunning = false;
+
+    this._events.raiseEvent('stop', Sys.EventArgs.Empty);
+
 }
 
 function jsWorkFlow_Application$dispose() {
@@ -246,14 +283,20 @@ jsWorkFlow.Application.prototype = {
     _contextStack: null,
     _events: null,
     _scheduler: null,
+    _errorStrategy: jsWorkFlow.ActivityExecuteStrategy.none, //默认无定义
     //property
     get_scheduler: jsWorkFlow_Application$get_scheduler,
     get_globalContext: jsWorkFlow_Application$get_globalContext,
     get_appContext: jsWorkFlow_Application$get_appContext,
-    get_instance: jsWorkFlow_Application$get_instance, 
+    get_instance: jsWorkFlow_Application$get_instance,
     get_currentContext: jsWorkFlow_Application$get_currentContext,
+    //应用级的错误处理策略
+    get_errorStrategy: jsWorkFlow_Application$get_errorStrategy,
+    set_errorStrategy: jsWorkFlow_Application$set_errorStrategy,
+
     //method
     run: jsWorkFlow_Application$run,
+    forceStop: jsWorkFlow_Application$forceStop,
     dispose: jsWorkFlow_Application$dispose,
     //ActivityContext栈维护
     pushContextStack: jsWorkFlow_Application$pushContextStack,
@@ -426,6 +469,27 @@ jsWorkFlow.ActivityState.min_value = 100;
 
 jsWorkFlow.ActivityState.registerEnum('jsWorkFlow.ActivityState');
 
+
+
+//////////////////////////////////////////////////////////////////////////////////////////
+//ActivityExecuteStrategy，表示activity运行期错误的容错类型
+
+jsWorkFlow.ActivityExecuteStrategy = function jsWorkFlow_ActivityExecuteStrategy() {
+    throw new Error.notImplemented();
+};
+
+//系统默认的activity的状态
+jsWorkFlow.ActivityExecuteStrategy.prototype = {
+    none: 0,        //没设置，会使用系统的默认错误回复机制
+    exception: 1,   //通过抛出异常来处理，为系统默认的异常处理方式
+    ignore: 2,      //拦截并忽略
+    stop: 3         //停止整个workflow的执行
+};
+
+jsWorkFlow.ActivityExecuteStrategy.registerEnum('jsWorkFlow.ActivityExecuteStrategy');
+
+
+
 //////////////////////////////////////////////////////////////////////////////////////////
 //ActivityEventArgs，提供jsWorkFlow的Activity的事件响应参数
 //
@@ -460,6 +524,46 @@ jsWorkFlow.ActivityEventArgs.prototype = {
 };
 
 jsWorkFlow.ActivityEventArgs.registerClass('jsWorkFlow.ActivityEventArgs', Sys.EventArgs);
+
+//////////////////////////////////////////////////////////////////////////////////////////
+//ActivityCustomErrorEventArgs，提供jsWorkFlow的error的事件响应函数的参数，默认是exception
+//
+// TO 开发者：
+//    activity相关的事件handler中传递的参数，主要是携带context参数。
+//    data是可选的参数，看事件上下文是否需要携带额外的数据
+//
+jsWorkFlow.ActivityCustomErrorEventArgs = function jsWorkFlow_ActivityCustomErrorEventArgs(context, exception) {
+    jsWorkFlow.ActivityCustomErrorEventArgs.initializeBase(this, [context, null]);
+    this._exception = exception;
+};
+
+function jsWorkFlow_ActivityCustomErrorEventArgs$dispose() {
+    jsWorkFlow.ActivityCustomErrorEventArgs.callBaseMethod(this, 'dispose');
+}
+
+function jsWorkFlow_ActivityCustomErrorEventArgs$get_errorStrategy() {
+    return this._errorStrategy;
+}
+
+function jsWorkFlow_ActivityCustomErrorEventArgs$set_errorStrategy(value) {
+    this._errorStrategy = value;
+}
+
+function jsWorkFlow_ActivityCustomErrorEventArgs$get_exception() {
+    return this._exception;
+}
+
+jsWorkFlow.ActivityCustomErrorEventArgs.prototype = {
+    _errorStrategy: jsWorkFlow.ActivityExecuteStrategy.none, //默认无定义
+    _exception: null,
+    dispose: jsWorkFlow_ActivityCustomErrorEventArgs$dispose,
+    //property
+    get_errorStrategy: jsWorkFlow_ActivityCustomErrorEventArgs$get_errorStrategy,
+    set_errorStrategy: jsWorkFlow_ActivityCustomErrorEventArgs$set_errorStrategy,
+    get_exception: jsWorkFlow_ActivityCustomErrorEventArgs$get_exception
+};
+
+jsWorkFlow.ActivityCustomErrorEventArgs.registerClass('jsWorkFlow.ActivityCustomErrorEventArgs', jsWorkFlow.ActivityEventArgs);
 
 
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -597,6 +701,35 @@ jsWorkFlow.ActivityHelper.setGlobalData = function jsWorkFlow_ActivityHelper$set
     globalContext.setData(key, value);
 }
 
+//通过activity的serializeContext来恢复activity
+jsWorkFlow.ActivityHelper.loadActivity = function jsWorkFlow_ActivityHelper$loadActivity(serializeContext) {
+
+    var activity = null;
+
+    if (serializeContext) {
+        var activityType = eval(serializeContext['_@_activityType']);
+
+        //
+        activity = new activityType();
+        activity.loadSerializeContext(serializeContext);
+    }
+
+    return activity;
+}
+
+jsWorkFlow.ActivityHelper.saveActivity = function jsWorkFlow_ActivityHelper$saveActivity(activity) {
+
+    var serializeContext = null;
+
+    if (activity) {
+        serializeContext = {};
+        activity.saveSerializeContext(serializeContext);
+    }
+
+    return serializeContext;
+}
+
+
 jsWorkFlow.ActivityHelper.registerClass('jsWorkFlow.ActivityHelper');
 
 //make a shortcut for ActivityHelper
@@ -615,6 +748,10 @@ var $jwf = jsWorkFlow.ActivityHelper;
 //好的activity可以组装到多个activity中使用。
 //    activity的运行期的数据，存储在activity context之中。
 //    Activity类是一个抽象基类，本身只提供对activity公用数据、方法的封装，不能作为activity来运行。
+//    activity的序列化通过loadSerializeContext和saveSerializeContext来执行，传入的serializeContext是
+//序列化数据的载体，要求是基本的数据类型(Primary Data Type)，每个activity里面存放自身的数据，其中有
+//两个特殊的数据项，"_@_activityType"用于存放activity类型的full name，"_@_base"用于存放父类的
+//serializeContext。
 //
 jsWorkFlow.Activity = function jsWorkFlow_Activity() {
     this._events = new jsWorkFlow.Events(this);
@@ -625,12 +762,48 @@ function jsWorkFlow_Activity$dispose() {
     this._events = null;
 }
 
+function jsWorkFlow_Activity$getType() {
+    return Object.getType(this);
+}
+
 function jsWorkFlow_Activity$get_name() {
     return this._name;
 }
 
 function jsWorkFlow_Activity$set_name(value) {
     this._name = value;
+}
+
+function jsWorkFlow_Activity$get_errorStrategy() {
+    return this._errorStrategy;
+}
+
+function jsWorkFlow_Activity$set_errorStrategy(value) {
+    this._errorStrategy = value;
+}
+
+//activity的恢复
+function jsWorkFlow_Activity$loadSerializeContext(serializeContext) {
+
+    //检查类型 ===> 这是规范
+    if (serializeContext['_@_activityType'] !== this.getType().getName()) {
+        throw Error.invalidOperation("loadSerializeContext missmatch type!");
+    }
+
+    //恢复name & errorStrategy属性
+    this.set_name(serializeContext['_@_name']);
+    this.set_errorStrategy(serializeContext['_@_errorStrategy']);
+}
+
+//activity的序列化
+function jsWorkFlow_Activity$saveSerializeContext(serializeContext) {
+
+    //保存类型 ===> 这是规范
+    serializeContext['_@_activityType'] = this.getType().getName();
+    
+    //保存name & errorStrategy属性
+    serializeContext['_@_name'] = this.get_name();
+    serializeContext['_@_errorStrategy'] = this.get_errorStrategy();
 }
 
 //activity的状态机的启动入口，自动驱动activity的状态机进入运行状态。
@@ -662,6 +835,10 @@ function jsWorkFlow_Activity$notifyStateChanged(context, oldState, curState) {
     //ignore other state value
 }
 
+function jsWorkFlow_Activity$notifyError(eventArgs) {
+    this._events.raiseEvent('error', eventArgs);
+}
+
 //events
 function jsWorkFlow_Activity$add_start(handler) {
     this._events.addHandler('start', handler);
@@ -679,17 +856,33 @@ function jsWorkFlow_Activity$remove_stop(handler) {
     this._events.removeHandler('stop', handler);
 }
 
+function jsWorkFlow_Activity$add_error(handler) {
+    this._events.addHandler('error', handler);
+}
+
+function jsWorkFlow_Activity$remove_error(handler) {
+    this._events.removeHandler('error', handler);
+}
+
 jsWorkFlow.Activity.prototype = {
     _name: null,
     _events: null,
+    _errorStrategy: jsWorkFlow.ActivityExecuteStrategy.none, //默认无定义
     dispose: jsWorkFlow_Activity$dispose,
     //property
     //name，只是一个标识
     get_name: jsWorkFlow_Activity$get_name,
     set_name: jsWorkFlow_Activity$set_name,
+    //errorStrategy,容错策略
+    get_errorStrategy: jsWorkFlow_Activity$get_errorStrategy,
+    set_errorStrategy: jsWorkFlow_Activity$set_errorStrategy,
+
     //method
+    loadSerializeContext: jsWorkFlow_Activity$loadSerializeContext,
+    saveSerializeContext: jsWorkFlow_Activity$saveSerializeContext,
     execute: jsWorkFlow_Activity$execute,
     notifyStateChanged: jsWorkFlow_Activity$notifyStateChanged,
+    notifyError: jsWorkFlow_Activity$notifyError,
     //event handler
     //基类关注的activity的状态只有start和stop，其它状态由派生类来扩展
     //start 事件
@@ -697,7 +890,11 @@ jsWorkFlow.Activity.prototype = {
     remove_start: jsWorkFlow_Activity$remove_start,
     //stop 事件
     add_stop: jsWorkFlow_Activity$add_stop,
-    remove_stop: jsWorkFlow_Activity$remove_stop
+    remove_stop: jsWorkFlow_Activity$remove_stop,
+    //error 事件
+    add_error: jsWorkFlow_Activity$add_error,
+    remove_error: jsWorkFlow_Activity$remove_error
+
 };
 
 jsWorkFlow.Activity.registerClass('jsWorkFlow.Activity');
@@ -1016,15 +1213,81 @@ function jsWorkFlow_ActivityExecutor$get_activityContext() {
     return this._activityContext;
 }
 
+function _jwf$ae$run_and_check(activityContext, callback, callbackContext) {
+
+    var activity = activityContext.get_activity();
+    var application = activityContext.get_application();
+
+    var errorStrategy = activity.get_errorStrategy();
+
+    if (errorStrategy === jsWorkFlow.ActivityExecuteStrategy.none) {
+        //使用应用级别的错误处理定义
+        errorStrategy = application.get_errorStrategy();
+    }
+
+    try {
+        //执行callback
+        callback(callbackContext);
+    } catch (e) {
+        //运行出现异常
+        //看activity中是否会做错误的修正
+        var eventArgs = new jsWorkFlow.ActivityCustomErrorEventArgs(activityContext, e);
+        activity.notifyError(eventArgs);
+
+        //如果eventArgs中包含了不同的错误定义，优先使用这个
+        var curErrorStrategy = eventArgs.get_errorStrategy();
+
+        if (curErrorStrategy !== jsWorkFlow.ActivityExecuteStrategy.none) {
+            errorStrategy = curErrorStrategy;
+        }
+
+        switch (errorStrategy) {
+            case jsWorkFlow.ActivityExecuteStrategy.ignore:
+                {
+                    //ignore，workflow会处于一种不稳定的状态
+
+                    //因为已经出现异常了，如果忽略，强制设置当前的activity为结束状态，尽量驱动后续的activity继续执行
+                    //activity的状态驱动的机制可以保证驱动相同的状态不会触发状态变更
+                    $jwf.endActivity(activityContext);
+                    return;
+                }
+            case jsWorkFlow.ActivityExecuteStrategy.stop:
+                {
+                    //强制application结束
+                    application.forceStop();
+                    return;
+                }
+            case jsWorkFlow.ActivityExecuteStrategy.exception:
+            case jsWorkFlow.ActivityExecuteStrategy.none:
+            default:
+                {
+                    //直接抛出异常，由上层的程序来处理
+                    throw e;
+                }
+        }
+    }
+} 
+
 //内部使用，job的callback的handler
 function jsWorkFlow_ActivityExecutor$doJobCallback(jobItem) {
-    var eventArgs = new jsWorkFlow.ActivityEventArgs(this._activityContext);
 
-    //执行前先触发executor的init事件，用于准备activity的执行环境
-    this.raiseInitEvent(eventArgs);
+    //构造lamda上下文
+    var activityExecutor = this;
+    var activity = this._activity;
+    var application = this._application;
+    var activityContext = this._activityContext;
+
+    //执行
+    jsWorkFlow.ActivityExecutor.run_and_check(this._activityContext, function () {
+        var eventArgs = new jsWorkFlow.ActivityEventArgs(activityContext);
+        //执行前先触发executor的init事件，用于准备activity的执行环境
+        activityExecutor.raiseInitEvent(eventArgs);
+
+        //执行activity
+        activity.execute(activityContext);
+
+    }, null);
     
-    //执行activity
-    this._activity.execute(this._activityContext);
 
     //进入事件通知的状态。
 
@@ -1161,6 +1424,9 @@ jsWorkFlow.ActivityExecutor.prototype = {
     add_postComplete: jsWorkFlow_ActivityExecutor$add_postComplete,
     remove_postComplete: jsWorkFlow_ActivityExecutor$remove_postComplete
 };
+
+//class method
+jsWorkFlow.ActivityExecutor.run_and_check = _jwf$ae$run_and_check;
 
 jsWorkFlow.ActivityExecutor.registerClass('jsWorkFlow.ActivityExecutor');
 
@@ -1368,27 +1634,8 @@ function jsWorkFlow_Scheduler$stop(forceStopNow) {
         return;
     }
 
-    //forceStopNow
-    //clean all jobs.
-    var jobQueue = this._jobQueue;
-
-    for (var i = 0, ilen = jobQueue.length; i < ilen; i++) {
-
-        var job = jobQueue.shift();
-
-        try {
-            //释放job
-            job.dispose();
-        } catch (e) {
-            //TODO:
-            //    log error here!
-        }
-    }
-
-    //设置运行状态为stop
-    this._isRunning = false;
-
-    this._events.raiseEvent('stop', Sys.EventArgs.Empty);
+    //forceStop
+    this.forceStop();
 
 }
 

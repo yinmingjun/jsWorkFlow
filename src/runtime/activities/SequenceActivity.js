@@ -17,9 +17,14 @@ Type.registerNamespace('jsWorkFlow.Activities');
 //    是一个activity的容器，允许将多个activity放到SequenceActivity中按加入的次序顺序执行。
 //SequenceActivity将其执行的最后一个activity作为自己的返回值携带回来。
 //
-jsWorkFlow.Activities.SequenceActivity = function jsWorkFlow_Activities_SequenceActivity() {
+jsWorkFlow.Activities.SequenceActivity = function jsWorkFlow_Activities_SequenceActivity(activities) {
     jsWorkFlow.Activities.SequenceActivity.initializeBase(this);
-    this._activities = [];
+
+    if (!activities) {
+        activities = [];
+    }
+
+    this._activities = activities;
     this._doActivityCompleteHandler = Function.createDelegate(this, this.doActivityCompleteHandler);
 };
 
@@ -29,6 +34,68 @@ function jsWorkFlow_Activities_SequenceActivity$dispose() {
     this._activities = null;
     this._doActivityCompleteHandler = null;
 }
+
+function jsWorkFlow_Activities_SequenceActivity$get_activities() {
+    return this._activities;
+}
+
+function jsWorkFlow_Activities_SequenceActivity$set_activities(value) {
+    this._activities = value;
+}
+
+//activity的恢复
+function jsWorkFlow_Activities_SequenceActivity$loadSerializeContext(serializeContext) {
+    //检查类型 ===> 这是规范
+    if (serializeContext['_@_activityType'] !== this.getType().getName()) {
+        throw Error.invalidOperation("loadSerializeContext missmatch type!");
+    }
+
+    //恢复base
+    var baseSerializeContext = serializeContext['_@_base'];
+
+    jsWorkFlow.Activities.SequenceActivity.callBaseMethod(this, 'loadSerializeContext', [baseSerializeContext]);
+
+    //恢复自身
+    var activitiesSC = serializeContext['activities'];
+    var activities = [];
+
+    if (activitiesSC && (activitiesSC.length > 0)) {
+        for (var i = 0, ilen = activitiesSC.length; i < ilen; i++) {
+            var activity = $jwf.loadActivity(activitiesSC[i]);
+            Array.add(activities, activity);
+        }
+    }
+
+    this.set_activities(activities);
+}
+
+//activity的序列化
+function jsWorkFlow_Activities_SequenceActivity$saveSerializeContext(serializeContext) {
+
+    //保存类型 ===> 这是规范
+    serializeContext['_@_activityType'] = this.getType().getName();
+
+    //保存自身
+    var activitiesSC = [];
+    var activities = this.get_activities();
+
+    if (activities && (activities.length > 0)) {
+        for (var i = 0, ilen = activities.length; i < ilen; i++) {
+            var activitySC = $jwf.saveActivity(activities[i]);
+            Array.add(activitiesSC, activitySC); 
+        }
+    }
+
+    serializeContext['activities'] = activitiesSC;
+
+    //保存base
+    var baseSerializeContext = {};
+
+    jsWorkFlow.Activities.SequenceActivity.callBaseMethod(this, 'saveSerializeContext', [baseSerializeContext]);
+
+    serializeContext['_@_base'] = baseSerializeContext;
+}
+
 
 //activity的状态机的启动入口，自动驱动activity的状态机进入运行状态。
 function jsWorkFlow_Activities_SequenceActivity$execute(context) {
@@ -90,7 +157,11 @@ jsWorkFlow.Activities.SequenceActivity.prototype = {
     _doActivityCompleteHandler: null,
     dispose: jsWorkFlow_Activities_SequenceActivity$dispose,
     //property
+    get_activities: jsWorkFlow_Activities_SequenceActivity$get_activities,
+    set_activities: jsWorkFlow_Activities_SequenceActivity$set_activities,
     //method
+    loadSerializeContext: jsWorkFlow_Activities_SequenceActivity$loadSerializeContext,
+    saveSerializeContext: jsWorkFlow_Activities_SequenceActivity$saveSerializeContext,
     execute: jsWorkFlow_Activities_SequenceActivity$execute,
     addActivity: jsWorkFlow_Activities_SequenceActivity$addActivity,
     //执行activity，并挂接ActivityExecutor的postComplete事件

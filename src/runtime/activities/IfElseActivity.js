@@ -61,6 +61,54 @@ function jsWorkFlow_Activities_IfElseActivity$set_elseActivity(value) {
     this._elseActivity = value;
 }
 
+//activity的恢复
+function jsWorkFlow_Activities_IfElseActivity$loadSerializeContext(serializeContext) {
+    //检查类型 ===> 这是规范
+    if (serializeContext['_@_activityType'] !== this.getType().getName()) {
+        throw Error.invalidOperation("loadSerializeContext missmatch type!");
+    }
+
+    //恢复base
+    var baseSerializeContext = serializeContext['_@_base'];
+
+    jsWorkFlow.Activities.IfElseActivity.callBaseMethod(this, 'loadSerializeContext', [baseSerializeContext]);
+
+
+    //恢复自身
+    var conditionActivitySC = serializeContext['conditionActivity'];
+    var conditionActivity = $jwf.loadActivity(conditionActivitySC);
+    this.set_conditionActivity(conditionActivity);
+
+    var thenActivitySC = serializeContext['thenActivity'];
+    var thenActivity = $jwf.loadActivity(thenActivitySC);
+    this.set_thenActivity(thenActivity);
+
+    var elseActivitySC = serializeContext['elseActivity'];
+    var elseActivity = $jwf.loadActivity(elseActivitySC);
+    this.set_elseActivity(elseActivity);
+
+}
+
+//activity的序列化
+function jsWorkFlow_Activities_IfElseActivity$saveSerializeContext(serializeContext) {
+
+    //保存类型 ===> 这是规范
+    serializeContext['_@_activityType'] = this.getType().getName();
+
+    //保存自身
+    serializeContext['conditionActivity'] = $jwf.saveActivity(this.get_conditionActivity());
+    serializeContext['thenActivity'] = $jwf.saveActivity(this.get_thenActivity());
+    serializeContext['elseActivity'] = $jwf.saveActivity(this.get_elseActivity());
+
+    //保存base
+    var baseSerializeContext = {};
+
+    jsWorkFlow.Activities.IfElseActivity.callBaseMethod(this, 'saveSerializeContext', [baseSerializeContext]);
+
+    serializeContext['_@_base'] = baseSerializeContext;
+}
+
+
 function jsWorkFlow_Activities_IfElseActivity$doEvalCondition(context) {
     //如果没有设置条件，认为为false，执行else分支
     var activity = this._conditionActivity;

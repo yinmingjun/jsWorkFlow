@@ -41,6 +41,7 @@ jsWorkFlow.Activities.FunctionActivityEventArgs.registerClass('jsWorkFlow.Activi
 //
 //TO 开发者：
 //    function的调用形式为function fun(FunctionActivityEventArgs) { ... }。
+//    load & save SerializeContext目前只支持具名函数的序列化&恢复
 //
 jsWorkFlow.Activities.FunctionActivity = function jsWorkFlow_Activities_FunctionActivity(func, callbackData) {
     this._func = func;
@@ -50,6 +51,54 @@ jsWorkFlow.Activities.FunctionActivity = function jsWorkFlow_Activities_Function
 
 function jsWorkFlow_Activities_FunctionActivity$dispose() {
     jsWorkFlow.Activities.FunctionActivity.callBaseMethod(this, 'dispose');
+}
+
+function jsWorkFlow_Activities_FunctionActivity$get_func() {
+    return this._func;
+}
+
+function jsWorkFlow_Activities_FunctionActivity$set_func(value) {
+    this._func = value;
+}
+
+//activity的恢复****目前只支持具名函数的序列化&恢复****
+function jsWorkFlow_Activities_FunctionActivity$loadSerializeContext(serializeContext) {
+    //检查类型 ===> 这是规范
+    if (serializeContext['_@_activityType'] !== this.getType().getName()) {
+        throw Error.invalidOperation("loadSerializeContext missmatch type!");
+    }
+
+    //恢复base
+    var baseSerializeContext = serializeContext['_@_base'];
+
+    jsWorkFlow.Activities.FunctionActivity.callBaseMethod(this, 'loadSerializeContext', [baseSerializeContext]);
+
+    //恢复自身
+    this.set_func(eval(serializeContext['func']));
+}
+
+//activity的序列化****目前只支持具名函数的序列化&恢复****
+function jsWorkFlow_Activities_FunctionActivity$saveSerializeContext(serializeContext) {
+
+    //保存类型 ===> 这是规范
+    serializeContext['_@_activityType'] = this.getType().getName();
+
+    //保存自身
+    var func = this.get_func();
+    var funcName = "";
+
+    if (func) {
+        var funcBody = func.toString();
+        funcName = funcBody.substring(funcBody.indexOf("function")+8, funcBody.indexOf("("));
+    }
+    serializeContext['func'] = funcName;
+
+    //保存base
+    var baseSerializeContext = {};
+
+    jsWorkFlow.Activities.FunctionActivity.callBaseMethod(this, 'saveSerializeContext', [baseSerializeContext]);
+
+    serializeContext['_@_base'] = baseSerializeContext;
 }
 
 //activity的状态机的启动入口，自动驱动activity的状态机进入运行状态。
@@ -74,6 +123,8 @@ jsWorkFlow.Activities.FunctionActivity.prototype = {
     _callbackData: null,
     dispose: jsWorkFlow_Activities_FunctionActivity$dispose,
     //property
+    get_func: jsWorkFlow_Activities_FunctionActivity$get_func,
+    set_func: jsWorkFlow_Activities_FunctionActivity$set_func,
     //method
     execute: jsWorkFlow_Activities_FunctionActivity$execute
 };

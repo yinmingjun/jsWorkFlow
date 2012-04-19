@@ -26,6 +26,40 @@ function jsWorkFlow_Activities_NoopActivity$dispose() {
     jsWorkFlow.Activities.NoopActivity.callBaseMethod(this, 'dispose');
 }
 
+
+//activity的恢复
+function jsWorkFlow_Activities_NoopActivity$loadSerializeContext(serializeContext) {
+    //检查类型 ===> 这是规范
+    if (serializeContext['_@_activityType'] !== this.getType().getName()) {
+        throw Error.invalidOperation("loadSerializeContext missmatch type!");
+    }
+
+
+    //恢复base
+    var baseSerializeContext = serializeContext['_@_base'];
+
+    jsWorkFlow.Activities.NoopActivity.callBaseMethod(this, 'loadSerializeContext', [baseSerializeContext]);
+
+    //恢复自身
+
+}
+
+//activity的序列化
+function jsWorkFlow_Activities_NoopActivity$saveSerializeContext(serializeContext) {
+
+    //保存类型 ===> 这是规范
+    serializeContext['_@_activityType'] = this.getType().getName();
+
+    //保存自身
+
+    //保存base
+    var baseSerializeContext = {};
+
+    jsWorkFlow.Activities.NoopActivity.callBaseMethod(this, 'saveSerializeContext', [baseSerializeContext]);
+
+    serializeContext['_@_base'] = baseSerializeContext;
+}
+
 //activity的状态机的启动入口，自动驱动activity的状态机进入运行状态。
 function jsWorkFlow_Activities_NoopActivity$execute(context) {
     jsWorkFlow.Activities.NoopActivity.callBaseMethod(this, 'execute', [context]);
@@ -41,6 +75,8 @@ jsWorkFlow.Activities.NoopActivity.prototype = {
     dispose: jsWorkFlow_Activities_NoopActivity$dispose,
     //property
     //method
+    loadSerializeContext: jsWorkFlow_Activities_NoopActivity$loadSerializeContext,
+    saveSerializeContext: jsWorkFlow_Activities_NoopActivity$saveSerializeContext,
     execute: jsWorkFlow_Activities_NoopActivity$execute
 };
 

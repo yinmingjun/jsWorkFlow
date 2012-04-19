@@ -49,6 +49,41 @@ function jsWorkFlow_Activities_WhileActivity$set_bodyActivity(value) {
     this._bodyActivity = value;
 }
 
+//activity的恢复
+function jsWorkFlow_Activities_WhileActivity$loadSerializeContext(serializeContext) {
+    //检查类型 ===> 这是规范
+    if (serializeContext['_@_activityType'] !== this.getType().getName()) {
+        throw Error.invalidOperation("loadSerializeContext missmatch type!");
+    }
+
+    //恢复base
+    var baseSerializeContext = serializeContext['_@_base'];
+
+    jsWorkFlow.Activities.WhileActivity.callBaseMethod(this, 'loadSerializeContext', [baseSerializeContext]);
+
+    //恢复自身
+    this.set_conditionActivity($jwf.loadActivity(serializeContext['conditionActivity']));
+    this.set_bodyActivity($jwf.loadActivity(serializeContext['bodyActivity']));
+}
+
+//activity的序列化
+function jsWorkFlow_Activities_WhileActivity$saveSerializeContext(serializeContext) {
+
+    //保存类型 ===> 这是规范
+    serializeContext['_@_activityType'] = this.getType().getName();
+
+    //保存自身
+    serializeContext['conditionActivity'] = $jwf.saveActivity(this.get_conditionActivity());
+    serializeContext['bodyActivity'] = $jwf.saveActivity(this.get_bodyActivity());
+
+
+    //保存base
+    var baseSerializeContext = {};
+
+    jsWorkFlow.Activities.WhileActivity.callBaseMethod(this, 'saveSerializeContext', [baseSerializeContext]);
+
+    serializeContext['_@_base'] = baseSerializeContext;
+}
 
 function jsWorkFlow_Activities_WhileActivity$doEvalCondition(context) {
     //如果没有设置条件，认为为false
@@ -150,6 +185,8 @@ jsWorkFlow.Activities.WhileActivity.prototype = {
     get_bodyActivity: jsWorkFlow_Activities_WhileActivity$get_bodyActivity,
     set_bodyActivity: jsWorkFlow_Activities_WhileActivity$set_bodyActivity,
     //method
+    loadSerializeContext: jsWorkFlow_Activities_WhileActivity$loadSerializeContext,
+    saveSerializeContext: jsWorkFlow_Activities_WhileActivity$saveSerializeContext,
     doEvalCondition: jsWorkFlow_Activities_WhileActivity$doEvalCondition,
     doEvalConditionCompleteHandler: jsWorkFlow_Activities_WhileActivity$doEvalConditionCompleteHandler,
     doExecuteBody: jsWorkFlow_Activities_WhileActivity$doExecuteBody,
