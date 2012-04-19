@@ -7,10 +7,20 @@ http://jquery.org/license
 -------------------------------------------------------------------------------
 
 jsWorkFlow's road map
-
 1. use M$'s AJAX as a base framework(temporary, may be changed in furture).
 2. build a workflow runtime engine for javascript.
 3. create necessary activities.
 4. create WorkFlow's designer(HTML5+JavaScript)
 5. support load from xml and run.
+
+About events & property
+    Events of activities are designed to be used by activity's writer, and it's 
+content's (handler) will not be seralized by serialize context. So, all contents 
+used by end-user should build them workflow by activities. 
+
+About serialize a running activity
+    Activity serialize context dosn't support serialize a running activity. And this
+requirement will not be consider in the nearly future. End-user who have this requirements
+should consider how restart them activities by serialized data and activities. This meen
+jsWorkFlow would like use retry instead searialize a running activity.
 
