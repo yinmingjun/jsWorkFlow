@@ -791,8 +791,8 @@ function jsWorkFlow_Activity$loadSerializeContext(serializeContext) {
     }
 
     //恢复name & errorStrategy属性
-    this.set_name(serializeContext['_@_name']);
-    this.set_errorStrategy(serializeContext['_@_errorStrategy']);
+    this.set_name(serializeContext['name']);
+    this.set_errorStrategy(serializeContext['errorStrategy']);
 }
 
 //activity的序列化
@@ -802,8 +802,8 @@ function jsWorkFlow_Activity$saveSerializeContext(serializeContext) {
     serializeContext['_@_activityType'] = this.getType().getName();
     
     //保存name & errorStrategy属性
-    serializeContext['_@_name'] = this.get_name();
-    serializeContext['_@_errorStrategy'] = this.get_errorStrategy();
+    serializeContext['name'] = this.get_name();
+    serializeContext['errorStrategy'] = this.get_errorStrategy();
 }
 
 //activity的状态机的启动入口，自动驱动activity的状态机进入运行状态。
