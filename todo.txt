@@ -6,7 +6,8 @@
 3. 使用js.class作为基础类库
 4. 寻找合适的soap client
 5. 完成SoapActivity
-6. 完成activity的错误恢复支持
-7. 完成activity属性包的支持
-8. 寻找javascript对象创建&对象属性赋值的支持
-9. 支持基于serializeContext的序列化和恢复
+6. 完成activity的错误恢复支持  ==> OK
+7. 完成activity属性包的支持    ==> OK
+8. 寻找javascript对象创建&对象属性赋值的支持   ==> OK
+9. 支持基于serializeContext的序列化和恢复      ==> OK
+
