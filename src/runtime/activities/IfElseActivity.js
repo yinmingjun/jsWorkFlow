@@ -26,8 +26,8 @@ jsWorkFlow.Activities.IfElseActivity = function jsWorkFlow_Activities_IfElseActi
     this.set_thenActivity(thenActivity);
     this.set_elseActivity(elseActivity);
 
-    this._doEvalConditionCompleteHandler = Function.createDeledate(this, this.doEvalConditionCompleteHandler);
-    this._doExecuteBodyCompleteHandler = Function.createDeledate(this, this.doExecuteBodyCompleteHandler);
+    this._doEvalConditionCompleteHandler = Function.createDelegate(this, this.doEvalConditionCompleteHandler);
+    this._doExecuteBodyCompleteHandler = Function.createDelegate(this, this.doExecuteBodyCompleteHandler);
 };
 
 function jsWorkFlow_Activities_IfElseActivity$dispose() {
@@ -130,7 +130,7 @@ function jsWorkFlow_Activities_IfElseActivity$doEvalCondition(context) {
     activityExecutor.execute();
 }
 
-function jsWorkFlow_Activities_IfElseActivity$doEvalConditionCompleteHandler(eventArgs) {
+function jsWorkFlow_Activities_IfElseActivity$doEvalConditionCompleteHandler(sender, eventArgs) {
     var context = eventArgs.get_context();
     var executor = context.get_executor();
     var parentContext = executor.parentContext;
@@ -164,7 +164,7 @@ function jsWorkFlow_Activities_IfElseActivity$doExecuteBody(context, condition) 
     activityExecutor.execute();
 }
 
-function jsWorkFlow_Activities_IfElseActivity$doExecuteBodyCompleteHandler(eventArgs) {
+function jsWorkFlow_Activities_IfElseActivity$doExecuteBodyCompleteHandler(sender, eventArgs) {
     var context = eventArgs.get_context();
     var executor = context.get_executor();
     var parentContext = executor.parentContext;
@@ -174,7 +174,7 @@ function jsWorkFlow_Activities_IfElseActivity$doExecuteBodyCompleteHandler(event
     parentContext.set_result(result);
 
     //结束activity的执行
-    $jwf.endActivity(context);
+    $jwf.endActivity(parentContext);
     return;
 }
 

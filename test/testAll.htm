@@ -1,0 +1,49 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+	<head>
+		<title></title>
+	    <style type="text/css">
+            #Button1
+            {
+                width: 89px;
+            }
+            #TextArea1
+            {
+                height: 284px;
+                width: 579px;
+            }
+        </style>
+
+        <script type="text/javascript" src="../ScriptsLib/jquery-1.4.1.js"></script>
+        <script type="text/javascript" src="../ScriptsLib/MicrosoftAjax.debug.js"></script>
+        <script type="text/javascript" src="../build/jsWorkFlow-debug.js"></script>
+        <script type="text/javascript" src="../build/test-debug.js"></script>
+
+        <script type="text/javascript">
+            function doStartClick() {
+                //testEngine();
+                //testSequence();
+                //testIfElse();
+                //testDelay();
+                //testNoop();
+                //testFunc();
+                //testWhile();
+                //testSwitch();
+                testParallel();
+            }
+        </script>
+	</head>
+	<body>
+	
+	    <p>
+            <input id="startBtn" type="button" value="Start..." onclick="doStartClick();" /></p>
+        <p>
+            Test Result:</p>
+        <p>
+            <textarea id="TextArea1" name="S1" style="width:100%;height:300px" cols="20" 
+                rows="1"></textarea></p>
+        <p>
+            &nbsp;</p>
+	
+	</body>
+</html>

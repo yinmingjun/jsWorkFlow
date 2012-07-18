@@ -15,20 +15,20 @@ Type.registerNamespace('jsWorkFlow.Activities');
 //
 // TO 开发者：
 //
-jsWorkFlow.Activities.FunctionActivityEventArgs = function jsWorkFlow_Activities.FunctionActivityEventArgs(context, callbackData) {
+jsWorkFlow.Activities.FunctionActivityEventArgs = function jsWorkFlow_Activities_FunctionActivityEventArgs(context, callbackData) {
     jsWorkFlow.Activities.FunctionActivityEventArgs.initializeBase(this, [context, callbackData]);
 };
 
-function jsWorkFlow_Activities.FunctionActivityEventArgs$dispose() {
+function jsWorkFlow_Activities_FunctionActivityEventArgs$dispose() {
     jsWorkFlow.Activities.FunctionActivityEventArgs.callBaseMethod(this, 'dispose');
 }
 
-function jsWorkFlow_Activities.FunctionActivityEventArgs$get_callbackData() {
+function jsWorkFlow_Activities_FunctionActivityEventArgs$get_callbackData() {
     return this.get_data();
 }
 
 jsWorkFlow.Activities.FunctionActivityEventArgs.prototype = {
-    dispose: jsWorkFlow_Activities.FunctionActivityEventArgs$dispose,
+    dispose: jsWorkFlow_Activities_FunctionActivityEventArgs$dispose,
     //property
     get_callbackData: jsWorkFlow_Activities_FunctionActivityEventArgs$get_callbackData
 };

@@ -17,6 +17,7 @@ Type.registerNamespace('jsWorkFlow.Activities');
 //    SwitchActivity用于处理多路分派的情况。可以处理Condition，并和特定的Activity的值来比较，
 //并执行匹配的分支。
 //    elseActivity对应没有匹配的Case的情况，这种情况下执行elseActivity。
+//    allCase 是"key"/"value"字典组成的数组，这是规范的定义方式，不允许修改。
 //
 jsWorkFlow.Activities.SwitchActivity = function jsWorkFlow_Activities_SwitchActivity(conditionActivity, elseActivity, allCase) {
     jsWorkFlow.Activities.SwitchActivity.initializeBase(this);
@@ -25,10 +26,10 @@ jsWorkFlow.Activities.SwitchActivity = function jsWorkFlow_Activities_SwitchActi
     this._elseActivity = elseActivity ? elseActivity : null;
     this._allCase = allCase ? allCase : [];
 
-    this._doEvalConditionCompleteHandler = Function.createDeledate(this, this.doEvalConditionCompleteHandler);
-    this._doEvalCaseConditionCompleteHandler = Function.createDeledate(this, this.doEvalCaseConditionCompleteHandler);
-    this._doExecuteCaseBodyCompleteHandler = Function.createDeledate(this, this.doExecuteCaseBodyCompleteHandler);
-    this._doExecuteElseCaseCompleteHandler = Function.createDeledate(this, this.doExecuteElseCaseCompleteHandler);
+    this._doEvalConditionCompleteHandler = Function.createDelegate(this, this.doEvalConditionCompleteHandler);
+    this._doEvalCaseConditionCompleteHandler = Function.createDelegate(this, this.doEvalCaseConditionCompleteHandler);
+    this._doExecuteCaseBodyCompleteHandler = Function.createDelegate(this, this.doExecuteCaseBodyCompleteHandler);
+    this._doExecuteElseCaseCompleteHandler = Function.createDelegate(this, this.doExecuteElseCaseCompleteHandler);
 
 };
 
@@ -205,7 +206,7 @@ function jsWorkFlow_Activities_SwitchActivity$doEvalCondition(context) {
     activityExecutor.execute();
 }
 
-function jsWorkFlow_Activities_SwitchActivity$doEvalConditionCompleteHandler(eventArgs) {
+function jsWorkFlow_Activities_SwitchActivity$doEvalConditionCompleteHandler(sender, eventArgs) {
     var context = eventArgs.get_context();
     var executor = context.get_executor();
     var parentContext = executor.parentContext;
@@ -258,7 +259,7 @@ function jsWorkFlow_Activities_SwitchActivity$doEvalCaseCondition(context, condi
     activityExecutor.execute();
 }
 
-function jsWorkFlow_Activities_SwitchActivity$doEvalCaseConditionCompleteHandler(eventArgs) {
+function jsWorkFlow_Activities_SwitchActivity$doEvalCaseConditionCompleteHandler(sender, eventArgs) {
     var context = eventArgs.get_context();
     var executor = context.get_executor();
     var parentContext = executor.parentContext;
@@ -290,8 +291,8 @@ function jsWorkFlow_Activities_SwitchActivity$doExecuteCaseBody(context, index) 
     var activity = caseItem["value"];
 
     if (!activity) {
-        //没有activity，继续到评估条件处执行
-        //$jwf.endActivity(context);
+        //如果不存在case body，则认为已经执行完毕，结束activity的执行
+        $jwf.endActivity(context);
 
         return;
     }
@@ -302,16 +303,19 @@ function jsWorkFlow_Activities_SwitchActivity$doExecuteCaseBody(context, index) 
     //将上下文的数据存放在activityExecutor之中
     activityExecutor.parentContext = context;
 
-    activityExecutor.add_postComplete(this._doExecuteBodyCompleteHandler);
+    activityExecutor.add_postComplete(this._doExecuteCaseBodyCompleteHandler);
 
     //OK, kick activityExecutor to run!
     activityExecutor.execute();
 }
 
-function jsWorkFlow_Activities_SwitchActivity$doExecuteCaseBodyCompleteHandler(eventArgs) {
+function jsWorkFlow_Activities_SwitchActivity$doExecuteCaseBodyCompleteHandler(sender, eventArgs) {
     var context = eventArgs.get_context();
     var executor = context.get_executor();
     var parentContext = executor.parentContext;
+
+    //执行完case body，可以结束switch activity的执行了
+    $jwf.endActivity(parentContext);
 
 }
 
@@ -340,12 +344,12 @@ function jsWorkFlow_Activities_SwitchActivity$doExecuteElseCase(context) {
     activityExecutor.execute();
 }
 
-function jsWorkFlow_Activities_SwitchActivity$doExecuteElseCaseCompleteHandler(eventArgs) {
+function jsWorkFlow_Activities_SwitchActivity$doExecuteElseCaseCompleteHandler(sender, eventArgs) {
     var context = eventArgs.get_context();
     var executor = context.get_executor();
     var parentContext = executor.parentContext;
 
-    //结束parentActivity的执行
+    //执行完case body，可以结束switch activity的执行了
     $jwf.endActivity(parentContext);
 
 }
@@ -357,11 +361,7 @@ function jsWorkFlow_Activities_SwitchActivity$execute(context) {
     //初始化是否执行case的标记
     context.runCase = false;
 
-    //TODO:
-    //    LOG noop message!
-
-    //执行完毕，结束activity
-    $jwf.endActivity(context);
+    this.doEvalCondition(context);
 }
 
 jsWorkFlow.Activities.SwitchActivity.prototype = {

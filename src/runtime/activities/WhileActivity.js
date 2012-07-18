@@ -24,8 +24,8 @@ jsWorkFlow.Activities.WhileActivity = function jsWorkFlow_Activities_WhileActivi
     this.set_conditionActivity(conditionActivity);
     this.set_bodyActivity(bodyActivity);
 
-    this._doEvalConditionCompleteHandler = Function.createDeledate(this, this.doEvalConditionCompleteHandler);
-    this._doExecuteBodyCompleteHandler = Function.createDeledate(this, this.doExecuteBodyCompleteHandler);
+    this._doEvalConditionCompleteHandler = Function.createDelegate(this, this.doEvalConditionCompleteHandler);
+    this._doExecuteBodyCompleteHandler = Function.createDelegate(this, this.doExecuteBodyCompleteHandler);
 
 };
 
@@ -107,7 +107,7 @@ function jsWorkFlow_Activities_WhileActivity$doEvalCondition(context) {
     activityExecutor.execute();
 }
 
-function jsWorkFlow_Activities_WhileActivity$doEvalConditionCompleteHandler(eventArgs) {
+function jsWorkFlow_Activities_WhileActivity$doEvalConditionCompleteHandler(sender, eventArgs) {
     //根据condition的执行结果，来执行
     var context = eventArgs.get_context();
     var executor = context.get_executor();
@@ -150,7 +150,7 @@ function jsWorkFlow_Activities_WhileActivity$doExecuteBody(context, condition) {
     activityExecutor.execute();
 }
 
-function jsWorkFlow_Activities_WhileActivity$doExecuteBodyCompleteHandler(eventArgs) {
+function jsWorkFlow_Activities_WhileActivity$doExecuteBodyCompleteHandler(sender, eventArgs) {
     var context = eventArgs.get_context();
     var executor = context.get_executor();
     var parentContext = executor.parentContext;

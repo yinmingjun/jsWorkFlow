@@ -132,7 +132,7 @@ function jsWorkFlow_Activities_SequenceActivity$doExecActivity(context, index) {
 
 }
 
-function jsWorkFlow_Activities_SequenceActivity$doActivityCompleteHandler(eventArgs) {
+function jsWorkFlow_Activities_SequenceActivity$doActivityCompleteHandler(sender, eventArgs) {
     //post complete事件
     var context = eventArgs.get_context();
     var executor = context.get_executor();

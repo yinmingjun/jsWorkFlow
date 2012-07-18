@@ -71,8 +71,6 @@ function jsWorkFlow_Activities_DelayActivity$saveSerializeContext(serializeConte
 function jsWorkFlow_Activities_DelayActivity$execute(context) {
     jsWorkFlow.Activities.DelayActivity.callBaseMethod(this, 'execute', [context]);
 
-    var doDelay = Function.createDelegate(this, this.doDelay);
-
     //通过lamda设置回调
     jsWorkFlow.setTimeout(function () {
         //LOG 

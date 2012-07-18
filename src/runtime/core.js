@@ -28,6 +28,47 @@ Type.registerNamespace('jsWorkFlow');
 jsWorkFlow.setInterval = setInterval;
 jsWorkFlow.setTimeout = setTimeout;
 
+//////////////////////////////////////////////////////////////////////////////////////////
+//ActivityState，表示一个jsWorkFlow活动的运行状态
+
+jsWorkFlow.ActivityState = function jsWorkFlow_ActivityState() {
+    throw new Error.notImplemented();
+};
+
+//系统默认的activity的状态
+jsWorkFlow.ActivityState.prototype = {
+    none: 0,
+    start: 1,
+    stop: 2
+};
+
+//global 数值
+//100以内是系统保留的activity状态值，以外的状态通过类的继承关系来确定
+jsWorkFlow.ActivityState.min_value = 100;
+
+jsWorkFlow.ActivityState.registerEnum('jsWorkFlow.ActivityState');
+
+
+
+//////////////////////////////////////////////////////////////////////////////////////////
+//ActivityExecuteStrategy，表示activity运行期错误的容错类型
+
+jsWorkFlow.ActivityExecuteStrategy = function jsWorkFlow_ActivityExecuteStrategy() {
+    throw new Error.notImplemented();
+};
+
+//系统默认的activity的状态
+jsWorkFlow.ActivityExecuteStrategy.prototype = {
+    none: 0,        //没设置，会使用系统的默认错误回复机制
+    exception: 1,   //通过抛出异常来处理，为系统默认的异常处理方式
+    ignore: 2,      //拦截并忽略
+    stop: 3         //停止整个workflow的执行
+};
+
+jsWorkFlow.ActivityExecuteStrategy.registerEnum('jsWorkFlow.ActivityExecuteStrategy');
+
+
+
 
 //////////////////////////////////////////////////////////////////////////////////////////
 //Events，提供jsWorkFlow中事件的管理
@@ -97,6 +138,11 @@ jsWorkFlow.Events.registerClass('jsWorkFlow.Events');
 jsWorkFlow.Application = function jsWorkFlow_Application(instance, dataContext) {
     //事件属于装配件，需一直存在
     this._events = new jsWorkFlow.Events(this);
+
+    this._instance = instance;
+    if (!dataContext) {
+        dataContext = {};
+    }
     this._dataContext = dataContext;
 
     //调度器属于APP的固定组成部分，activity只是使用者之一，一直可用
@@ -154,6 +200,9 @@ function jsWorkFlow_Application$run() {
     //activityContext栈，运行期间可用
     this._contextStack = [];
 
+    //启动scheduler
+    this._scheduler.start();
+
     //通过instance的execute开始执行
     this._instance.execute(this);
 }
@@ -186,10 +235,12 @@ function jsWorkFlow_Application$forceStop() {
 
 function jsWorkFlow_Application$dispose() {
     this._events.dispose();
+    this._instance.dispose();
     this._scheduler.dispose();
     this._appContext.dispose();
 
     this._events = null;
+    this._instance = null;
     this._scheduler = null;
     this._appContext = null;
     this._contextStack = null;
@@ -447,47 +498,6 @@ jsWorkFlow.Instance.prototype = {
 };
 
 jsWorkFlow.Instance.registerClass('jsWorkFlow.Instance');
-
-
-//////////////////////////////////////////////////////////////////////////////////////////
-//ActivityState，表示一个jsWorkFlow活动的运行状态
-
-jsWorkFlow.ActivityState = function jsWorkFlow_ActivityState() {
-    throw new Error.notImplemented();
-};
-
-//系统默认的activity的状态
-jsWorkFlow.ActivityState.prototype = {
-    none: 0,
-    start: 1,
-    stop: 2
-};
-
-//global 数值
-//100以内是系统保留的activity状态值，以外的状态通过类的继承关系来确定
-jsWorkFlow.ActivityState.min_value = 100;
-
-jsWorkFlow.ActivityState.registerEnum('jsWorkFlow.ActivityState');
-
-
-
-//////////////////////////////////////////////////////////////////////////////////////////
-//ActivityExecuteStrategy，表示activity运行期错误的容错类型
-
-jsWorkFlow.ActivityExecuteStrategy = function jsWorkFlow_ActivityExecuteStrategy() {
-    throw new Error.notImplemented();
-};
-
-//系统默认的activity的状态
-jsWorkFlow.ActivityExecuteStrategy.prototype = {
-    none: 0,        //没设置，会使用系统的默认错误回复机制
-    exception: 1,   //通过抛出异常来处理，为系统默认的异常处理方式
-    ignore: 2,      //拦截并忽略
-    stop: 3         //停止整个workflow的执行
-};
-
-jsWorkFlow.ActivityExecuteStrategy.registerEnum('jsWorkFlow.ActivityExecuteStrategy');
-
 
 
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -1296,6 +1306,11 @@ function jsWorkFlow_ActivityExecutor$doJobCallback(jobItem) {
 
 //executor的执行入口点
 function jsWorkFlow_ActivityExecutor$execute() {
+    var activityExecutor = this;
+    var activity = this._activity;
+    var application = this._application;
+    var activityContext = this._activityContext;
+
     //创建activity的context
     this._activityContext = new jsWorkFlow.ActivityContext(application, activity, this);
 
