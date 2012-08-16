@@ -7,6 +7,8 @@
     <include name="test\testEngine.js" />
     <include name="test\testSequence.js" />
     <include name="test\testIfElse.js" />
+    <include name="test\testStateMachine.js" />
+    <include name="test\testParallel.js" />
     <include name="test\testNoop.js" />
     <include name="test\testDelay.js" />
     <include name="test\testFunc.js" />
@@ -19,4 +21,6 @@
   <file name="test\testFunc.js" path="" />
   <file name="test\testWhile.js" path="" />
   <file name="test\testSwitch.js" path="" />
+  <file name="test\testParallel.js" path="" />
+  <file name="test\testStateMachine.js" path="" />
 </project>
