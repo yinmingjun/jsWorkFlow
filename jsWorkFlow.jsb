@@ -19,10 +19,23 @@
     <include name="src\runtime\activities\FunctionActivity.js" />
     <include name="src\runtime\activities\IfElseActivity.js" />
     <include name="src\runtime\activities\NoopActivity.js" />
+    <include name="src\runtime\activities\ContextDataActivity.js" />
     <include name="src\runtime\activities\ParallelActivity.js" />
     <include name="src\runtime\activities\SequenceActivity.js" />
     <include name="src\runtime\activities\StateMachineActivity.js" />
     <include name="src\runtime\activities\SwitchActivity.js" />
     <include name="src\runtime\activities\WhileActivity.js" />
+    <include name="src\runtime\activities\LogicOptActivity.js" />
+    <include name="src\runtime\activities\ConstActivity.js" />
+    <include name="src\runtime\activities\CompareActivity.js" />
+    <include name="src\runtime\designer\PrimaryValueDesigner.js" />
+    <include name="src\runtime\designer\ActivityDesigner.js" />
   </target>
+  <file name="src\runtime\designer\ActivityDesigner.js" path="runtime\designer" />
+  <file name="src\runtime\designer\PrimaryValueDesigner.js" path="runtime\designer" />
+  <file name="src\runtime\activities\ContextDataActivity.js" path="runtime\activities" />
+  <file name="src\runtime\activities\CompareActivity.js" path="runtime\activities" />
+  <file name="src\runtime\activities\ConstActivity.js" path="runtime\activities" />
+  <file name="src\runtime\activities\IsEqualsActivity.js" path="runtime\activities" />
+  <file name="src\runtime\activities\LogicOptActivity.js" path="runtime\activities" />
 </project>

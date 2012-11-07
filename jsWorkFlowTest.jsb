@@ -9,11 +9,13 @@
     <include name="test\testIfElse.js" />
     <include name="test\testStateMachine.js" />
     <include name="test\testParallel.js" />
+    <include name="test\testLogicalOpt.js" />
     <include name="test\testNoop.js" />
     <include name="test\testDelay.js" />
     <include name="test\testFunc.js" />
     <include name="test\testWhile.js" />
     <include name="test\testSwitch.js" />
+    <include name="test\testContextData.js" />
   </target>
   <file name="test\testIfElse.js" path="" />
   <file name="test\testDelay.js" path="" />
@@ -23,4 +25,6 @@
   <file name="test\testSwitch.js" path="" />
   <file name="test\testParallel.js" path="" />
   <file name="test\testStateMachine.js" path="" />
+  <file name="test\testContextData.js" path="" />
+  <file name="test\testLogicalOpt.js" path="" />
 </project>

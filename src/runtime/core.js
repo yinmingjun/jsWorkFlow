@@ -259,9 +259,22 @@ function jsWorkFlow_Application$popContextStack() {
     return activityContext;
 }
 
-function jsWorkFlow_Application$getDataItem(key) {
+//取跳过指定次序的栈顶的context
+//index从0开始
+function jsWorkFlow_Application$internalContextAt(index) {
+    var contextStack = this._contextStack;
+    var activityContext = contextStack[contextStack.length - 1 - index];
+    return activityContext;
+}
+
+//localContextIndex指定不受可见性控制的top stack context
+function jsWorkFlow_Application$getDataItem(key, localContextIndex) {
     //根据key值在activityContext栈中查找value，并返回
     //注意：除顶层外，其他层受可见性控制
+
+    if (typeof (localContextIndex) === "undefined") {
+        localContextIndex = 0;
+    }
 
     var dataItem = null;
 
@@ -274,7 +287,7 @@ function jsWorkFlow_Application$getDataItem(key) {
         dataItem = context.getDataItem(key);
 
         //顶层不受可见性的控制
-        if (dataItem && i == contextStack.length - 1) {
+        if (dataItem && (i >= (contextStack.length - localContextIndex - 1))) {
             return dataItem;
         }
 
@@ -303,8 +316,8 @@ function jsWorkFlow_Application$getDataItem(key) {
 }
 
 //APP级别的数据维护接口
-function jsWorkFlow_Application$getData(key) {
-    var dataItem = this.getDataItem(key);
+function jsWorkFlow_Application$getData(key, localContextIndex) {
+    var dataItem = this.getDataItem(key, localContextIndex);
 
     if (dataItem) {
         return dataItem.value;
@@ -313,16 +326,18 @@ function jsWorkFlow_Application$getData(key) {
     return null;
 }
 
-function jsWorkFlow_Application$setData(key, value) {
-    var dataItem = this.getDataItem(key);
+//如果不存在已经定义的数据项，数据保存在currentContext之中
+function jsWorkFlow_Application$setData(key, value, localContextIndex) {
+    var dataItem = this.getDataItem(key, localContextIndex);
 
     if (dataItem) {
         dataItem.value = value;
         return;
     }
 
-    //找不到，在当前层上创建key、value
-    var context = this.get_currentContext();
+    //找不到，在指定的层上创建key、value
+    //var context = this.get_currentContext();
+    var context = this.internalContextAt(localContextIndex);
     context.setData(key, value);
 }
 
@@ -352,6 +367,7 @@ jsWorkFlow.Application.prototype = {
     //ActivityContext栈维护
     pushContextStack: jsWorkFlow_Application$pushContextStack,
     popContextStack: jsWorkFlow_Application$popContextStack,
+    internalContextAt: jsWorkFlow_Application$internalContextAt,
     //APP级别的数据维护接口
     getDataItem: jsWorkFlow_Application$getDataItem,
     getData: jsWorkFlow_Application$getData,
@@ -739,6 +755,51 @@ jsWorkFlow.ActivityHelper.saveActivity = function jsWorkFlow_ActivityHelper$save
     return serializeContext;
 }
 
+//activity的注册数据库
+jsWorkFlow.ActivityHelper._activityRegistry = {};
+
+//register activity，其参数如下。
+//activityType, activity的类型（function type）
+//activityInfo，activity信息，是一个字典，其成员如下：
+//       .catalog           -->  activity在设计器中对应的分类
+//       .description       -->  对应的描述
+//       .supportInstance   -->  是否允许实例化
+//       .designerRuntimeProps  -->  传递给activity设计器的运行期属性设置，是key-value的map
+//propertyInfoList，activity的属性设计信息列表，是一个数组，其每个元素是一个字典，结构如下：
+//       .propName          --> 属性名称
+//       .propDesignerName  --> 对应的属性设计器的名称
+//       .description       -->  对应的描述
+//       .designerRuntimeProps  --> 传递给属性设计器附加的属性值（构造之后设置）,是key-value的map
+
+jsWorkFlow.ActivityHelper.registerActivity = function jsWorkFlow_ActivityHelper$registerActivity(activityType, activityInfo, propertyInfoList) {
+    var activityRegistry = {
+        activityInfo: activityInfo,
+        propertyInfoList: propertyInfoList
+    };
+
+    jsWorkFlow.ActivityHelper._activityRegistry[activityType] = activityRegistry;
+
+    return activityRegistry;
+};
+
+
+//获取activity的设计器信息
+jsWorkFlow.ActivityHelper.loadActivityRegistry = function jsWorkFlow_ActivityHelper$loadActivityRegistry(activityType) {
+    var activityRegistry = jsWorkFlow.ActivityHelper._activityRegistry[activityType];
+
+    return activityRegistry;
+};
+
+//设计器使用的API，获取合并后的activity的注册信息的完整集合，包含继承链上的所有注册。
+//为了保持javascript的动态的特性，buildActivityRegistry会动态的计算其注册信息，保证任何的动态更新都能在第一时间获取到。
+jsWorkFlow.ActivityHelper.buildActivityRegistry = function jsWorkFlow_ActivityHelper$buildActivityRegistry(activityType) {
+    //TODO: 获得activity的继承链，并按从父到子的次序合并设计器信息
+    var activityRegistry = null;
+    return activityRegistry;
+};
+
+
+
 
 jsWorkFlow.ActivityHelper.registerClass('jsWorkFlow.ActivityHelper');
 
@@ -910,24 +971,139 @@ jsWorkFlow.Activity.prototype = {
 jsWorkFlow.Activity.registerClass('jsWorkFlow.Activity');
 
 //////////////////////////////////////////////////////////////////////////////////////////
-//ActivityDesigner，表示一个jsWorkFlow Activity的designer的基类
+//DesignerSiteInfo，表示一个designer的设计器于展示相关的信息
 //
 // To 开发者：
-//    ActivityDesigner是所有designer的抽象基类，用于提供activity的状态和设计期，输出结果到JSON对象。
+//    designer是抽象模型是基于div的输出模式，div提供客户端的呈现的客户端的尺寸，designer在div提供的呈现空间
+//内交互，我们将客户端的呈现相关的信息称为：DesignerSiteInfo
 //
-jsWorkFlow.ActivityDesigner = function jsWorkFlow_ActivityDesigner() {
+jsWorkFlow.DesignerSiteInfo = function jsWorkFlow_DesignerSiteInfo(site) {
+    this._site = site;
 };
 
-function jsWorkFlow_ActivityDesigner$dispose() {
+function jsWorkFlow_DesignerSiteInfo$dispose() {
+    this._site = null;
 }
 
-jsWorkFlow.ActivityDesigner.prototype = {
-    dispose: jsWorkFlow_ActivityDesigner$dispose
+//site尺寸发生变化的事件
+function jsWorkFlow_DesignerSiteInfo$add_resized(handler) {
+}
+
+function jsWorkFlow_DesignerSiteInfo$remove_resized(handler) {
+}
+
+//clicl事件
+function jsWorkFlow_DesignerSiteInfo$add_click(handler) {
+}
+
+function jsWorkFlow_DesignerSiteInfo$remove_click(handler) {
+}
+
+
+//提供designer所在的div
+function jsWorkFlow_DesignerSiteInfo$get_site() {
+    return this._site;
+}
+
+jsWorkFlow.DesignerSiteInfo.prototype = {
+    _indent: 0, //缩进
+    _seperateLine: 0, //分割行
+    _site: null,
+    dispose: jsWorkFlow_DesignerSiteInfo$dispose,
+    //event
+    //resized
+    add_resized: jsWorkFlow_DesignerSiteInfo$add_resized,
+    remove_resized: jsWorkFlow_DesignerSiteInfo$remove_resized,
+    //click
+    add_click: jsWorkFlow_DesignerSiteInfo$add_click,
+    remove_click: jsWorkFlow_DesignerSiteInfo$remove_click,
     //property
-    //method
+    get_site: jsWorkFlow_DesignerSiteInfo$get_site
+
 };
 
-jsWorkFlow.ActivityDesigner.registerClass('jsWorkFlow.ActivityDesigner');
+jsWorkFlow.DesignerSiteInfo.registerClass('jsWorkFlow.DesignerSiteInfo');
+
+//缩进为20px
+jsWorkFlow.DesignerSiteInfo.indentWidth = 20;
+//行高
+jsWorkFlow.DesignerSiteInfo.rowHeight = 20;
+
+//////////////////////////////////////////////////////////////////////////////////////////
+//PropertyDesignerBase，表示一个jsWorkFlow的编辑器中的一个属性的基类
+//
+// To 开发者：
+//    PropertyDesignerBase是所有designer的抽象基类，用于提供activity的状态和设计期，输出结果到JSON对象。
+//    designer是抽象模型是基于div的输出模式，div提供客户端的呈现的客户端的尺寸，designer在div提供的呈现空间
+//内交互，我们将客户端的呈现相关的信息称为：siteInfo
+//    一个designer通过active来激活；通过deactive来关闭；通过document来打开或保存记录的信息。
+//  
+//    activity设计器UI
+//     ------------------------------------------
+//    |>>| Activity    | IfActivity(if1)       |A|  显示activity的类型和名称（如果有），重新选择activity置空内部的文档
+//    |  |---------------------------------------   \
+//    |  |  | Name     |  if1                |str|   |
+//    |  |---------------------------------------   /
+//    |  |>>| IfCond   | ExprActivity(expr1)   |A|
+//    |     |------------------------------------
+//    |[id] |  | Name  | expr1               |str|
+//    |     |------------------------------------
+//    |     |  | Expr  | xxxx                |str|
+//    |     |------------------------------------
+//    |  |>>| IfBody   | ExprActivity(expr2)   |A|
+//    |     |------------------------------------
+//    |     |  | Name  | expr2               |str|
+//    |     |------------------------------------
+//    |     |  | Expr  | xxxx                |str|
+//    |     |-------------------------------------
+//    |  |>>| ElseBody | ExprActivity(expr3)   |A|
+//    |     |------------------------------------
+//    |     |  | Name  | expr3               |str|
+//    |     |------------------------------------
+//    |     |  | Expr  | xxxx                |str|
+//     ------------------------------------------
+//    ^     ^          ^                         ^end line, can be moved.
+//    |     |          |seperate line, can be moved.
+//    |     |indent start
+//    |site left side             site right side^
+//
+
+jsWorkFlow.PropertyDesignerBase = function jsWorkFlow_PropertyDesignerBase() {
+};
+
+function jsWorkFlow_PropertyDesignerBase$dispose() {
+}
+
+//提供PropertyDesignerBase对应的类型名
+function jsWorkFlow_PropertyDesignerBase$get_siteInfo() {
+    throw Error.notImplemented();
+}
+
+//显示编辑页面，开始编辑activity
+function jsWorkFlow_PropertyDesignerBase$active(siteInfo, document) {
+    //siteInfo是designer的工作场所，
+    //document是传递给designer的文档，用于存储activity的编辑结果
+    this._siteInfo = siteInfo;
+    this._document = document;
+}
+
+function jsWorkFlow_PropertyDesignerBase$deactive() {
+    this._siteInfo = null;
+    this._document = null;
+}
+
+jsWorkFlow.PropertyDesignerBase.prototype = {
+    _siteInfo: null,
+    _document: null,
+    dispose: jsWorkFlow_PropertyDesignerBase$dispose,
+    //property
+    get_siteInfo: jsWorkFlow_PropertyDesignerBase$get_siteInfo,
+    //method
+    active: jsWorkFlow_PropertyDesignerBase$active,
+    deactive: jsWorkFlow_PropertyDesignerBase$deactive
+};
+
+jsWorkFlow.PropertyDesignerBase.registerClass('jsWorkFlow.PropertyDesignerBase');
 
 
 
@@ -946,6 +1122,11 @@ jsWorkFlow.ContextBase = function jsWorkFlow_ContextBase(defaultVisibilityIsPubl
 
 function jsWorkFlow_ContextBase$dispose() {
     this._data = null;
+}
+
+//默认的可见性
+function jsWorkFlow_ContextBase$get_defaultVisibilityIsPublic() {
+    return this._defaultVisibilityIsPublic;
 }
 
 function jsWorkFlow_ContextBase$clear() {
@@ -985,7 +1166,7 @@ function jsWorkFlow_ContextBase$setData(key, value, visibilitySwitch) {
     var isPublic = (!!visibilitySwitch) ? !this._defaultVisibilityIsPublic : this._defaultVisibilityIsPublic;
 
     var item = { key: key,
-        value: data,
+        value: value,
         isPublic: isPublic
     };
 
@@ -1003,6 +1184,7 @@ jsWorkFlow.ContextBase.prototype = {
     _defaultVisibilityIsPublic: false,
     _data: null,
     dispose: jsWorkFlow_ContextBase$dispose,
+    get_defaultVisibilityIsPublic: jsWorkFlow_ContextBase$get_defaultVisibilityIsPublic,
     //method
     //获取&设置context中的数据
     clear: jsWorkFlow_ContextBase$clear,
@@ -1036,20 +1218,21 @@ jsWorkFlow.GlobalContext.prototype = {
     //property
 };
 
+jsWorkFlow.GlobalContext.registerClass('jsWorkFlow.GlobalContext', jsWorkFlow.ContextBase);
+
 jsWorkFlow.GlobalContext._instance = new jsWorkFlow.GlobalContext();
 
 jsWorkFlow.GlobalContext.getInstance = function jsWorkFlow_GlobalContext$getInstance() {
     return jsWorkFlow.GlobalContext._instance;
 };
 
-jsWorkFlow.GlobalContext.registerClass('jsWorkFlow.GlobalContext', jsWorkFlow.ContextBase);
 
 //////////////////////////////////////////////////////////////////////////////////////////
 //ApplicationContext，应用级别的上下文，数据的生命周期可以跨Activity
 //
 //to 开发者：
 //    ApplicationContext表示应用程序的运行上下文环境，用于管理应用级别共享的数据，于ActivityContext不同，
-//ApplicationContext中的数据默认是对包含的activity开放的。
+//    默认可见性为public，ApplicationContext中的数据默认是对包含的activity开放的。
 //
 jsWorkFlow.ApplicationContext = function jsWorkFlow_ApplicationContext() {
     jsWorkFlow.ApplicationContext.initializeBase(this, [true]);
