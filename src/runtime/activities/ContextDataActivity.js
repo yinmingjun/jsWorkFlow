@@ -38,6 +38,9 @@ jsWorkFlow.DataContextLayer.registerEnum('jsWorkFlow.DataContextLayer');
 //    注意，DefineContextDataActivity的执行结果是要将数据存放在parent的context之中。
 //
 jsWorkFlow.Activities.DefineContextDataActivity = function jsWorkFlow_Activities_DefineContextDataActivity(dataKey, dataValueActivity, isPrivate, dataContextLayer) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.DefineContextDataActivity execute!");
+
     jsWorkFlow.Activities.DefineContextDataActivity.initializeBase(this);
 
     if (typeof (dataContextLayer) === "undefined") {
@@ -55,6 +58,9 @@ jsWorkFlow.Activities.DefineContextDataActivity = function jsWorkFlow_Activities
 };
 
 function jsWorkFlow_Activities_DefineContextDataActivity$dispose() {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.DefineContextDataActivity dispose!");
+
     jsWorkFlow.Activities.DefineContextDataActivity.callBaseMethod(this, 'dispose');
 
     this._dataKey = null;
@@ -95,6 +101,9 @@ function jsWorkFlow_Activities_DefineContextDataActivity$set_isPrivate(value) {
 
 //activity的恢复
 function jsWorkFlow_Activities_DefineContextDataActivity$loadSerializeContext(serializeContext) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.DefineContextDataActivity loadSerializeContext!");
+
     //检查类型 ===> 这是规范
     if (serializeContext['_@_activityType'] !== this.getType().getName()) {
         throw Error.invalidOperation("loadSerializeContext missmatch type!");
@@ -123,6 +132,8 @@ function jsWorkFlow_Activities_DefineContextDataActivity$loadSerializeContext(se
 
 //activity的序列化
 function jsWorkFlow_Activities_DefineContextDataActivity$saveSerializeContext(serializeContext) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.DefineContextDataActivity saveSerializeContext!");
 
     //保存类型 ===> 这是规范
     serializeContext['_@_activityType'] = this.getType().getName();
@@ -147,6 +158,9 @@ function jsWorkFlow_Activities_DefineContextDataActivity$saveSerializeContext(se
 }
 
 function jsWorkFlow_Activities_DefineContextDataActivity$doInitContextDataValue(application, value) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.DefineContextDataActivity doInitContextDataValue!");
+
     //使用给出的值来初始化contextData
     var dataContextLayer = this._dataContextLayer;
     var dataKey  = this._dataKey;
@@ -178,6 +192,8 @@ function jsWorkFlow_Activities_DefineContextDataActivity$doInitContextDataValue(
 }
 
 function jsWorkFlow_Activities_DefineContextDataActivity$doEvalDataValueActivityCompleteHandler(sender, eventArgs) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.DefineContextDataActivity doEvalDataValueActivityCompleteHandler!");
     //post complete事件
     var context = eventArgs.get_context();
     var executor = context.get_executor();
@@ -207,6 +223,9 @@ function jsWorkFlow_Activities_DefineContextDataActivity$doEvalDataValueActivity
 
 //activity的状态机的启动入口，自动驱动activity的状态机进入运行状态。
 function jsWorkFlow_Activities_DefineContextDataActivity$execute(context) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.DefineContextDataActivity execute!");
+
     jsWorkFlow.Activities.DefineContextDataActivity.callBaseMethod(this, 'execute', [context]);
 
     //对dataValueActivity求值
@@ -270,6 +289,9 @@ jsWorkFlow.Activities.DefineContextDataActivity.registerClass('jsWorkFlow.Activi
 //只访问指定的数据容器，可以看到私有的数据项。
 //
 jsWorkFlow.Activities.GetContextDataActivity = function jsWorkFlow_Activities_GetContextDataActivity(dataKey, dataContextLayer) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.GetContextDataActivity execute!");
+
     jsWorkFlow.Activities.GetContextDataActivity.initializeBase(this);
 
     if (typeof (dataContextLayer) === "undefined") {
@@ -281,6 +303,9 @@ jsWorkFlow.Activities.GetContextDataActivity = function jsWorkFlow_Activities_Ge
 };
 
 function jsWorkFlow_Activities_GetContextDataActivity$dispose() {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.GetContextDataActivity dispose!");
+
     jsWorkFlow.Activities.GetContextDataActivity.callBaseMethod(this, 'dispose');
 }
 
@@ -301,6 +326,9 @@ function jsWorkFlow_Activities_GetContextDataActivity$set_dataContextLayer(value
 
 //activity的恢复
 function jsWorkFlow_Activities_GetContextDataActivity$loadSerializeContext(serializeContext) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.GetContextDataActivity loadSerializeContext!");
+
     //检查类型 ===> 这是规范
     if (serializeContext['_@_activityType'] !== this.getType().getName()) {
         throw Error.invalidOperation("loadSerializeContext missmatch type!");
@@ -321,6 +349,9 @@ function jsWorkFlow_Activities_GetContextDataActivity$loadSerializeContext(seria
 
 //activity的序列化
 function jsWorkFlow_Activities_GetContextDataActivity$saveSerializeContext(serializeContext) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.GetContextDataActivity saveSerializeContext!");
+
 
     //保存类型 ===> 这是规范
     serializeContext['_@_activityType'] = this.getType().getName();
@@ -339,6 +370,9 @@ function jsWorkFlow_Activities_GetContextDataActivity$saveSerializeContext(seria
 
 //activity的状态机的启动入口，自动驱动activity的状态机进入运行状态。
 function jsWorkFlow_Activities_GetContextDataActivity$execute(context) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.GetContextDataActivity execute!");
+
     jsWorkFlow.Activities.GetContextDataActivity.callBaseMethod(this, 'execute', [context]);
 
     var application = context.get_application();
@@ -416,6 +450,10 @@ jsWorkFlow.Activities.GetContextDataActivity.registerClass('jsWorkFlow.Activitie
 //因为本身是数据的消费者。
 //
 jsWorkFlow.Activities.SetContextDataActivity = function jsWorkFlow_Activities_SetContextDataActivity(dataKey, dataValueActivity, dataContextLayer) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.SetContextDataActivity execute!");
+
+
     jsWorkFlow.Activities.SetContextDataActivity.initializeBase(this);
 
     if (typeof (dataContextLayer) === "undefined") {
@@ -432,6 +470,9 @@ jsWorkFlow.Activities.SetContextDataActivity = function jsWorkFlow_Activities_Se
 };
 
 function jsWorkFlow_Activities_SetContextDataActivity$dispose() {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.SetContextDataActivity dispose!");
+
     jsWorkFlow.Activities.SetContextDataActivity.callBaseMethod(this, 'dispose');
 
     this._dataKey = null;
@@ -464,6 +505,9 @@ function jsWorkFlow_Activities_SetContextDataActivity$set_dataContextLayer(value
 
 //activity的恢复
 function jsWorkFlow_Activities_SetContextDataActivity$loadSerializeContext(serializeContext) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.SetContextDataActivity loadSerializeContext!");
+
     //检查类型 ===> 这是规范
     if (serializeContext['_@_activityType'] !== this.getType().getName()) {
         throw Error.invalidOperation("loadSerializeContext missmatch type!");
@@ -491,6 +535,9 @@ function jsWorkFlow_Activities_SetContextDataActivity$loadSerializeContext(seria
 
 //activity的序列化
 function jsWorkFlow_Activities_SetContextDataActivity$saveSerializeContext(serializeContext) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.SetContextDataActivity saveSerializeContext!");
+
 
     //保存类型 ===> 这是规范
     serializeContext['_@_activityType'] = this.getType().getName();
@@ -513,6 +560,9 @@ function jsWorkFlow_Activities_SetContextDataActivity$saveSerializeContext(seria
 }
 
 function jsWorkFlow_Activities_SetContextDataActivity$doSetContextDataValue(application, value) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.SetContextDataActivity doSetContextDataValue!");
+
     //使用给出的值来初始化contextData
     var dataContextLayer = this._dataContextLayer;
     var dataKey = this._dataKey;
@@ -558,6 +608,9 @@ function jsWorkFlow_Activities_SetContextDataActivity$doSetContextDataValue(appl
 }
 
 function jsWorkFlow_Activities_SetContextDataActivity$doEvalDataValueActivityCompleteHandler(sender, eventArgs) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.SetContextDataActivity doEvalDataValueActivityCompleteHandler!");
+
     //post complete事件
     var context = eventArgs.get_context();
     var executor = context.get_executor();
@@ -587,6 +640,9 @@ function jsWorkFlow_Activities_SetContextDataActivity$doEvalDataValueActivityCom
 
 //activity的状态机的启动入口，自动驱动activity的状态机进入运行状态。
 function jsWorkFlow_Activities_SetContextDataActivity$execute(context) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.SetContextDataActivity execute!");
+
     jsWorkFlow.Activities.SetContextDataActivity.callBaseMethod(this, 'execute', [context]);
 
     //对dataValueActivity求值

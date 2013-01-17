@@ -20,6 +20,9 @@ Type.registerNamespace('jsWorkFlow.Activities');
 //    conditionActivity、thenActivity和elseActivity都可以为空。
 //    IfElseActivity将执行的activity(thenActivity或elseActivity)作为自己的返回值。
 jsWorkFlow.Activities.IfElseActivity = function jsWorkFlow_Activities_IfElseActivity(conditionActivity, thenActivity, elseActivity) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.IfElseActivity create!");
+
     jsWorkFlow.Activities.IfElseActivity.initializeBase(this);
 
     this.set_conditionActivity(conditionActivity);
@@ -31,6 +34,9 @@ jsWorkFlow.Activities.IfElseActivity = function jsWorkFlow_Activities_IfElseActi
 };
 
 function jsWorkFlow_Activities_IfElseActivity$dispose() {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.IfElseActivity dispose!");
+
     this._conditionActivity = null;
     this._elseActivity = null;
     this._thenActivity = null;
@@ -63,6 +69,9 @@ function jsWorkFlow_Activities_IfElseActivity$set_elseActivity(value) {
 
 //activity的恢复
 function jsWorkFlow_Activities_IfElseActivity$loadSerializeContext(serializeContext) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.IfElseActivity loadSerializeContext!");
+
     //检查类型 ===> 这是规范
     if (serializeContext['_@_activityType'] !== this.getType().getName()) {
         throw Error.invalidOperation("loadSerializeContext missmatch type!");
@@ -91,6 +100,9 @@ function jsWorkFlow_Activities_IfElseActivity$loadSerializeContext(serializeCont
 
 //activity的序列化
 function jsWorkFlow_Activities_IfElseActivity$saveSerializeContext(serializeContext) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.IfElseActivity saveSerializeContext!");
+
 
     //保存类型 ===> 这是规范
     serializeContext['_@_activityType'] = this.getType().getName();
@@ -110,6 +122,9 @@ function jsWorkFlow_Activities_IfElseActivity$saveSerializeContext(serializeCont
 
 
 function jsWorkFlow_Activities_IfElseActivity$doEvalCondition(context) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.IfElseActivity doEvalCondition!");
+
     //如果没有设置条件，认为为false，执行else分支
     var activity = this._conditionActivity;
 
@@ -131,6 +146,9 @@ function jsWorkFlow_Activities_IfElseActivity$doEvalCondition(context) {
 }
 
 function jsWorkFlow_Activities_IfElseActivity$doEvalConditionCompleteHandler(sender, eventArgs) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.IfElseActivity doEvalConditionCompleteHandler!");
+
     var context = eventArgs.get_context();
     var executor = context.get_executor();
     var parentContext = executor.parentContext;
@@ -143,8 +161,14 @@ function jsWorkFlow_Activities_IfElseActivity$doEvalConditionCompleteHandler(sen
 }
 
 function jsWorkFlow_Activities_IfElseActivity$doExecuteBody(context, condition) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.IfElseActivity doExecuteBody!");
+
     //如果没有设置条件，认为为false，执行else分支
     var activity = (condition)? this._thenActivity: this._elseActivity;
+
+    log.debug("condition is:[" + !!condition + "!");
+
 
     if (!activity) {
         //没有activity，结束执行
@@ -165,6 +189,9 @@ function jsWorkFlow_Activities_IfElseActivity$doExecuteBody(context, condition) 
 }
 
 function jsWorkFlow_Activities_IfElseActivity$doExecuteBodyCompleteHandler(sender, eventArgs) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.IfElseActivity doExecuteBodyCompleteHandler!");
+
     var context = eventArgs.get_context();
     var executor = context.get_executor();
     var parentContext = executor.parentContext;
@@ -181,6 +208,9 @@ function jsWorkFlow_Activities_IfElseActivity$doExecuteBodyCompleteHandler(sende
 
 //activity的状态机的启动入口，自动驱动activity的状态机进入运行状态。
 function jsWorkFlow_Activities_IfElseActivity$execute(context) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.IfElseActivity execute!");
+
     jsWorkFlow.Activities.IfElseActivity.callBaseMethod(this, 'execute', [context]);
 
     //从执行条件开始kick out

@@ -20,6 +20,9 @@ Type.registerNamespace('jsWorkFlow.Activities');
 //    内部先进行equals比较，如果不相等，lha > rha，返回1；如果lha < rha，返回-1；如果相等，返回0
 //
 jsWorkFlow.Activities.CompareActivity = function jsWorkFlow_Activities_CompareActivity(leftHandActivity, rightHandActivity, strict) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.CompareActivity create!");
+
     jsWorkFlow.Activities.CompareActivity.initializeBase(this);
     this.set_leftHandActivity(leftHandActivity);
     this.set_rightHandActivity(rightHandActivity);
@@ -30,6 +33,9 @@ jsWorkFlow.Activities.CompareActivity = function jsWorkFlow_Activities_CompareAc
 };
 
 function jsWorkFlow_Activities_CompareActivity$dispose() {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.CompareActivity dispose!");
+
     jsWorkFlow.Activities.CompareActivity.callBaseMethod(this, 'dispose');
 }
 
@@ -60,6 +66,10 @@ function jsWorkFlow_Activities_CompareActivity$set_strict(value) {
 
 //activity的恢复
 function jsWorkFlow_Activities_CompareActivity$loadSerializeContext(serializeContext) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.CompareActivity loadSerializeContext!");
+
+
     //检查类型 ===> 这是规范
     if (serializeContext['_@_activityType'] !== this.getType().getName()) {
         throw Error.invalidOperation("loadSerializeContext missmatch type!");
@@ -86,6 +96,8 @@ function jsWorkFlow_Activities_CompareActivity$loadSerializeContext(serializeCon
 
 //activity的序列化
 function jsWorkFlow_Activities_CompareActivity$saveSerializeContext(serializeContext) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.CompareActivity saveSerializeContext!");
 
     //保存类型 ===> 这是规范
     serializeContext['_@_activityType'] = this.getType().getName();
@@ -104,6 +116,9 @@ function jsWorkFlow_Activities_CompareActivity$saveSerializeContext(serializeCon
 }
 
 function jsWorkFlow_Activities_CompareActivity$doExecLha(context) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.CompareActivity doExecLha!");
+
     //开始执行lha
     //如果没有设置条件，认为为false，执行else分支
     var lhaActivity = this._leftHandActivity;
@@ -127,6 +142,9 @@ function jsWorkFlow_Activities_CompareActivity$doExecLha(context) {
 }
 
 function jsWorkFlow_Activities_CompareActivity$doExecLhaCompleteHandler(sender, eventArgs) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.CompareActivity doExecLhaCompleteHandler!");
+
     var context = eventArgs.get_context();
     var executor = context.get_executor();
     var parentContext = executor.parentContext;
@@ -141,6 +159,9 @@ function jsWorkFlow_Activities_CompareActivity$doExecLhaCompleteHandler(sender, 
 }
 
 function jsWorkFlow_Activities_CompareActivity$doExecCompare(lhaResult, rhaResult) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.CompareActivity doExecCompare!");
+
     var strict = this._strict;
     var isEquals = (lhaResult == rhaResult);
     var result = 0;
@@ -162,6 +183,8 @@ function jsWorkFlow_Activities_CompareActivity$doExecCompare(lhaResult, rhaResul
 }
 
 function jsWorkFlow_Activities_CompareActivity$doExecRha(context, lhaResult) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.CompareActivity doExecRha!");
 
     //开始执行lha
     //如果没有设置条件，认为为false，执行else分支
@@ -190,6 +213,9 @@ function jsWorkFlow_Activities_CompareActivity$doExecRha(context, lhaResult) {
 }
 
 function jsWorkFlow_Activities_CompareActivity$doExecRhaCompleteHandler(sender, eventArgs) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.CompareActivity doExecRhaCompleteHandler!");
+
     var context = eventArgs.get_context();
     var executor = context.get_executor();
     var parentContext = executor.parentContext;
@@ -207,6 +233,9 @@ function jsWorkFlow_Activities_CompareActivity$doExecRhaCompleteHandler(sender, 
 
 //activity的状态机的启动入口，自动驱动activity的状态机进入运行状态。
 function jsWorkFlow_Activities_CompareActivity$execute(context) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.CompareActivity execute!");
+
     jsWorkFlow.Activities.CompareActivity.callBaseMethod(this, 'execute', [context]);
 
     this.doExecLha(context);

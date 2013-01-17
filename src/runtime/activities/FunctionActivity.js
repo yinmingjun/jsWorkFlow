@@ -44,12 +44,18 @@ jsWorkFlow.Activities.FunctionActivityEventArgs.registerClass('jsWorkFlow.Activi
 //    load & save SerializeContext目前只支持具名函数的序列化&恢复
 //
 jsWorkFlow.Activities.FunctionActivity = function jsWorkFlow_Activities_FunctionActivity(func, callbackData) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.FunctionActivity create!");
+
     this._func = func;
     this._callbackData = callbackData;
     jsWorkFlow.Activities.FunctionActivity.initializeBase(this);
 };
 
 function jsWorkFlow_Activities_FunctionActivity$dispose() {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.FunctionActivity dispose!");
+
     jsWorkFlow.Activities.FunctionActivity.callBaseMethod(this, 'dispose');
 }
 
@@ -63,6 +69,10 @@ function jsWorkFlow_Activities_FunctionActivity$set_func(value) {
 
 //activity的恢复****目前只支持具名函数的序列化&恢复****
 function jsWorkFlow_Activities_FunctionActivity$loadSerializeContext(serializeContext) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.FunctionActivity loadSerializeContext!");
+
+
     //检查类型 ===> 这是规范
     if (serializeContext['_@_activityType'] !== this.getType().getName()) {
         throw Error.invalidOperation("loadSerializeContext missmatch type!");
@@ -79,6 +89,9 @@ function jsWorkFlow_Activities_FunctionActivity$loadSerializeContext(serializeCo
 
 //activity的序列化****目前只支持具名函数的序列化&恢复****
 function jsWorkFlow_Activities_FunctionActivity$saveSerializeContext(serializeContext) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.FunctionActivity saveSerializeContext!");
+
 
     //保存类型 ===> 这是规范
     serializeContext['_@_activityType'] = this.getType().getName();
@@ -103,6 +116,9 @@ function jsWorkFlow_Activities_FunctionActivity$saveSerializeContext(serializeCo
 
 //activity的状态机的启动入口，自动驱动activity的状态机进入运行状态。
 function jsWorkFlow_Activities_FunctionActivity$execute(context) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.FunctionActivity execute!");
+
     //执行基类execute方法，会进入start状态
     jsWorkFlow.Activities.FunctionActivity.callBaseMethod(this, 'execute', [context]);
 

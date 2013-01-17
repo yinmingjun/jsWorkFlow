@@ -19,6 +19,9 @@ Type.registerNamespace('jsWorkFlow.Activities');
 //时机。
 //
 jsWorkFlow.Activities.ParallelActivity = function jsWorkFlow_Activities_ParallelActivity(activities) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.ParallelActivity create!");
+
     jsWorkFlow.Activities.ParallelActivity.initializeBase(this);
 
     this._activities = activities;
@@ -26,6 +29,9 @@ jsWorkFlow.Activities.ParallelActivity = function jsWorkFlow_Activities_Parallel
 };
 
 function jsWorkFlow_Activities_ParallelActivity$dispose() {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.ParallelActivity dispose!");
+
     jsWorkFlow.Activities.ParallelActivity.callBaseMethod(this, 'dispose');
 }
 
@@ -63,6 +69,9 @@ function jsWorkFlow_Activities_ParallelActivity$clearActivity() {
 
 //activity的恢复
 function jsWorkFlow_Activities_ParallelActivity$loadSerializeContext(serializeContext) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.ParallelActivity loadSerializeContext!");
+
     //检查类型 ===> 这是规范
     if (serializeContext['_@_activityType'] !== this.getType().getName()) {
         throw Error.invalidOperation("loadSerializeContext missmatch type!");
@@ -91,6 +100,9 @@ function jsWorkFlow_Activities_ParallelActivity$loadSerializeContext(serializeCo
 
 //activity的序列化
 function jsWorkFlow_Activities_ParallelActivity$saveSerializeContext(serializeContext) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.ParallelActivity saveSerializeContext!");
+
 
     //保存类型 ===> 这是规范
     serializeContext['_@_activityType'] = this.getType().getName();
@@ -117,6 +129,9 @@ function jsWorkFlow_Activities_ParallelActivity$saveSerializeContext(serializeCo
 }
 
 function jsWorkFlow_Activities_ParallelActivity$doExecuteItem(context, activity) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.ParallelActivity doExecuteItem!");
+
     
     //取activity
     if (!activity) {
@@ -140,6 +155,9 @@ function jsWorkFlow_Activities_ParallelActivity$doExecuteItem(context, activity)
 }
 
 function jsWorkFlow_Activities_ParallelActivity$doExecuteItemCompleteHandler(sender, eventArgs) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.ParallelActivity doExecuteItemCompleteHandler!");
+
     var context = eventArgs.get_context();
     var executor = context.get_executor();
     var parentContext = executor.parentContext;
@@ -157,6 +175,9 @@ function jsWorkFlow_Activities_ParallelActivity$doExecuteItemCompleteHandler(sen
 
 //activity的状态机的启动入口，自动驱动activity的状态机进入运行状态。
 function jsWorkFlow_Activities_ParallelActivity$execute(context) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.ParallelActivity execute!");
+
     jsWorkFlow.Activities.ParallelActivity.callBaseMethod(this, 'execute', [context]);
 
     //因为每个activity都是通过job来执行，本身就是异步的。循环执行activityExecutor就可以。

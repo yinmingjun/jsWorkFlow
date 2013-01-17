@@ -20,6 +20,9 @@ Type.registerNamespace('jsWorkFlow.Activities');
 //    allCase 是"key"/"value"字典组成的数组，这是规范的定义方式，不允许修改。
 //
 jsWorkFlow.Activities.SwitchActivity = function jsWorkFlow_Activities_SwitchActivity(conditionActivity, elseActivity, allCase) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.SwitchActivity create!");
+
     jsWorkFlow.Activities.SwitchActivity.initializeBase(this);
 
     this._conditionActivity = conditionActivity ? conditionActivity : null;
@@ -34,6 +37,9 @@ jsWorkFlow.Activities.SwitchActivity = function jsWorkFlow_Activities_SwitchActi
 };
 
 function jsWorkFlow_Activities_SwitchActivity$dispose() {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.SwitchActivity dispose!");
+
     this._conditionActivity = null;
     this._elseActivity = null;
     this._allCase = [];
@@ -69,6 +75,9 @@ function jsWorkFlow_Activities_SwitchActivity$set_allCase(value) {
 
 //activity的恢复
 function jsWorkFlow_Activities_SwitchActivity$loadSerializeContext(serializeContext) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.SwitchActivity loadSerializeContext!");
+
     //检查类型 ===> 这是规范
     if (serializeContext['_@_activityType'] !== this.getType().getName()) {
         throw Error.invalidOperation("loadSerializeContext missmatch type!");
@@ -108,6 +117,8 @@ function jsWorkFlow_Activities_SwitchActivity$loadSerializeContext(serializeCont
 
 //activity的序列化
 function jsWorkFlow_Activities_SwitchActivity$saveSerializeContext(serializeContext) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.SwitchActivity saveSerializeContext!");
 
     //保存类型 ===> 这是规范
     serializeContext['_@_activityType'] = this.getType().getName();
@@ -185,6 +196,10 @@ function jsWorkFlow_Activities_SwitchActivity$clearAllCase() {
 
 //执行switch的条件，并返回值
 function jsWorkFlow_Activities_SwitchActivity$doEvalCondition(context) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.SwitchActivity doEvalCondition!");
+
+
     //如果没有设置条件，取值为null
     var activity = this._conditionActivity;
 
@@ -207,6 +222,9 @@ function jsWorkFlow_Activities_SwitchActivity$doEvalCondition(context) {
 }
 
 function jsWorkFlow_Activities_SwitchActivity$doEvalConditionCompleteHandler(sender, eventArgs) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.SwitchActivity doEvalConditionCompleteHandler!");
+
     var context = eventArgs.get_context();
     var executor = context.get_executor();
     var parentContext = executor.parentContext;
@@ -214,11 +232,17 @@ function jsWorkFlow_Activities_SwitchActivity$doEvalConditionCompleteHandler(sen
     //从context取执行结果
     var condition = context.get_result();
 
+    log.debug("condition is:[" + condition + "]");
+
     //将condition传递给doEvalCaseCondition继续执行
     this.doEvalCaseCondition(parentContext, condition, 0);
 }
 
 function jsWorkFlow_Activities_SwitchActivity$doEvalCaseCondition(context, condition, index) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.SwitchActivity doEvalCaseCondition!");
+    log.debug("index is:[" + index + "]");
+
     var allCase = this.get_allCase();
 
     if (index >= allCase.length) {
@@ -260,6 +284,9 @@ function jsWorkFlow_Activities_SwitchActivity$doEvalCaseCondition(context, condi
 }
 
 function jsWorkFlow_Activities_SwitchActivity$doEvalCaseConditionCompleteHandler(sender, eventArgs) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.SwitchActivity doEvalCaseConditionCompleteHandler!");
+
     var context = eventArgs.get_context();
     var executor = context.get_executor();
     var parentContext = executor.parentContext;
@@ -268,6 +295,7 @@ function jsWorkFlow_Activities_SwitchActivity$doEvalCaseConditionCompleteHandler
 
     //从context取执行结果
     var caseCondition = context.get_result();
+    log.debug("caseCondition is:[" + caseCondition + "]");
 
     if (condition === caseCondition) {
         //有匹配的case, 设置runCase标记
@@ -283,6 +311,9 @@ function jsWorkFlow_Activities_SwitchActivity$doEvalCaseConditionCompleteHandler
 
 
 function jsWorkFlow_Activities_SwitchActivity$doExecuteCaseBody(context, index) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.SwitchActivity doExecuteCaseBody!");
+
     //执行对应的caseBody
 
     //取caseItem
@@ -310,6 +341,9 @@ function jsWorkFlow_Activities_SwitchActivity$doExecuteCaseBody(context, index) 
 }
 
 function jsWorkFlow_Activities_SwitchActivity$doExecuteCaseBodyCompleteHandler(sender, eventArgs) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.SwitchActivity doExecuteCaseBodyCompleteHandler!");
+
     var context = eventArgs.get_context();
     var executor = context.get_executor();
     var parentContext = executor.parentContext;
@@ -320,6 +354,8 @@ function jsWorkFlow_Activities_SwitchActivity$doExecuteCaseBodyCompleteHandler(s
 }
 
 function jsWorkFlow_Activities_SwitchActivity$doExecuteElseCase(context) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.SwitchActivity doExecuteElseCase!");
 
     var activity = this._elseActivity;
 
@@ -345,6 +381,9 @@ function jsWorkFlow_Activities_SwitchActivity$doExecuteElseCase(context) {
 }
 
 function jsWorkFlow_Activities_SwitchActivity$doExecuteElseCaseCompleteHandler(sender, eventArgs) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.SwitchActivity doExecuteElseCaseCompleteHandler!");
+
     var context = eventArgs.get_context();
     var executor = context.get_executor();
     var parentContext = executor.parentContext;
@@ -356,6 +395,9 @@ function jsWorkFlow_Activities_SwitchActivity$doExecuteElseCaseCompleteHandler(s
 
 //activity的状态机的启动入口，自动驱动activity的状态机进入运行状态。
 function jsWorkFlow_Activities_SwitchActivity$execute(context) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.SwitchActivity execute!");
+
     jsWorkFlow.Activities.SwitchActivity.callBaseMethod(this, 'execute', [context]);
 
     //初始化是否执行case的标记

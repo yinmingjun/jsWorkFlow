@@ -19,12 +19,18 @@ Type.registerNamespace('jsWorkFlow.Activities');
 //workflow的表达能力。
 //
 jsWorkFlow.Activities.EvalExprActivity = function jsWorkFlow_Activities_EvalExprActivity(expr) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.EvalExprActivity create!");
+
     jsWorkFlow.Activities.EvalExprActivity.initializeBase(this);
 
     this.set_expr(expr);
 };
 
 function jsWorkFlow_Activities_EvalExprActivity$dispose() {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.EvalExprActivity dispose!");
+
     jsWorkFlow.Activities.EvalExprActivity.callBaseMethod(this, 'dispose');
 }
 
@@ -47,6 +53,10 @@ function jsWorkFlow_Activities_EvalExprActivity$set_expr(value) {
 
 //activity的恢复
 function jsWorkFlow_Activities_EvalExprActivity$loadSerializeContext(serializeContext) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.EvalExprActivity loadSerializeContext!");
+
+
     //检查类型 ===> 这是规范
     if (serializeContext['_@_activityType'] !== this.getType().getName()) {
         throw Error.invalidOperation("loadSerializeContext missmatch type!");
@@ -63,6 +73,9 @@ function jsWorkFlow_Activities_EvalExprActivity$loadSerializeContext(serializeCo
 
 //activity的序列化
 function jsWorkFlow_Activities_EvalExprActivity$saveSerializeContext(serializeContext) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.EvalExprActivity saveSerializeContext!");
+
 
     //保存类型 ===> 这是规范
     serializeContext['_@_activityType'] = this.getType().getName();
@@ -80,6 +93,9 @@ function jsWorkFlow_Activities_EvalExprActivity$saveSerializeContext(serializeCo
 
 //activity的状态机的启动入口，自动驱动activity的状态机进入运行状态。
 function jsWorkFlow_Activities_EvalExprActivity$execute(context) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.EvalExprActivity execute!");
+
 
     jsWorkFlow.Activities.EvalExprActivity.callBaseMethod(this, 'execute', [context]);
 

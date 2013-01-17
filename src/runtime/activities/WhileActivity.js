@@ -19,6 +19,9 @@ Type.registerNamespace('jsWorkFlow.Activities');
 //    conditionActivity和bodyActivity都可以为空。
 //
 jsWorkFlow.Activities.WhileActivity = function jsWorkFlow_Activities_WhileActivity(conditionActivity, bodyActivity) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.WhileActivity create!");
+
     jsWorkFlow.Activities.WhileActivity.initializeBase(this);
 
     this.set_conditionActivity(conditionActivity);
@@ -30,6 +33,9 @@ jsWorkFlow.Activities.WhileActivity = function jsWorkFlow_Activities_WhileActivi
 };
 
 function jsWorkFlow_Activities_WhileActivity$dispose() {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.WhileActivity dispose!");
+
     jsWorkFlow.Activities.WhileActivity.callBaseMethod(this, 'dispose');
 }
 
@@ -51,6 +57,9 @@ function jsWorkFlow_Activities_WhileActivity$set_bodyActivity(value) {
 
 //activity的恢复
 function jsWorkFlow_Activities_WhileActivity$loadSerializeContext(serializeContext) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.WhileActivity loadSerializeContext!");
+
     //检查类型 ===> 这是规范
     if (serializeContext['_@_activityType'] !== this.getType().getName()) {
         throw Error.invalidOperation("loadSerializeContext missmatch type!");
@@ -68,6 +77,8 @@ function jsWorkFlow_Activities_WhileActivity$loadSerializeContext(serializeConte
 
 //activity的序列化
 function jsWorkFlow_Activities_WhileActivity$saveSerializeContext(serializeContext) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.WhileActivity saveSerializeContext!");
 
     //保存类型 ===> 这是规范
     serializeContext['_@_activityType'] = this.getType().getName();
@@ -86,6 +97,9 @@ function jsWorkFlow_Activities_WhileActivity$saveSerializeContext(serializeConte
 }
 
 function jsWorkFlow_Activities_WhileActivity$doEvalCondition(context) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.WhileActivity doEvalCondition!");
+
     //如果没有设置条件，认为为false
     var activity = this._conditionActivity;
 
@@ -108,6 +122,9 @@ function jsWorkFlow_Activities_WhileActivity$doEvalCondition(context) {
 }
 
 function jsWorkFlow_Activities_WhileActivity$doEvalConditionCompleteHandler(sender, eventArgs) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.WhileActivity doEvalConditionCompleteHandler!");
+
     //根据condition的执行结果，来执行
     var context = eventArgs.get_context();
     var executor = context.get_executor();
@@ -115,6 +132,7 @@ function jsWorkFlow_Activities_WhileActivity$doEvalConditionCompleteHandler(send
 
     //从context取执行结果
     var condition = context.get_result();
+    log.debug("condition is:[" + condition + "]");
 
     //将condition传递给doExecuteBody继续执行
     this.doExecuteBody(parentContext, condition);
@@ -122,6 +140,8 @@ function jsWorkFlow_Activities_WhileActivity$doEvalConditionCompleteHandler(send
 }
 
 function jsWorkFlow_Activities_WhileActivity$doExecuteBody(context, condition) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.WhileActivity doExecuteBody!");
 
     if (!condition) {
         //循环条件为false，结束while的执行
@@ -151,6 +171,9 @@ function jsWorkFlow_Activities_WhileActivity$doExecuteBody(context, condition) {
 }
 
 function jsWorkFlow_Activities_WhileActivity$doExecuteBodyCompleteHandler(sender, eventArgs) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.WhileActivity doExecuteBodyCompleteHandler!");
+
     var context = eventArgs.get_context();
     var executor = context.get_executor();
     var parentContext = executor.parentContext;
@@ -165,6 +188,9 @@ function jsWorkFlow_Activities_WhileActivity$doExecuteBodyCompleteHandler(sender
 
 //activity的状态机的启动入口，自动驱动activity的状态机进入运行状态。
 function jsWorkFlow_Activities_WhileActivity$execute(context) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.WhileActivity execute!");
+
     jsWorkFlow.Activities.WhileActivity.callBaseMethod(this, 'execute', [context]);
 
     //从条件检查开始执行

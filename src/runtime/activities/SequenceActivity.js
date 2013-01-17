@@ -18,6 +18,9 @@ Type.registerNamespace('jsWorkFlow.Activities');
 //SequenceActivity将其执行的最后一个activity作为自己的返回值携带回来。
 //
 jsWorkFlow.Activities.SequenceActivity = function jsWorkFlow_Activities_SequenceActivity(activities) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.SequenceActivity create!");
+
     jsWorkFlow.Activities.SequenceActivity.initializeBase(this);
 
     if (!activities) {
@@ -29,6 +32,9 @@ jsWorkFlow.Activities.SequenceActivity = function jsWorkFlow_Activities_Sequence
 };
 
 function jsWorkFlow_Activities_SequenceActivity$dispose() {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.SequenceActivity dispose!");
+
     jsWorkFlow.Activities.SequenceActivity.callBaseMethod(this, 'dispose');
 
     this._activities = null;
@@ -45,6 +51,9 @@ function jsWorkFlow_Activities_SequenceActivity$set_activities(value) {
 
 //activity的恢复
 function jsWorkFlow_Activities_SequenceActivity$loadSerializeContext(serializeContext) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.SequenceActivity loadSerializeContext!");
+
     //检查类型 ===> 这是规范
     if (serializeContext['_@_activityType'] !== this.getType().getName()) {
         throw Error.invalidOperation("loadSerializeContext missmatch type!");
@@ -71,6 +80,9 @@ function jsWorkFlow_Activities_SequenceActivity$loadSerializeContext(serializeCo
 
 //activity的序列化
 function jsWorkFlow_Activities_SequenceActivity$saveSerializeContext(serializeContext) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.SequenceActivity saveSerializeContext!");
+
 
     //保存类型 ===> 这是规范
     serializeContext['_@_activityType'] = this.getType().getName();
@@ -99,6 +111,9 @@ function jsWorkFlow_Activities_SequenceActivity$saveSerializeContext(serializeCo
 
 //activity的状态机的启动入口，自动驱动activity的状态机进入运行状态。
 function jsWorkFlow_Activities_SequenceActivity$execute(context) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.SequenceActivity execute!");
+
     jsWorkFlow.Activities.SequenceActivity.callBaseMethod(this, 'execute', [context]);
 
     //从索引0开始依次执行
@@ -110,6 +125,9 @@ function jsWorkFlow_Activities_SequenceActivity$addActivity(activity) {
 }
 
 function jsWorkFlow_Activities_SequenceActivity$doExecActivity(context, index) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.SequenceActivity doExecActivity!");
+
     if (index >= this._activities.length) {
         //OK，所有activity都执行完毕了，结束当前的活动
         $jwf.endActivity(context);
@@ -133,6 +151,10 @@ function jsWorkFlow_Activities_SequenceActivity$doExecActivity(context, index) {
 }
 
 function jsWorkFlow_Activities_SequenceActivity$doActivityCompleteHandler(sender, eventArgs) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.SequenceActivity doActivityCompleteHandler!");
+
+
     //post complete事件
     var context = eventArgs.get_context();
     var executor = context.get_executor();

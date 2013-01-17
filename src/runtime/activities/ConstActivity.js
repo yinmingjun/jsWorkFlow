@@ -18,12 +18,18 @@ Type.registerNamespace('jsWorkFlow.Activities');
 //符使用。
 //
 jsWorkFlow.Activities.ConstActivity = function jsWorkFlow_Activities_ConstActivity(constValue) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.ConstActivity create!");
+
     jsWorkFlow.Activities.ConstActivity.initializeBase(this);
 
     this.set_constValue(constValue);
 };
 
 function jsWorkFlow_Activities_ConstActivity$dispose() {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.ConstActivity dispose!");
+
     jsWorkFlow.Activities.ConstActivity.callBaseMethod(this, 'dispose');
 }
 
@@ -37,6 +43,9 @@ function jsWorkFlow_Activities_ConstActivity$set_constValue(value) {
 
 //activity的恢复
 function jsWorkFlow_Activities_ConstActivity$loadSerializeContext(serializeContext) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.ConstActivity loadSerializeContext!");
+
     //检查类型 ===> 这是规范
     if (serializeContext['_@_activityType'] !== this.getType().getName()) {
         throw Error.invalidOperation("loadSerializeContext missmatch type!");
@@ -55,6 +64,9 @@ function jsWorkFlow_Activities_ConstActivity$loadSerializeContext(serializeConte
 
 //activity的序列化
 function jsWorkFlow_Activities_ConstActivity$saveSerializeContext(serializeContext) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.ConstActivity saveSerializeContext!");
+
 
     //保存类型 ===> 这是规范
     serializeContext['_@_activityType'] = this.getType().getName();
@@ -72,6 +84,9 @@ function jsWorkFlow_Activities_ConstActivity$saveSerializeContext(serializeConte
 
 //activity的状态机的启动入口，自动驱动activity的状态机进入运行状态。
 function jsWorkFlow_Activities_ConstActivity$execute(context) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.ConstActivity execute!");
+
     jsWorkFlow.Activities.ConstActivity.callBaseMethod(this, 'execute', [context]);
 
     //将constValue放到activity的result之中

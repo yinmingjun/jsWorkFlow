@@ -20,6 +20,9 @@ Type.registerNamespace('jsWorkFlow.Activities');
 //    如果activity为null，作为false处理。
 //
 jsWorkFlow.Activities.LogicAndActivity = function jsWorkFlow_Activities_LogicAndActivity(leftHandActivity, rightHandActivity) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.LogicAndActivity create!");
+
     jsWorkFlow.Activities.LogicAndActivity.initializeBase(this);
     this.set_leftHandActivity(leftHandActivity);
     this.set_rightHandActivity(rightHandActivity);
@@ -29,6 +32,9 @@ jsWorkFlow.Activities.LogicAndActivity = function jsWorkFlow_Activities_LogicAnd
 };
 
 function jsWorkFlow_Activities_LogicAndActivity$dispose() {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.LogicAndActivity dispose!");
+
     jsWorkFlow.Activities.LogicAndActivity.callBaseMethod(this, 'dispose');
 }
 
@@ -51,6 +57,9 @@ function jsWorkFlow_Activities_LogicAndActivity$set_rightHandActivity(value) {
 
 //activity的恢复
 function jsWorkFlow_Activities_LogicAndActivity$loadSerializeContext(serializeContext) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.LogicAndActivity loadSerializeContext!");
+
     //检查类型 ===> 这是规范
     if (serializeContext['_@_activityType'] !== this.getType().getName()) {
         throw Error.invalidOperation("loadSerializeContext missmatch type!");
@@ -74,6 +83,9 @@ function jsWorkFlow_Activities_LogicAndActivity$loadSerializeContext(serializeCo
 
 //activity的序列化
 function jsWorkFlow_Activities_LogicAndActivity$saveSerializeContext(serializeContext) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.LogicAndActivity saveSerializeContext!");
+
 
     //保存类型 ===> 这是规范
     serializeContext['_@_activityType'] = this.getType().getName();
@@ -91,6 +103,9 @@ function jsWorkFlow_Activities_LogicAndActivity$saveSerializeContext(serializeCo
 }
 
 function jsWorkFlow_Activities_LogicAndActivity$doExecLha(context) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.LogicAndActivity doExecLha!");
+
     //开始执行lha
     //如果没有设置条件，认为为false，执行else分支
     var lhaActivity = this._leftHandActivity;
@@ -114,6 +129,9 @@ function jsWorkFlow_Activities_LogicAndActivity$doExecLha(context) {
 }
 
 function jsWorkFlow_Activities_LogicAndActivity$doExecLhaCompleteHandler(sender, eventArgs) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.LogicAndActivity doExecLhaCompleteHandler!");
+
     var context = eventArgs.get_context();
     var executor = context.get_executor();
     var parentContext = executor.parentContext;
@@ -128,6 +146,9 @@ function jsWorkFlow_Activities_LogicAndActivity$doExecLhaCompleteHandler(sender,
 }
 
 function jsWorkFlow_Activities_LogicAndActivity$doExecRha(context, lhaResult) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.LogicAndActivity doExecRha!");
+
 
     //执行短路逻辑，如果为false，后面的不用执行了。
     if (!lhaResult) {
@@ -162,6 +183,9 @@ function jsWorkFlow_Activities_LogicAndActivity$doExecRha(context, lhaResult) {
 }
 
 function jsWorkFlow_Activities_LogicAndActivity$doExecRhaCompleteHandler(sender, eventArgs) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.LogicAndActivity doExecRhaCompleteHandler!");
+
     var context = eventArgs.get_context();
     var executor = context.get_executor();
     var parentContext = executor.parentContext;
@@ -179,6 +203,9 @@ function jsWorkFlow_Activities_LogicAndActivity$doExecRhaCompleteHandler(sender,
 
 //activity的状态机的启动入口，自动驱动activity的状态机进入运行状态。
 function jsWorkFlow_Activities_LogicAndActivity$execute(context) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.LogicAndActivity execute!");
+
     jsWorkFlow.Activities.LogicAndActivity.callBaseMethod(this, 'execute', [context]);
 
     this.doExecLha(context);
@@ -218,6 +245,9 @@ jsWorkFlow.Activities.LogicAndActivity.registerClass('jsWorkFlow.Activities.Logi
 //    如果activity为null，作为false处理。
 //
 jsWorkFlow.Activities.LogicOrActivity = function jsWorkFlow_Activities_LogicOrActivity(leftHandActivity, rightHandActivity) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.LogicOrActivity create!");
+
     jsWorkFlow.Activities.LogicOrActivity.initializeBase(this);
     this.set_leftHandActivity(leftHandActivity);
     this.set_rightHandActivity(rightHandActivity);
@@ -227,6 +257,9 @@ jsWorkFlow.Activities.LogicOrActivity = function jsWorkFlow_Activities_LogicOrAc
 };
 
 function jsWorkFlow_Activities_LogicOrActivity$dispose() {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.LogicOrActivity dispose!");
+
     jsWorkFlow.Activities.LogicOrActivity.callBaseMethod(this, 'dispose');
 }
 
@@ -249,6 +282,9 @@ function jsWorkFlow_Activities_LogicOrActivity$set_rightHandActivity(value) {
 
 //activity的恢复
 function jsWorkFlow_Activities_LogicOrActivity$loadSerializeContext(serializeContext) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.LogicOrActivity loadSerializeContext!");
+
     //检查类型 ===> 这是规范
     if (serializeContext['_@_activityType'] !== this.getType().getName()) {
         throw Error.invalidOperation("loadSerializeContext missmatch type!");
@@ -272,6 +308,9 @@ function jsWorkFlow_Activities_LogicOrActivity$loadSerializeContext(serializeCon
 
 //activity的序列化
 function jsWorkFlow_Activities_LogicOrActivity$saveSerializeContext(serializeContext) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.LogicOrActivity saveSerializeContext!");
+
 
     //保存类型 ===> 这是规范
     serializeContext['_@_activityType'] = this.getType().getName();
@@ -289,6 +328,9 @@ function jsWorkFlow_Activities_LogicOrActivity$saveSerializeContext(serializeCon
 }
 
 function jsWorkFlow_Activities_LogicOrActivity$doExecLha(context) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.LogicOrActivity doExecLha!");
+
     //开始执行lha
     //如果没有设置条件，认为为false，执行else分支
     var lhaActivity = this._leftHandActivity;
@@ -312,6 +354,9 @@ function jsWorkFlow_Activities_LogicOrActivity$doExecLha(context) {
 }
 
 function jsWorkFlow_Activities_LogicOrActivity$doExecLhaCompleteHandler(sender, eventArgs) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.LogicOrActivity doExecLhaCompleteHandler!");
+
     var context = eventArgs.get_context();
     var executor = context.get_executor();
     var parentContext = executor.parentContext;
@@ -326,6 +371,9 @@ function jsWorkFlow_Activities_LogicOrActivity$doExecLhaCompleteHandler(sender, 
 }
 
 function jsWorkFlow_Activities_LogicOrActivity$doExecRha(context, lhaResult) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.LogicOrActivity doExecRha!");
+
 
     //执行短路逻辑，如果为true，后面的不用执行了。
     if (lhaResult) {
@@ -360,6 +408,9 @@ function jsWorkFlow_Activities_LogicOrActivity$doExecRha(context, lhaResult) {
 }
 
 function jsWorkFlow_Activities_LogicOrActivity$doExecRhaCompleteHandler(sender, eventArgs) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.LogicOrActivity doExecRhaCompleteHandler!");
+
     var context = eventArgs.get_context();
     var executor = context.get_executor();
     var parentContext = executor.parentContext;
@@ -377,6 +428,9 @@ function jsWorkFlow_Activities_LogicOrActivity$doExecRhaCompleteHandler(sender, 
 
 //activity的状态机的启动入口，自动驱动activity的状态机进入运行状态。
 function jsWorkFlow_Activities_LogicOrActivity$execute(context) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.LogicOrActivity execute!");
+
     jsWorkFlow.Activities.LogicOrActivity.callBaseMethod(this, 'execute', [context]);
 
     this.doExecLha(context);
@@ -415,6 +469,9 @@ jsWorkFlow.Activities.LogicOrActivity.registerClass('jsWorkFlow.Activities.Logic
 //    如果activity为null，作为false处理。
 //
 jsWorkFlow.Activities.LogicXorActivity = function jsWorkFlow_Activities_LogicXorActivity(leftHandActivity, rightHandActivity) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.LogicXorActivity create!");
+
     jsWorkFlow.Activities.LogicXorActivity.initializeBase(this);
     this.set_leftHandActivity(leftHandActivity);
     this.set_rightHandActivity(rightHandActivity);
@@ -424,6 +481,9 @@ jsWorkFlow.Activities.LogicXorActivity = function jsWorkFlow_Activities_LogicXor
 };
 
 function jsWorkFlow_Activities_LogicXorActivity$dispose() {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.LogicXorActivity dispose!");
+
     jsWorkFlow.Activities.LogicXorActivity.callBaseMethod(this, 'dispose');
 }
 
@@ -446,6 +506,9 @@ function jsWorkFlow_Activities_LogicXorActivity$set_rightHandActivity(value) {
 
 //activity的恢复
 function jsWorkFlow_Activities_LogicXorActivity$loadSerializeContext(serializeContext) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.LogicXorActivity loadSerializeContext!");
+
     //检查类型 ===> 这是规范
     if (serializeContext['_@_activityType'] !== this.getType().getName()) {
         throw Error.invalidOperation("loadSerializeContext missmatch type!");
@@ -469,6 +532,9 @@ function jsWorkFlow_Activities_LogicXorActivity$loadSerializeContext(serializeCo
 
 //activity的序列化
 function jsWorkFlow_Activities_LogicXorActivity$saveSerializeContext(serializeContext) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.LogicXorActivity saveSerializeContext!");
+
 
     //保存类型 ===> 这是规范
     serializeContext['_@_activityType'] = this.getType().getName();
@@ -486,6 +552,9 @@ function jsWorkFlow_Activities_LogicXorActivity$saveSerializeContext(serializeCo
 }
 
 function jsWorkFlow_Activities_LogicXorActivity$doExecLha(context) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.LogicXorActivity doExecLha!");
+
     //开始执行lha
     //如果没有设置条件，认为为false，执行else分支
     var lhaActivity = this._leftHandActivity;
@@ -509,6 +578,10 @@ function jsWorkFlow_Activities_LogicXorActivity$doExecLha(context) {
 }
 
 function jsWorkFlow_Activities_LogicXorActivity$doExecLhaCompleteHandler(sender, eventArgs) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.LogicXorActivity doExecLhaCompleteHandler!");
+
+
     var context = eventArgs.get_context();
     var executor = context.get_executor();
     var parentContext = executor.parentContext;
@@ -523,6 +596,9 @@ function jsWorkFlow_Activities_LogicXorActivity$doExecLhaCompleteHandler(sender,
 }
 
 function jsWorkFlow_Activities_LogicXorActivity$doEvalXor(lhaResult, rhaResult) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.LogicXorActivity doEvalXor!");
+
 
     var lhaBit = 0;
     var rhaBit = 0;
@@ -542,6 +618,8 @@ function jsWorkFlow_Activities_LogicXorActivity$doEvalXor(lhaResult, rhaResult) 
 }
 
 function jsWorkFlow_Activities_LogicXorActivity$doExecRha(context, lhaResult) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.LogicXorActivity doExecRha!");
 
     //开始执行lha
     //如果没有设置条件，认为为false，执行else分支
@@ -570,6 +648,9 @@ function jsWorkFlow_Activities_LogicXorActivity$doExecRha(context, lhaResult) {
 }
 
 function jsWorkFlow_Activities_LogicXorActivity$doExecRhaCompleteHandler(sender, eventArgs) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.LogicXorActivity doExecRhaCompleteHandler!");
+
     var context = eventArgs.get_context();
     var executor = context.get_executor();
     var parentContext = executor.parentContext;
@@ -588,6 +669,9 @@ function jsWorkFlow_Activities_LogicXorActivity$doExecRhaCompleteHandler(sender,
 
 //activity的状态机的启动入口，自动驱动activity的状态机进入运行状态。
 function jsWorkFlow_Activities_LogicXorActivity$execute(context) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.LogicXorActivity execute!");
+
     jsWorkFlow.Activities.LogicXorActivity.callBaseMethod(this, 'execute', [context]);
 
     this.doExecLha(context);
@@ -627,6 +711,9 @@ jsWorkFlow.Activities.LogicXorActivity.registerClass('jsWorkFlow.Activities.Logi
 //    如果activity为null，作为false处理。
 //
 jsWorkFlow.Activities.LogicNotActivity = function jsWorkFlow_Activities_LogicNotActivity(activity) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.LogicNotActivity create!");
+
     jsWorkFlow.Activities.LogicNotActivity.initializeBase(this);
     this.set_activity(activity);
 
@@ -634,6 +721,9 @@ jsWorkFlow.Activities.LogicNotActivity = function jsWorkFlow_Activities_LogicNot
 };
 
 function jsWorkFlow_Activities_LogicNotActivity$dispose() {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.LogicNotActivity dispose!");
+
     jsWorkFlow.Activities.LogicNotActivity.callBaseMethod(this, 'dispose');
 }
 
@@ -648,6 +738,10 @@ function jsWorkFlow_Activities_LogicNotActivity$set_activity(value) {
 
 //activity的恢复
 function jsWorkFlow_Activities_LogicNotActivity$loadSerializeContext(serializeContext) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.LogicNotActivity loadSerializeContext!");
+
+
     //检查类型 ===> 这是规范
     if (serializeContext['_@_activityType'] !== this.getType().getName()) {
         throw Error.invalidOperation("loadSerializeContext missmatch type!");
@@ -668,6 +762,9 @@ function jsWorkFlow_Activities_LogicNotActivity$loadSerializeContext(serializeCo
 
 //activity的序列化
 function jsWorkFlow_Activities_LogicNotActivity$saveSerializeContext(serializeContext) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.LogicNotActivity saveSerializeContext!");
+
 
     //保存类型 ===> 这是规范
     serializeContext['_@_activityType'] = this.getType().getName();
@@ -684,6 +781,10 @@ function jsWorkFlow_Activities_LogicNotActivity$saveSerializeContext(serializeCo
 }
 
 function jsWorkFlow_Activities_LogicNotActivity$doExecActivity(context) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.LogicNotActivity doExecActivity!");
+
+
     //开始执行lha
     //如果没有设置条件，认为为false，执行else分支
     var activity = this._activity;
@@ -708,6 +809,9 @@ function jsWorkFlow_Activities_LogicNotActivity$doExecActivity(context) {
 }
 
 function jsWorkFlow_Activities_LogicNotActivity$doExecActivityCompleteHandler(sender, eventArgs) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.LogicNotActivity doExecActivityCompleteHandler!");
+
     var context = eventArgs.get_context();
     var executor = context.get_executor();
     var parentContext = executor.parentContext;
@@ -723,6 +827,9 @@ function jsWorkFlow_Activities_LogicNotActivity$doExecActivityCompleteHandler(se
 
 //activity的状态机的启动入口，自动驱动activity的状态机进入运行状态。
 function jsWorkFlow_Activities_LogicNotActivity$execute(context) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.LogicNotActivity execute!");
+
     jsWorkFlow.Activities.LogicNotActivity.callBaseMethod(this, 'execute', [context]);
 
     this.doExecActivity(context);

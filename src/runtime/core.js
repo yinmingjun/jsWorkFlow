@@ -25,8 +25,19 @@ Type.registerNamespace('jsWorkFlow');
 //
 // Low level API
 //
-jsWorkFlow.setInterval = setInterval;
-jsWorkFlow.setTimeout = setTimeout;
+
+function jsWorkFlow$setInterval(handler, interval) {
+    var retval = setInterval(handler, interval);
+    return retval;
+}
+
+function jsWorkFlow$setTimeout(handler, delay) {
+    var retval = setTimeout(handler, delay);
+    return retval;
+}
+
+jsWorkFlow.setInterval = jsWorkFlow$setInterval;
+jsWorkFlow.setTimeout = jsWorkFlow$setTimeout;
 
 //////////////////////////////////////////////////////////////////////////////////////////
 //ActivityState，表示一个jsWorkFlow活动的运行状态
@@ -132,10 +143,11 @@ jsWorkFlow.Events.registerClass('jsWorkFlow.Events');
 //执行。
 //    dataContext是传递给APP的启动参数，字典形式。必须是plane data object。APP会克隆后加入到applicationContext之中。
 //
-// TODO:
-//    Add LOG support.
 //
 jsWorkFlow.Application = function jsWorkFlow_Application(instance, dataContext) {
+    var log = jwf$getLogger();
+    log.debug("Application create!");
+
     //事件属于装配件，需一直存在
     this._events = new jsWorkFlow.Events(this);
 
@@ -185,6 +197,9 @@ function jsWorkFlow_Application$set_errorStrategy(value) {
 
 
 function jsWorkFlow_Application$run() {
+    var log = jwf$getLogger();
+    log.debug("Application run!");
+
     //应用的上下文，运行期间可用
     this._appContext = new jsWorkFlow.ApplicationContext();
 
@@ -209,6 +224,8 @@ function jsWorkFlow_Application$run() {
 
 //强制停止
 function jsWorkFlow_Application$forceStop() {
+    var log = jwf$getLogger();
+    log.debug("Application forceStop!");
     //forceStop
     //clean all jobs.
     var jobQueue = this._jobQueue;
@@ -221,8 +238,8 @@ function jsWorkFlow_Application$forceStop() {
             //释放job
             job.dispose();
         } catch (e) {
-            //TODO:
-            //    log error here!
+            var log = jwf$getLogger();
+            log.error("app catch exception in forceStop!", e);
         }
     }
 
@@ -234,6 +251,9 @@ function jsWorkFlow_Application$forceStop() {
 }
 
 function jsWorkFlow_Application$dispose() {
+    var log = jwf$getLogger();
+    log.debug("Application dispose!");
+
     this._events.dispose();
     this._instance.dispose();
     this._scheduler.dispose();
@@ -385,10 +405,16 @@ jsWorkFlow.Application.registerClass('jsWorkFlow.Application');
 //    Instance的执行是初始化ActivityContext的栈的数据结构，并将rootActivity调度执行。
 //
 jsWorkFlow.Instance = function jsWorkFlow_Instance() {
+    var log = jwf$getLogger();
+    log.debug("Instance create!");
+
     this._events = new jsWorkFlow.Events(this);
 };
 
 function jsWorkFlow_Instance$dispose() {
+    var log = jwf$getLogger();
+    log.debug("Instance dispose!");
+
     if (this._rootActivity) {
         this._rootActivity.dispose();
         this._rootActivity = null;
@@ -419,6 +445,9 @@ function jsWorkFlow_Instance$unload() {
 //开始在APP中运行
 function jsWorkFlow_Instance$execute(application) {
 
+    var log = jwf$getLogger();
+    log.debug("Instance execute!");
+
     //TODO:
     //检查application参数和rootActivity
     
@@ -441,17 +470,26 @@ function jsWorkFlow_Instance$execute(application) {
 
 //执行init相关操作
 function jsWorkFlow_Instance$doInit(eventArgs) {
+    var log = jwf$getLogger();
+    log.debug("Instance doInit!");
+
     //TODO:
     //init instance
 }
 
 //执行complete相关操作
 function jsWorkFlow_Instance$doComplete(eventArgs) {
+    var log = jwf$getLogger();
+    log.debug("Instance doComplete!");
+
     //TODO:
     //clear instance
 }
 
 function jsWorkFlow_Instance$initEventHandler(eventArgs) {
+    var log = jwf$getLogger();
+    log.debug("Instance initEventHandler!");
+
     //先执行自身init相关逻辑
     this.doInit(eventArgs);
 
@@ -468,6 +506,9 @@ function jsWorkFlow_Instance$remove_init(handler) {
 }
 
 function jsWorkFlow_Instance$completeEventHandler(eventArgs) {
+    var log = jwf$getLogger();
+    log.debug("Instance completeEventHandler!");
+
     //触发注册的complete事件
     this._events.raiseEvent('complete', eventArgs);
 
@@ -825,10 +866,16 @@ var $jwf = jsWorkFlow.ActivityHelper;
 //serializeContext。
 //
 jsWorkFlow.Activity = function jsWorkFlow_Activity() {
+    var log = jwf$getLogger();
+    log.debug("Activity create!");
+
     this._events = new jsWorkFlow.Events(this);
 };
 
 function jsWorkFlow_Activity$dispose() {
+    var log = jwf$getLogger();
+    log.debug("Activity dispose!");
+
     this._events.dispose();
     this._events = null;
 }
@@ -855,6 +902,8 @@ function jsWorkFlow_Activity$set_errorStrategy(value) {
 
 //activity的恢复
 function jsWorkFlow_Activity$loadSerializeContext(serializeContext) {
+    var log = jwf$getLogger();
+    log.debug("Activity loadSerializeContext!");
 
     //检查类型 ===> 这是规范
     if (serializeContext['_@_activityType'] !== this.getType().getName()) {
@@ -868,6 +917,8 @@ function jsWorkFlow_Activity$loadSerializeContext(serializeContext) {
 
 //activity的序列化
 function jsWorkFlow_Activity$saveSerializeContext(serializeContext) {
+    var log = jwf$getLogger();
+    log.debug("Activity saveSerializeContext!");
 
     //保存类型 ===> 这是规范
     serializeContext['_@_activityType'] = this.getType().getName();
@@ -879,6 +930,9 @@ function jsWorkFlow_Activity$saveSerializeContext(serializeContext) {
 
 //activity的状态机的启动入口，自动驱动activity的状态机进入运行状态。
 function jsWorkFlow_Activity$execute(context) {
+    var log = jwf$getLogger();
+    log.debug("Activity execute!");
+
     //context必须是jsWorkFlow.ActivityContext类型
     var e = Function._validateParams(arguments, [
         { name: "context", type: jsWorkFlow.ActivityContext }
@@ -893,13 +947,20 @@ function jsWorkFlow_Activity$execute(context) {
 
 //通知状态变更，触发自己关心的事件变更
 function jsWorkFlow_Activity$notifyStateChanged(context, oldState, curState) {
+    var log = jwf$getLogger();
+    log.debug("Activity notifyStateChanged!");
+
     var eventArgs = new jsWorkFlow.ActivityEventArgs(context);
 
     if (curState == jsWorkFlow.ActivityState.start) {
+        log.debug("Activity notifyStateChanged jsWorkFlow.ActivityState.start!");
+
         //状态迁移到start，触发start事件
         this._events.raiseEvent('start', eventArgs);
     }
     else if (curState == jsWorkFlow.ActivityState.end) {
+        log.debug("Activity notifyStateChanged jsWorkFlow.ActivityState.end!");
+
         this._events.raiseEvent('end', eventArgs);
     }
 
@@ -907,6 +968,9 @@ function jsWorkFlow_Activity$notifyStateChanged(context, oldState, curState) {
 }
 
 function jsWorkFlow_Activity$notifyError(eventArgs) {
+    var log = jwf$getLogger();
+    log.debug("Activity notifyError!");
+
     this._events.raiseEvent('error', eventArgs);
 }
 
@@ -1386,6 +1450,9 @@ jsWorkFlow.ActivityContext.registerClass('jsWorkFlow.ActivityContext', jsWorkFlo
 //    (4) postComplete发生在doComplete之后，执行环境以及完全清除。
 //
 jsWorkFlow.ActivityExecutor = function jsWorkFlow_ActivityExecutor(application, activity) {
+    var log = jwf$getLogger();
+    log.debug("ActivityExecutor create!");
+
     this._application = application;
     this._activity = activity;
     this._activityContext = null;
@@ -1393,6 +1460,9 @@ jsWorkFlow.ActivityExecutor = function jsWorkFlow_ActivityExecutor(application, 
 };
 
 function jsWorkFlow_ActivityExecutor$dispose() {
+    var log = jwf$getLogger();
+    log.debug("ActivityExecutor dispose!");
+
     this._activityContext.dispose();
     this._events.dispose();
 
@@ -1463,6 +1533,8 @@ function _jwf$ae$run_and_check(activityContext, callback, callbackContext) {
 
 //内部使用，job的callback的handler
 function jsWorkFlow_ActivityExecutor$doJobCallback(jobItem) {
+    var log = jwf$getLogger();
+    log.debug("ActivityExecutor doJobCallback!");
 
     //构造lamda上下文
     var activityExecutor = this;
@@ -1489,6 +1561,9 @@ function jsWorkFlow_ActivityExecutor$doJobCallback(jobItem) {
 
 //executor的执行入口点
 function jsWorkFlow_ActivityExecutor$execute() {
+    var log = jwf$getLogger();
+    log.debug("ActivityExecutor execute!");
+
     var activityExecutor = this;
     var activity = this._activity;
     var application = this._application;
@@ -1511,6 +1586,9 @@ function jsWorkFlow_ActivityExecutor$execute() {
 
 //执行init相关操作
 function jsWorkFlow_ActivityExecutor$doInit(eventArgs) {
+    var log = jwf$getLogger();
+    log.debug("ActivityExecutor doInit!");
+
     //push activity context
     this._application.pushContextStack(this._activityContext);
 
@@ -1520,6 +1598,9 @@ function jsWorkFlow_ActivityExecutor$doInit(eventArgs) {
 
 //执行complete相关操作
 function jsWorkFlow_ActivityExecutor$doComplete(eventArgs) {
+    var log = jwf$getLogger();
+    log.debug("ActivityExecutor doComplete!");
+
     //TODO:
     //    put result here!
 
@@ -1530,6 +1611,9 @@ function jsWorkFlow_ActivityExecutor$doComplete(eventArgs) {
 
 //触发init相关事件
 function jsWorkFlow_ActivityExecutor$raiseInitEvent(eventArgs) {
+    var log = jwf$getLogger();
+    log.debug("ActivityExecutor raiseInitEvent!");
+
     //触发注册的preInit事件
     this._events.raiseEvent('preInit', eventArgs);
 
@@ -1542,6 +1626,9 @@ function jsWorkFlow_ActivityExecutor$raiseInitEvent(eventArgs) {
 
 //触发complete相关事件
 function jsWorkFlow_ActivityExecutor$raiseCompleteEvent(eventArgs) {
+    var log = jwf$getLogger();
+    log.debug("ActivityExecutor raiseCompleteEvent!");
+
     //触发注册的complete事件
     this._events.raiseEvent('complete', eventArgs);
 
@@ -1684,6 +1771,9 @@ jsWorkFlow.Job.registerClass('jsWorkFlow.Job');
 //    Scheduler是workflow的任务的执行引擎，驱动job的执行。
 //    Scheduler在application中启动和初始化，可以通过事件关注其状态的变化，可以在外部控制其启动、停止、暂停等。
 jsWorkFlow.Scheduler = function jsWorkFlow_Scheduler() {
+    var log = jwf$getLogger();
+    log.debug("Scheduler create!");
+
     this._events = new jsWorkFlow.Events(this);
 };
 
@@ -1705,6 +1795,8 @@ function jsWorkFlow_Scheduler$get_isPausing() {
 }
 
 function jsWorkFlow_Scheduler$dispose() {
+    var log = jwf$getLogger();
+    log.debug("Scheduler dispose!");
 
     if (this._isRunning) {
         this.stop(true);
@@ -1750,8 +1842,8 @@ function jsWorkFlow_Scheduler$doExecJobInterval() {
             //job已经执行完，释放
             job.dispose();
         } catch (e) {
-            //TODO:
-            //    log error here!
+            var log = jwf$getLogger();
+            log.error("Scheduler catch exception in doExecJobInterval!", e);
         }
 
         //检查运行时间
@@ -1774,6 +1866,9 @@ function jsWorkFlow_Scheduler$doExecJobInterval() {
 
 //默认start直接进入运行状态，如果isPausing为true，表示启动后处于暂停状态
 function jsWorkFlow_Scheduler$start(isPausing) {
+    var log = jwf$getLogger();
+    log.debug("Scheduler start!");
+
     if (this._isRunning) {
         throw Error.invalidOperation("Scheduler is already running!");
     }
@@ -1792,6 +1887,8 @@ function jsWorkFlow_Scheduler$start(isPausing) {
 }
 
 function jsWorkFlow_Scheduler$pause() {
+    var log = jwf$getLogger();
+    log.debug("Scheduler pause!");
 
     //如果没运行，或正在停止，不允许设置为暂停
     if (!this._isRunning || this._isStopPending) {
@@ -1805,6 +1902,8 @@ function jsWorkFlow_Scheduler$pause() {
 }
 
 function jsWorkFlow_Scheduler$resume() {
+    var log = jwf$getLogger();
+    log.debug("Scheduler resume!");
 
     if (!this._isRunning || this._isStopPending) {
         throw Error.invalidOperation("Scheduler is not running!");
@@ -1816,6 +1915,9 @@ function jsWorkFlow_Scheduler$resume() {
 
 //forceStopNow参数如果为true，表示是强制停止，不管是否有正在运行的任务。
 function jsWorkFlow_Scheduler$stop(forceStopNow) {
+    var log = jwf$getLogger();
+    log.debug("Scheduler stop!");
+
     if (!this._isRunning) {
         throw Error.invalidOperation("Scheduler is not running!");
         return;

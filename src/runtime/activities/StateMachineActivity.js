@@ -25,12 +25,19 @@ Type.registerNamespace('jsWorkFlow.Activities');
 //    在外部通过将activity注册到关注的目标状态或状态迁移来执行activity。
 //
 jsWorkFlow.Activities.StateMachineActivity = function jsWorkFlow_Activities_StateMachineActivity(executeActivity) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.StateMachineActivity create!");
+
+
     jsWorkFlow.Activities.StateMachineActivity.initializeBase(this);
 
     this._executeActivity = executeActivity;
 };
 
 function jsWorkFlow_Activities_StateMachineActivity$dispose() {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.StateMachineActivity dispose!");
+
     jsWorkFlow.Activities.StateMachineActivity.callBaseMethod(this, 'dispose');
     this._executeActivity = null;
 }
@@ -44,6 +51,12 @@ function jsWorkFlow_Activities_StateMachineActivity$set_executeActivity(value) {
 }
 
 function jsWorkFlow_Activities_StateMachineActivity$notifyStateChanged(context, oldState, curState) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.StateMachineActivity notifyStateChanged!");
+
+    log.debug("oldState:[" + oldState + "]!");
+    log.debug("curState:[" + curState + "]!");
+
     //先执行基类的notifyStateChanged
     jsWorkFlow.Activities.StateMachineActivity.callBaseMethod(this, 'notifyStateChanged', [context, oldState, curState]);
 
@@ -71,6 +84,9 @@ function jsWorkFlow_Activities_StateMachineActivity$notifyStateChanged(context, 
 
 //activity的恢复
 function jsWorkFlow_Activities_StateMachineActivity$loadSerializeContext(serializeContext) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.StateMachineActivity loadSerializeContext!");
+
     //检查类型 ===> 这是规范
     if (serializeContext['_@_activityType'] !== this.getType().getName()) {
         throw Error.invalidOperation("loadSerializeContext missmatch type!");
@@ -90,6 +106,8 @@ function jsWorkFlow_Activities_StateMachineActivity$loadSerializeContext(seriali
 
 //activity的序列化
 function jsWorkFlow_Activities_StateMachineActivity$saveSerializeContext(serializeContext) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.StateMachineActivity saveSerializeContext!");
 
     //保存类型 ===> 这是规范
     serializeContext['_@_activityType'] = this.getType().getName();
@@ -108,6 +126,9 @@ function jsWorkFlow_Activities_StateMachineActivity$saveSerializeContext(seriali
 
 //activity的状态机的启动入口，自动驱动activity的状态机进入运行状态。
 function jsWorkFlow_Activities_StateMachineActivity$execute(context) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.StateMachineActivity execute!");
+
     jsWorkFlow.Activities.StateMachineActivity.callBaseMethod(this, 'execute', [context]);
 
     //TODO:
@@ -173,17 +194,27 @@ function $jwf$sm$findStateMachineContext(context) {
 //    根据所在的状态机，获取状态机的状态，并将结果放置于Context的result之中
 //
 jsWorkFlow.Activities.GetStateMachineStateActivity = function jsWorkFlow_Activities_GetStateMachineStateActivity() {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.GetStateMachineStateActivity create!");
+
     jsWorkFlow.Activities.GetStateMachineStateActivity.initializeBase(this);
 
 };
 
 function jsWorkFlow_Activities_GetStateMachineStateActivity$dispose() {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.GetStateMachineStateActivity dispose!");
+
     jsWorkFlow.Activities.GetStateMachineStateActivity.callBaseMethod(this, 'dispose');
 }
 
 
 //activity的恢复
 function jsWorkFlow_Activities_GetStateMachineStateActivity$loadSerializeContext(serializeContext) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.GetStateMachineStateActivity loadSerializeContext!");
+
+
     //检查类型 ===> 这是规范
     if (serializeContext['_@_activityType'] !== this.getType().getName()) {
         throw Error.invalidOperation("loadSerializeContext missmatch type!");
@@ -201,6 +232,9 @@ function jsWorkFlow_Activities_GetStateMachineStateActivity$loadSerializeContext
 
 //activity的序列化
 function jsWorkFlow_Activities_GetStateMachineStateActivity$saveSerializeContext(serializeContext) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.GetStateMachineStateActivity saveSerializeContext!");
+
 
     //保存类型 ===> 这是规范
     serializeContext['_@_activityType'] = this.getType().getName();
@@ -217,6 +251,9 @@ function jsWorkFlow_Activities_GetStateMachineStateActivity$saveSerializeContext
 
 //activity的状态机的启动入口，自动驱动activity的状态机进入运行状态。
 function jsWorkFlow_Activities_GetStateMachineStateActivity$execute(context) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.GetStateMachineStateActivity execute!");
+
     jsWorkFlow.Activities.GetStateMachineStateActivity.callBaseMethod(this, 'execute', [context]);
 
     var smContext = $jwf$sm$findStateMachineContext(context);
@@ -257,6 +294,9 @@ jsWorkFlow.Activities.GetStateMachineStateActivity.registerClass('jsWorkFlow.Act
 //结束状态机通过设置状态为：jsWorkFlow.ActivityState.end
 //
 jsWorkFlow.Activities.SetStateMachineStateActivity = function jsWorkFlow_Activities_SetStateMachineStateActivity(stateActivity) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.SetStateMachineStateActivity create!");
+
     jsWorkFlow.Activities.SetStateMachineStateActivity.initializeBase(this);
 
     this._stateActivity = stateActivity;
@@ -265,6 +305,9 @@ jsWorkFlow.Activities.SetStateMachineStateActivity = function jsWorkFlow_Activit
 };
 
 function jsWorkFlow_Activities_SetStateMachineStateActivity$dispose() {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.SetStateMachineStateActivity dispose!");
+
     jsWorkFlow.Activities.SetStateMachineStateActivity.callBaseMethod(this, 'dispose');
 
     this._stateActivity = null;
@@ -282,6 +325,10 @@ function jsWorkFlow_Activities_SetStateMachineStateActivity$set_stateActivity(va
 
 //activity的恢复
 function jsWorkFlow_Activities_SetStateMachineStateActivity$loadSerializeContext(serializeContext) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.SetStateMachineStateActivity loadSerializeContext!");
+
+
     //检查类型 ===> 这是规范
     if (serializeContext['_@_activityType'] !== this.getType().getName()) {
         throw Error.invalidOperation("loadSerializeContext missmatch type!");
@@ -301,6 +348,9 @@ function jsWorkFlow_Activities_SetStateMachineStateActivity$loadSerializeContext
 
 //activity的序列化
 function jsWorkFlow_Activities_SetStateMachineStateActivity$saveSerializeContext(serializeContext) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.SetStateMachineStateActivity saveSerializeContext!");
+
 
     //保存类型 ===> 这是规范
     serializeContext['_@_activityType'] = this.getType().getName();
@@ -318,6 +368,9 @@ function jsWorkFlow_Activities_SetStateMachineStateActivity$saveSerializeContext
 }
 
 function jsWorkFlow_Activities_SetStateMachineStateActivity$doStateActivityCompleteHandler(sender, eventArgs) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.SetStateMachineStateActivity doStateActivityCompleteHandler!");
+
     var context = eventArgs.get_context();
     var executor = context.get_executor();
     var parentContext = executor.parentContext;
@@ -347,6 +400,9 @@ function jsWorkFlow_Activities_SetStateMachineStateActivity$doStateActivityCompl
 
 //activity的状态机的启动入口，自动驱动activity的状态机进入运行状态。
 function jsWorkFlow_Activities_SetStateMachineStateActivity$execute(context) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.SetStateMachineStateActivity execute!");
+
     jsWorkFlow.Activities.SetStateMachineStateActivity.callBaseMethod(this, 'execute', [context]);
 
     //如果存在stateActivity，执行其，并获取最新的状态
@@ -401,17 +457,26 @@ jsWorkFlow.Activities.SetStateMachineStateActivity.registerClass('jsWorkFlow.Act
 //    用于结束一个StateMachine的执行，使其进入结束状态。
 //
 jsWorkFlow.Activities.EndStateMachineActivity = function jsWorkFlow_Activities_EndStateMachineActivity() {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.EndStateMachineActivity create!");
+
     jsWorkFlow.Activities.EndStateMachineActivity.initializeBase(this);
 
 };
 
 function jsWorkFlow_Activities_EndStateMachineActivity$dispose() {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.EndStateMachineActivity dispose!");
+
     jsWorkFlow.Activities.EndStateMachineActivity.callBaseMethod(this, 'dispose');
 }
 
 
 //activity的恢复
 function jsWorkFlow_Activities_EndStateMachineActivity$loadSerializeContext(serializeContext) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.EndStateMachineActivity loadSerializeContext!");
+
     //检查类型 ===> 这是规范
     if (serializeContext['_@_activityType'] !== this.getType().getName()) {
         throw Error.invalidOperation("loadSerializeContext missmatch type!");
@@ -429,6 +494,9 @@ function jsWorkFlow_Activities_EndStateMachineActivity$loadSerializeContext(seri
 
 //activity的序列化
 function jsWorkFlow_Activities_EndStateMachineActivity$saveSerializeContext(serializeContext) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.EndStateMachineActivity saveSerializeContext!");
+
 
     //保存类型 ===> 这是规范
     serializeContext['_@_activityType'] = this.getType().getName();
@@ -445,6 +513,10 @@ function jsWorkFlow_Activities_EndStateMachineActivity$saveSerializeContext(seri
 
 //activity的状态机的启动入口，自动驱动activity的状态机进入运行状态。
 function jsWorkFlow_Activities_EndStateMachineActivity$execute(context) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.EndStateMachineActivity execute!");
+
+
     jsWorkFlow.Activities.EndStateMachineActivity.callBaseMethod(this, 'execute', [context]);
 
     //获取StateMachine的context

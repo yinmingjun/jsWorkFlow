@@ -16,11 +16,17 @@ Type.registerNamespace('jsWorkFlow.Activities');
 //TO 开发者：
 //    DelayActivity延迟（推迟）执行的时间，单位是ms。
 jsWorkFlow.Activities.DelayActivity = function jsWorkFlow_Activities_DelayActivity(delayTime) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.DelayActivity create!");
+
     jsWorkFlow.Activities.DelayActivity.initializeBase(this);
     this._delayTime = delayTime;
 };
 
 function jsWorkFlow_Activities_DelayActivity$dispose() {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.DelayActivity dispose!");
+
     jsWorkFlow.Activities.DelayActivity.callBaseMethod(this, 'dispose');
 }
 
@@ -34,6 +40,9 @@ function jsWorkFlow_Activities_DelayActivity$set_delayTime(value) {
 
 //activity的恢复
 function jsWorkFlow_Activities_DelayActivity$loadSerializeContext(serializeContext) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.DelayActivity loadSerializeContext!");
+
     //检查类型 ===> 这是规范
     if (serializeContext['_@_activityType'] !== this.getType().getName()) {
         throw Error.invalidOperation("loadSerializeContext missmatch type!");
@@ -51,6 +60,9 @@ function jsWorkFlow_Activities_DelayActivity$loadSerializeContext(serializeConte
 
 //activity的序列化
 function jsWorkFlow_Activities_DelayActivity$saveSerializeContext(serializeContext) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.DelayActivity saveSerializeContext!");
+
 
     //保存类型 ===> 这是规范
     serializeContext['_@_activityType'] = this.getType().getName();
@@ -69,6 +81,9 @@ function jsWorkFlow_Activities_DelayActivity$saveSerializeContext(serializeConte
 
 //activity的状态机的启动入口，自动驱动activity的状态机进入运行状态。
 function jsWorkFlow_Activities_DelayActivity$execute(context) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.DelayActivity execute!");
+
     jsWorkFlow.Activities.DelayActivity.callBaseMethod(this, 'execute', [context]);
 
     //通过lamda设置回调

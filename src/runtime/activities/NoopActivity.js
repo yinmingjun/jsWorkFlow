@@ -18,17 +18,27 @@ Type.registerNamespace('jsWorkFlow.Activities');
 //符使用。
 //
 jsWorkFlow.Activities.NoopActivity = function jsWorkFlow_Activities_NoopActivity() {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.NoopActivity create!");
+
+
     jsWorkFlow.Activities.NoopActivity.initializeBase(this);
 
 };
 
 function jsWorkFlow_Activities_NoopActivity$dispose() {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.NoopActivity dispose!");
+
     jsWorkFlow.Activities.NoopActivity.callBaseMethod(this, 'dispose');
 }
 
 
 //activity的恢复
 function jsWorkFlow_Activities_NoopActivity$loadSerializeContext(serializeContext) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.NoopActivity loadSerializeContext!");
+
     //检查类型 ===> 这是规范
     if (serializeContext['_@_activityType'] !== this.getType().getName()) {
         throw Error.invalidOperation("loadSerializeContext missmatch type!");
@@ -46,6 +56,8 @@ function jsWorkFlow_Activities_NoopActivity$loadSerializeContext(serializeContex
 
 //activity的序列化
 function jsWorkFlow_Activities_NoopActivity$saveSerializeContext(serializeContext) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.NoopActivity saveSerializeContext!");
 
     //保存类型 ===> 这是规范
     serializeContext['_@_activityType'] = this.getType().getName();
@@ -62,6 +74,9 @@ function jsWorkFlow_Activities_NoopActivity$saveSerializeContext(serializeContex
 
 //activity的状态机的启动入口，自动驱动activity的状态机进入运行状态。
 function jsWorkFlow_Activities_NoopActivity$execute(context) {
+    var log = jwf$getLogger();
+    log.debug("jsWorkFlow.Activities.NoopActivity execute!");
+
     jsWorkFlow.Activities.NoopActivity.callBaseMethod(this, 'execute', [context]);
 
     //TODO:
