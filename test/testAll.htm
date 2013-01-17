@@ -1,52 +1,19 @@
-﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+﻿
+
+<!DOCTYPE html>
 <html>
-	<head>
-		<title></title>
-	    <style type="text/css">
-            #Button1
-            {
-                width: 89px;
-            }
-            #TextArea1
-            {
-                height: 284px;
-                width: 579px;
-            }
-        </style>
+<head> 
+ <meta charset="utf-8">  
+ <title>jsWorkFlow QUnit Test Case</title>  
+ <link rel="stylesheet" href="./qunit/qunit-1.10.0.css"/>
+ </head><body>  
+ <div id="qunit"></div>  
 
         <script type="text/javascript" src="../ScriptsLib/jquery-1.4.1.js"></script>
         <script type="text/javascript" src="../ScriptsLib/MicrosoftAjax.debug.js"></script>
         <script type="text/javascript" src="../build/jsWorkFlow-debug.js"></script>
+        <script type="text/javascript" src="./qunit/qunit-1.10.0.js"> </script>  
         <script type="text/javascript" src="../build/test-debug.js"></script>
 
-        <script type="text/javascript">
-            function doStartClick() {
-                //testEngine();
-                //testSequence();
-                //testIfElse();
-                //testDelay();
-                //testNoop();
-                //testFunc();
-                //testWhile();
-                //testSwitch();
-                //testParallel();
-                //testStateMachine();
-                //testContextData();
-                testLogicalOpt();
-            }
-        </script>
-	</head>
-	<body>
-	
-	    <p>
-            <input id="startBtn" type="button" value="Start..." onclick="doStartClick();" /></p>
-        <p>
-            Test Result:</p>
-        <p>
-            <textarea id="TextArea1" name="S1" style="width:100%;height:300px" cols="20" 
-                rows="1"></textarea></p>
-        <p>
-            &nbsp;</p>
-	
-	</body>
-</html>
+ </body>
+ </html>
