@@ -50,7 +50,7 @@ jsWorkFlow.ActivityState = function jsWorkFlow_ActivityState() {
 jsWorkFlow.ActivityState.prototype = {
     none: 0,
     start: 1,
-    stop: 2
+    end: 2
 };
 
 //global 数值
@@ -983,12 +983,12 @@ function jsWorkFlow_Activity$remove_start(handler) {
     this._events.removeHandler('start', handler);
 }
 
-function jsWorkFlow_Activity$add_stop(handler) {
-    this._events.addHandler('stop', handler);
+function jsWorkFlow_Activity$add_end(handler) {
+    this._events.addHandler('end', handler);
 }
 
-function jsWorkFlow_Activity$remove_stop(handler) {
-    this._events.removeHandler('stop', handler);
+function jsWorkFlow_Activity$remove_end(handler) {
+    this._events.removeHandler('end', handler);
 }
 
 function jsWorkFlow_Activity$add_error(handler) {
@@ -1023,9 +1023,9 @@ jsWorkFlow.Activity.prototype = {
     //start 事件
     add_start: jsWorkFlow_Activity$add_start,
     remove_start: jsWorkFlow_Activity$remove_start,
-    //stop 事件
-    add_stop: jsWorkFlow_Activity$add_stop,
-    remove_stop: jsWorkFlow_Activity$remove_stop,
+    //end 事件
+    add_end: jsWorkFlow_Activity$add_end,
+    remove_end: jsWorkFlow_Activity$remove_end,
     //error 事件
     add_error: jsWorkFlow_Activity$add_error,
     remove_error: jsWorkFlow_Activity$remove_error
@@ -1778,9 +1778,9 @@ jsWorkFlow.Scheduler = function jsWorkFlow_Scheduler() {
 };
 
 //const
-//调度每100 ms执行一次
-jsWorkFlow.Scheduler.interval_timer = 100;
-
+//调度每10 ms执行一次
+jsWorkFlow.Scheduler.interval_timer = 10;
+jsWorkFlow.Scheduler.interval_time_bar = 100;
 
 function jsWorkFlow_Scheduler$get_isRunning() {
     return this._isRunning;
@@ -1849,7 +1849,7 @@ function jsWorkFlow_Scheduler$doExecJobInterval() {
         //检查运行时间
         var curTime = (new Date()).getTime();
 
-        if ((curTime - startTime) > jsWorkFlow.Scheduler.interval_timer) {
+        if ((curTime - startTime) > jsWorkFlow.Scheduler.interval_time_bar) {
             //运行时间过长了！需要终止运行，给其他操作让出CPU资源。
             break;
         }

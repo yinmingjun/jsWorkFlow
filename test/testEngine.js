@@ -3,10 +3,10 @@
 //如果有rootActivity，表示使用testEngine建立测试框架，并不是运行该测试案例
 function testEngine(rootActivity) {
 
-    var noop = new jsWorkFlow.Activities.NoopActivity();
     var ins = new jsWorkFlow.Instance();
 
     if (!rootActivity) {
+        var noop = new jsWorkFlow.Activities.NoopActivity();
         rootActivity = noop;
 
         ins.add_complete(function () {
