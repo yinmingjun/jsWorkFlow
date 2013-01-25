@@ -76,7 +76,7 @@ function jsWorkFlow_Activities_StateMachineActivity$notifyStateChanged(context, 
 
     //执行executeActivity，一般在executeActivity的执行过程中，会驱动状态发送变更，再次进入notifyStateChanged，或结束状态机的执行。
     var application = context.get_application();
-    var activityExecutor = new jsWorkFlow.ActivityExecutor(application, executeActivity);
+    var activityExecutor = new jsWorkFlow.ActivityExecutor(application, executeActivity, context);
     //OK, kick activityExecutor to run!
     activityExecutor.execute();
 
@@ -373,7 +373,7 @@ function jsWorkFlow_Activities_SetStateMachineStateActivity$doStateActivityCompl
 
     var context = eventArgs.get_context();
     var executor = context.get_executor();
-    var parentContext = executor.parentContext;
+    var parentContext = executor.get_parentContext();
 
     //取执行结果
     var curState = context.get_result();
@@ -415,10 +415,7 @@ function jsWorkFlow_Activities_SetStateMachineStateActivity$execute(context) {
 
     //执行stateActivity获取新状态
     var application = context.get_application();
-    var activityExecutor = new jsWorkFlow.ActivityExecutor(application, stateActivity);
-
-    //将上下文的数据存放在activityExecutor之中
-    activityExecutor.parentContext = context;
+    var activityExecutor = new jsWorkFlow.ActivityExecutor(application, stateActivity, context);
 
     activityExecutor.add_postComplete(this._doStateActivityCompleteHandler);
 

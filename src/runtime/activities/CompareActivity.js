@@ -129,10 +129,7 @@ function jsWorkFlow_Activities_CompareActivity$doExecLha(context) {
     }
 
     var application = context.get_application();
-    var activityExecutor = new jsWorkFlow.ActivityExecutor(application, lhaActivity);
-
-    //将上下文的数据存放在activityExecutor之中
-    activityExecutor.parentContext = context;
+    var activityExecutor = new jsWorkFlow.ActivityExecutor(application, lhaActivity, context);
 
     activityExecutor.add_postComplete(this._doExecLhaCompleteHandler);
 
@@ -147,7 +144,7 @@ function jsWorkFlow_Activities_CompareActivity$doExecLhaCompleteHandler(sender, 
 
     var context = eventArgs.get_context();
     var executor = context.get_executor();
-    var parentContext = executor.parentContext;
+    var parentContext = executor.get_parentContext();
 
     //获取activity的最后的执行结果，作为doExecRha的输入
     var lhaResult = context.get_result();
@@ -200,10 +197,9 @@ function jsWorkFlow_Activities_CompareActivity$doExecRha(context, lhaResult) {
 
     //调度执行rha
     var application = context.get_application();
-    var activityExecutor = new jsWorkFlow.ActivityExecutor(application, rhaActivity);
+    var activityExecutor = new jsWorkFlow.ActivityExecutor(application, rhaActivity, context);
 
     //将上下文的数据存放在activityExecutor之中
-    activityExecutor.parentContext = context;
     activityExecutor.lhaResult = lhaResult;
 
     activityExecutor.add_postComplete(this._doExecRhaCompleteHandler);
@@ -218,7 +214,7 @@ function jsWorkFlow_Activities_CompareActivity$doExecRhaCompleteHandler(sender, 
 
     var context = eventArgs.get_context();
     var executor = context.get_executor();
-    var parentContext = executor.parentContext;
+    var parentContext = executor.get_parentContext();
     var lhaResult = executor.lhaResult;
 
     var rhaResult = context.get_result();

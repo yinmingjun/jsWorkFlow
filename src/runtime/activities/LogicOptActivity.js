@@ -116,10 +116,7 @@ function jsWorkFlow_Activities_LogicAndActivity$doExecLha(context) {
     }
 
     var application = context.get_application();
-    var activityExecutor = new jsWorkFlow.ActivityExecutor(application, lhaActivity);
-
-    //将上下文的数据存放在activityExecutor之中
-    activityExecutor.parentContext = context;
+    var activityExecutor = new jsWorkFlow.ActivityExecutor(application, lhaActivity, context);
 
     activityExecutor.add_postComplete(this._doExecLhaCompleteHandler);
 
@@ -134,7 +131,7 @@ function jsWorkFlow_Activities_LogicAndActivity$doExecLhaCompleteHandler(sender,
 
     var context = eventArgs.get_context();
     var executor = context.get_executor();
-    var parentContext = executor.parentContext;
+    var parentContext = executor.get_parentContext();
 
     //获取activity的最后的执行结果，作为doExecRha的输入
     var lhaResult = context.get_result();
@@ -171,10 +168,7 @@ function jsWorkFlow_Activities_LogicAndActivity$doExecRha(context, lhaResult) {
 
     //调度执行rha
     var application = context.get_application();
-    var activityExecutor = new jsWorkFlow.ActivityExecutor(application, rhaActivity);
-
-    //将上下文的数据存放在activityExecutor之中
-    activityExecutor.parentContext = context;
+    var activityExecutor = new jsWorkFlow.ActivityExecutor(application, rhaActivity, context);
 
     activityExecutor.add_postComplete(this._doExecRhaCompleteHandler);
 
@@ -188,7 +182,7 @@ function jsWorkFlow_Activities_LogicAndActivity$doExecRhaCompleteHandler(sender,
 
     var context = eventArgs.get_context();
     var executor = context.get_executor();
-    var parentContext = executor.parentContext;
+    var parentContext = executor.get_parentContext();
 
     //将activity的最后的执行结果作为当前activity的执行结果
     //因为既然调度rha执行，说明lha的执行结果一定是true，可以忽略lha，直接写入rha的执行结果。
@@ -341,10 +335,7 @@ function jsWorkFlow_Activities_LogicOrActivity$doExecLha(context) {
     }
 
     var application = context.get_application();
-    var activityExecutor = new jsWorkFlow.ActivityExecutor(application, lhaActivity);
-
-    //将上下文的数据存放在activityExecutor之中
-    activityExecutor.parentContext = context;
+    var activityExecutor = new jsWorkFlow.ActivityExecutor(application, lhaActivity, context);
 
     activityExecutor.add_postComplete(this._doExecLhaCompleteHandler);
 
@@ -359,7 +350,7 @@ function jsWorkFlow_Activities_LogicOrActivity$doExecLhaCompleteHandler(sender, 
 
     var context = eventArgs.get_context();
     var executor = context.get_executor();
-    var parentContext = executor.parentContext;
+    var parentContext = executor.get_parentContext();
 
     //获取activity的最后的执行结果，作为doExecRha的输入
     var lhaResult = context.get_result();
@@ -396,10 +387,7 @@ function jsWorkFlow_Activities_LogicOrActivity$doExecRha(context, lhaResult) {
 
     //调度执行rha
     var application = context.get_application();
-    var activityExecutor = new jsWorkFlow.ActivityExecutor(application, rhaActivity);
-
-    //将上下文的数据存放在activityExecutor之中
-    activityExecutor.parentContext = context;
+    var activityExecutor = new jsWorkFlow.ActivityExecutor(application, rhaActivity, context);
 
     activityExecutor.add_postComplete(this._doExecRhaCompleteHandler);
 
@@ -413,7 +401,7 @@ function jsWorkFlow_Activities_LogicOrActivity$doExecRhaCompleteHandler(sender, 
 
     var context = eventArgs.get_context();
     var executor = context.get_executor();
-    var parentContext = executor.parentContext;
+    var parentContext = executor.get_parentContext();
 
     //将activity的最后的执行结果作为当前activity的执行结果
     //因为既然调度rha执行，说明lha的执行结果一定是false，可以忽略lha，直接写入rha的执行结果。
@@ -565,10 +553,7 @@ function jsWorkFlow_Activities_LogicXorActivity$doExecLha(context) {
     }
 
     var application = context.get_application();
-    var activityExecutor = new jsWorkFlow.ActivityExecutor(application, lhaActivity);
-
-    //将上下文的数据存放在activityExecutor之中
-    activityExecutor.parentContext = context;
+    var activityExecutor = new jsWorkFlow.ActivityExecutor(application, lhaActivity, context);
 
     activityExecutor.add_postComplete(this._doExecLhaCompleteHandler);
 
@@ -584,7 +569,7 @@ function jsWorkFlow_Activities_LogicXorActivity$doExecLhaCompleteHandler(sender,
 
     var context = eventArgs.get_context();
     var executor = context.get_executor();
-    var parentContext = executor.parentContext;
+    var parentContext = executor.get_parentContext();
 
     //获取activity的最后的执行结果，作为doExecRha的输入
     var lhaResult = context.get_result();
@@ -635,10 +620,9 @@ function jsWorkFlow_Activities_LogicXorActivity$doExecRha(context, lhaResult) {
 
     //调度执行rha
     var application = context.get_application();
-    var activityExecutor = new jsWorkFlow.ActivityExecutor(application, rhaActivity);
+    var activityExecutor = new jsWorkFlow.ActivityExecutor(application, rhaActivity, context);
 
     //将上下文的数据存放在activityExecutor之中
-    activityExecutor.parentContext = context;
     activityExecutor.lhaResult = lhaResult;
 
     activityExecutor.add_postComplete(this._doExecRhaCompleteHandler);
@@ -653,7 +637,7 @@ function jsWorkFlow_Activities_LogicXorActivity$doExecRhaCompleteHandler(sender,
 
     var context = eventArgs.get_context();
     var executor = context.get_executor();
-    var parentContext = executor.parentContext;
+    var parentContext = executor.get_parentContext();
     var lhaResult = executor.lhaResult;
 
     //结束activity的执行，并设置执行结果
@@ -796,10 +780,7 @@ function jsWorkFlow_Activities_LogicNotActivity$doExecActivity(context) {
     }
 
     var application = context.get_application();
-    var activityExecutor = new jsWorkFlow.ActivityExecutor(application, activity);
-
-    //将上下文的数据存放在activityExecutor之中
-    activityExecutor.parentContext = context;
+    var activityExecutor = new jsWorkFlow.ActivityExecutor(application, activity, context);
 
     activityExecutor.add_postComplete(this._doExecActivityCompleteHandler);
 
@@ -814,7 +795,7 @@ function jsWorkFlow_Activities_LogicNotActivity$doExecActivityCompleteHandler(se
 
     var context = eventArgs.get_context();
     var executor = context.get_executor();
-    var parentContext = executor.parentContext;
+    var parentContext = executor.get_parentContext();
 
     //获取activity的最后的执行结果
     var result = context.get_result();

@@ -197,14 +197,13 @@ function jsWorkFlow_Activities_DefineContextDataActivity$doEvalDataValueActivity
     //post complete事件
     var context = eventArgs.get_context();
     var executor = context.get_executor();
-    var parentContext = executor.parentContext;
+    var parentContext = executor.get_parentContext();
     var application = parentContext.get_application();
 
     //默认值是null
     var result = null;
 
     //cleanup old executor
-    executor.parentContext = null;
     executor.remove_postComplete(this._doEvalDataValueActivityCompleteHandler);
 
     //set last context's result as current context's result
@@ -243,10 +242,7 @@ function jsWorkFlow_Activities_DefineContextDataActivity$execute(context) {
         return;
     }
 
-    var activityExecutor = new jsWorkFlow.ActivityExecutor(application, activity);
-
-    //将上下文的数据存放在activityExecutor之中
-    activityExecutor.parentContext = context;
+    var activityExecutor = new jsWorkFlow.ActivityExecutor(application, activity, context);
 
     activityExecutor.add_postComplete(this._doEvalDataValueActivityCompleteHandler);
 
@@ -614,7 +610,7 @@ function jsWorkFlow_Activities_SetContextDataActivity$doEvalDataValueActivityCom
     //post complete事件
     var context = eventArgs.get_context();
     var executor = context.get_executor();
-    var parentContext = executor.parentContext;
+    var parentContext = executor.get_parentContext();
     var application = parentContext.get_application();
 
     //默认值是null
@@ -622,7 +618,6 @@ function jsWorkFlow_Activities_SetContextDataActivity$doEvalDataValueActivityCom
     var result = false;
 
     //cleanup old executor
-    executor.parentContext = null;
     executor.remove_postComplete(this._doEvalDataValueActivityCompleteHandler);
 
     //取求值结果
@@ -662,10 +657,7 @@ function jsWorkFlow_Activities_SetContextDataActivity$execute(context) {
         return;
     }
 
-    var activityExecutor = new jsWorkFlow.ActivityExecutor(application, activity);
-
-    //将上下文的数据存放在activityExecutor之中
-    activityExecutor.parentContext = context;
+    var activityExecutor = new jsWorkFlow.ActivityExecutor(application, activity, context);
 
     activityExecutor.add_postComplete(this._doEvalDataValueActivityCompleteHandler);
 

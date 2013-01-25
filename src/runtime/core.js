@@ -50,7 +50,8 @@ jsWorkFlow.ActivityState = function jsWorkFlow_ActivityState() {
 jsWorkFlow.ActivityState.prototype = {
     none: 0,
     start: 1,
-    end: 2
+    end: 2,
+    error: 3
 };
 
 //global 数值
@@ -58,26 +59,6 @@ jsWorkFlow.ActivityState.prototype = {
 jsWorkFlow.ActivityState.min_value = 100;
 
 jsWorkFlow.ActivityState.registerEnum('jsWorkFlow.ActivityState');
-
-
-
-//////////////////////////////////////////////////////////////////////////////////////////
-//ActivityExecuteStrategy，表示activity运行期错误的容错类型
-
-jsWorkFlow.ActivityExecuteStrategy = function jsWorkFlow_ActivityExecuteStrategy() {
-    throw new Error.notImplemented();
-};
-
-//系统默认的activity的状态
-jsWorkFlow.ActivityExecuteStrategy.prototype = {
-    none: 0,        //没设置，会使用系统的默认错误回复机制
-    exception: 1,   //通过抛出异常来处理，为系统默认的异常处理方式
-    ignore: 2,      //拦截并忽略
-    stop: 3         //停止整个workflow的执行
-};
-
-jsWorkFlow.ActivityExecuteStrategy.registerEnum('jsWorkFlow.ActivityExecuteStrategy');
-
 
 
 
@@ -185,16 +166,6 @@ function jsWorkFlow_Application$get_currentContext() {
 
     return context;
 }
-
-function jsWorkFlow_Application$get_errorStrategy() {
-    return this._errorStrategy;
-}
-
-function jsWorkFlow_Application$set_errorStrategy(value) {
-    this._errorStrategy = value;
-}
-
-
 
 function jsWorkFlow_Application$run() {
     var log = jwf$getLogger();
@@ -369,16 +340,12 @@ jsWorkFlow.Application.prototype = {
     _contextStack: null,
     _events: null,
     _scheduler: null,
-    _errorStrategy: jsWorkFlow.ActivityExecuteStrategy.none, //默认无定义
     //property
     get_scheduler: jsWorkFlow_Application$get_scheduler,
     get_globalContext: jsWorkFlow_Application$get_globalContext,
     get_appContext: jsWorkFlow_Application$get_appContext,
     get_instance: jsWorkFlow_Application$get_instance,
     get_currentContext: jsWorkFlow_Application$get_currentContext,
-    //应用级的错误处理策略
-    get_errorStrategy: jsWorkFlow_Application$get_errorStrategy,
-    set_errorStrategy: jsWorkFlow_Application$set_errorStrategy,
 
     //method
     run: jsWorkFlow_Application$run,
@@ -452,7 +419,7 @@ function jsWorkFlow_Instance$execute(application) {
     //检查application参数和rootActivity
     
     //Create ActivityExecutor，执行rootActivity
-    var activityExecutor = new jsWorkFlow.ActivityExecutor(application, this._rootActivity);
+    var activityExecutor = new jsWorkFlow.ActivityExecutor(application, this._rootActivity, null);
 
     //创建delegates
     this._initEventHandler = Function.createDelegate(this, this.initEventHandler);
@@ -593,47 +560,6 @@ jsWorkFlow.ActivityEventArgs.prototype = {
 jsWorkFlow.ActivityEventArgs.registerClass('jsWorkFlow.ActivityEventArgs', Sys.EventArgs);
 
 //////////////////////////////////////////////////////////////////////////////////////////
-//ActivityCustomErrorEventArgs，提供jsWorkFlow的error的事件响应函数的参数，默认是exception
-//
-// TO 开发者：
-//    activity相关的事件handler中传递的参数，主要是携带context参数。
-//    data是可选的参数，看事件上下文是否需要携带额外的数据
-//
-jsWorkFlow.ActivityCustomErrorEventArgs = function jsWorkFlow_ActivityCustomErrorEventArgs(context, exception) {
-    jsWorkFlow.ActivityCustomErrorEventArgs.initializeBase(this, [context, null]);
-    this._exception = exception;
-};
-
-function jsWorkFlow_ActivityCustomErrorEventArgs$dispose() {
-    jsWorkFlow.ActivityCustomErrorEventArgs.callBaseMethod(this, 'dispose');
-}
-
-function jsWorkFlow_ActivityCustomErrorEventArgs$get_errorStrategy() {
-    return this._errorStrategy;
-}
-
-function jsWorkFlow_ActivityCustomErrorEventArgs$set_errorStrategy(value) {
-    this._errorStrategy = value;
-}
-
-function jsWorkFlow_ActivityCustomErrorEventArgs$get_exception() {
-    return this._exception;
-}
-
-jsWorkFlow.ActivityCustomErrorEventArgs.prototype = {
-    _errorStrategy: jsWorkFlow.ActivityExecuteStrategy.none, //默认无定义
-    _exception: null,
-    dispose: jsWorkFlow_ActivityCustomErrorEventArgs$dispose,
-    //property
-    get_errorStrategy: jsWorkFlow_ActivityCustomErrorEventArgs$get_errorStrategy,
-    set_errorStrategy: jsWorkFlow_ActivityCustomErrorEventArgs$set_errorStrategy,
-    get_exception: jsWorkFlow_ActivityCustomErrorEventArgs$get_exception
-};
-
-jsWorkFlow.ActivityCustomErrorEventArgs.registerClass('jsWorkFlow.ActivityCustomErrorEventArgs', jsWorkFlow.ActivityEventArgs);
-
-
-//////////////////////////////////////////////////////////////////////////////////////////
 //ActivityHelper，提供activity帮助方法
 //
 // TO 开发者：
@@ -654,9 +580,52 @@ jsWorkFlow.ActivityHelper.startActivity = function jsWorkFlow_ActivityHelper$sta
 }
 
 jsWorkFlow.ActivityHelper.endActivity = function jsWorkFlow_ActivityHelper$endActivity(context) {
-    //使activity进入start状态
+    //使activity进入end状态
     context.set_activityState(jsWorkFlow.ActivityState.end);
 }
+
+//抛出异常
+jsWorkFlow.ActivityHelper.raiseError = function jsWorkFlow_ActivityHelper$raiseError(context, exception) {
+    var errorInfo = new jsWorkFlow.ActivityErrorInfo(context, exception);
+    //使activity进入error状态
+    context.set_errorInfo(errorInfo);
+
+    //使activity进入end状态
+    context.set_activityState(jsWorkFlow.ActivityState.error);
+}
+
+//向parent传递异常，内部使用
+jsWorkFlow.ActivityHelper._deliverError = function jsWorkFlow_ActivityHelper$_deliverError(activityContext) {
+    if (activityContext.get_activityState() !== jsWorkFlow.ActivityState.error) {
+        //???
+        return;
+    }
+
+    //向上传递错误信息
+    var errorInfo = activityContext.get_errorInfo();
+    var parentContext = activityContext.get_parentContext();
+    if (parentContext) {
+        //让parent也进入错误状态
+        parentContext.set_errorInfo(errorInfo);
+        parentContext.set_activityState(jsWorkFlow.ActivityState.error);
+    }
+
+}
+
+//从错误中恢复
+jsWorkFlow.ActivityHelper._recoverError = function jsWorkFlow_ActivityHelper$_recoverError(activityContext, activityState) {
+    if (activityContext.get_activityState() !== jsWorkFlow.ActivityState.error) {
+        //???
+        return;
+    }
+
+    //清空error信息
+    activityContext.set_errorInfo(null);
+    //使activitycontext进入到指定的状态
+    activityContext.set_activityState(activityState);
+
+}
+
 
 //查找Local数据项helper
 jsWorkFlow.ActivityHelper.getLocalDataItem = function jsWorkFlow_ActivityHelper$getLocalDataItem(context, key) {
@@ -892,14 +861,6 @@ function jsWorkFlow_Activity$set_name(value) {
     this._name = value;
 }
 
-function jsWorkFlow_Activity$get_errorStrategy() {
-    return this._errorStrategy;
-}
-
-function jsWorkFlow_Activity$set_errorStrategy(value) {
-    this._errorStrategy = value;
-}
-
 //activity的恢复
 function jsWorkFlow_Activity$loadSerializeContext(serializeContext) {
     var log = jwf$getLogger();
@@ -910,9 +871,8 @@ function jsWorkFlow_Activity$loadSerializeContext(serializeContext) {
         throw Error.invalidOperation("loadSerializeContext missmatch type!");
     }
 
-    //恢复name & errorStrategy属性
+    //恢复name属性
     this.set_name(serializeContext['name']);
-    this.set_errorStrategy(serializeContext['errorStrategy']);
 }
 
 //activity的序列化
@@ -923,9 +883,8 @@ function jsWorkFlow_Activity$saveSerializeContext(serializeContext) {
     //保存类型 ===> 这是规范
     serializeContext['_@_activityType'] = this.getType().getName();
     
-    //保存name & errorStrategy属性
+    //保存name属性
     serializeContext['name'] = this.get_name();
-    serializeContext['errorStrategy'] = this.get_errorStrategy();
 }
 
 //activity的状态机的启动入口，自动驱动activity的状态机进入运行状态。
@@ -950,7 +909,18 @@ function jsWorkFlow_Activity$notifyStateChanged(context, oldState, curState) {
     var log = jwf$getLogger();
     log.debug("Activity notifyStateChanged!");
 
-    var eventArgs = new jsWorkFlow.ActivityEventArgs(context);
+    //data中传递oldState和curState
+    var data = { oldState: oldState, curState: curState };
+    var eventArgs = new jsWorkFlow.ActivityEventArgs(context, data);
+
+    //如果是状态不是从error迁移过来，可以通知事件的变更
+    //从error状态恢复，简单的将activityContext的状态设置成目标状态，不通知状态的迁移
+    if (oldState === jsWorkFlow.ActivityState.error) {
+        this._events.raiseEvent('errorRecovery', eventArgs);
+        log.debug("Activity notifyStateChanged jsWorkFlow.ActivityState.start!");
+        return;
+    }
+
 
     if (curState == jsWorkFlow.ActivityState.start) {
         log.debug("Activity notifyStateChanged jsWorkFlow.ActivityState.start!");
@@ -963,16 +933,13 @@ function jsWorkFlow_Activity$notifyStateChanged(context, oldState, curState) {
 
         this._events.raiseEvent('end', eventArgs);
     }
+    else if (curState == jsWorkFlow.ActivityState.error) {
+        this._events.raiseEvent('error', eventArgs);
+    }
 
     //ignore other state value
 }
 
-function jsWorkFlow_Activity$notifyError(eventArgs) {
-    var log = jwf$getLogger();
-    log.debug("Activity notifyError!");
-
-    this._events.raiseEvent('error', eventArgs);
-}
 
 //events
 function jsWorkFlow_Activity$add_start(handler) {
@@ -999,25 +966,30 @@ function jsWorkFlow_Activity$remove_error(handler) {
     this._events.removeHandler('error', handler);
 }
 
+//errorRecovery 事件
+function jsWorkFlow_Activity$add_errorRecovery(handler) {
+    this._events.addHandler('errorRecovery', handler);
+}
+
+function jsWorkFlow_Activity$remove_errorRecovery(handler) {
+    this._events.removeHandler('errorRecovery', handler);
+}
+
+
 jsWorkFlow.Activity.prototype = {
     _name: null,
     _events: null,
-    _errorStrategy: jsWorkFlow.ActivityExecuteStrategy.none, //默认无定义
     dispose: jsWorkFlow_Activity$dispose,
     //property
     //name，只是一个标识
     get_name: jsWorkFlow_Activity$get_name,
     set_name: jsWorkFlow_Activity$set_name,
-    //errorStrategy,容错策略
-    get_errorStrategy: jsWorkFlow_Activity$get_errorStrategy,
-    set_errorStrategy: jsWorkFlow_Activity$set_errorStrategy,
 
     //method
     loadSerializeContext: jsWorkFlow_Activity$loadSerializeContext,
     saveSerializeContext: jsWorkFlow_Activity$saveSerializeContext,
     execute: jsWorkFlow_Activity$execute,
     notifyStateChanged: jsWorkFlow_Activity$notifyStateChanged,
-    notifyError: jsWorkFlow_Activity$notifyError,
     //event handler
     //基类关注的activity的状态只有start和stop，其它状态由派生类来扩展
     //start 事件
@@ -1028,7 +1000,10 @@ jsWorkFlow.Activity.prototype = {
     remove_end: jsWorkFlow_Activity$remove_end,
     //error 事件
     add_error: jsWorkFlow_Activity$add_error,
-    remove_error: jsWorkFlow_Activity$remove_error
+    remove_error: jsWorkFlow_Activity$remove_error,
+    //errorRecovery 事件
+    add_errorRecovery: jsWorkFlow_Activity$add_errorRecovery,
+    remove_errorRecovery: jsWorkFlow_Activity$remove_errorRecovery
 
 };
 
@@ -1314,6 +1289,36 @@ jsWorkFlow.ApplicationContext.prototype = {
 
 jsWorkFlow.ApplicationContext.registerClass('jsWorkFlow.ApplicationContext', jsWorkFlow.ContextBase);
 
+//////////////////////////////////////////////////////////////////////////////////////////
+//ActivityErrorInfo，表示一个jsWorkFlow活动的错误信息
+//
+//to 开发者：
+//    ActivityErrorInfo描述Activity运行期异常，存储exception对象，发生异常的执行点，以及异常对应
+//的执行路径。
+//
+jsWorkFlow.ActivityErrorInfo = function jsWorkFlow_ActivityErrorInfo(originalContext, exception) {
+}
+
+function jsWorkFlow_ActivityErrorInfo$get_originalContext() {
+    return this._originalContext;
+}
+
+function jsWorkFlow_ActivityErrorInfo$get_exception() {
+    return this._exception;
+}
+
+
+jsWorkFlow.ActivityErrorInfo.prototype = {
+    _originalContext: null,
+    _exception: null,
+
+    //获取产生异常的源信息
+    get_originalContext: jsWorkFlow_ActivityErrorInfo$get_originalContext,
+    //获取exception对象
+    get_exception: jsWorkFlow_ActivityErrorInfo$get_exception
+};
+
+jsWorkFlow.ActivityErrorInfo.registerClass('jsWorkFlow.ActivityErrorInfo');
 
 //////////////////////////////////////////////////////////////////////////////////////////
 //ActivityContext，表示一个jsWorkFlow活动的运行上下文,数据依附于所在的活动
@@ -1352,6 +1357,11 @@ function jsWorkFlow_ActivityContext$getParam(name) {
     return this._args[name];
 }
 
+//如果在ActivityContext中存在
+function jsWorkFlow_ActivityContext$isError() {
+    return !!this._errorInfo
+}
+
 //和activityContext关联的application
 function jsWorkFlow_ActivityContext$get_application() {
     return this._application;
@@ -1367,6 +1377,17 @@ function jsWorkFlow_ActivityContext$get_executor() {
     return this._executor;
 }
 
+function jsWorkFlow_ActivityContext$get_parentContext() {
+    var parentContext = null;
+    var executor = this.get_executor();
+
+    if (executor) {
+        parentContext = executor.get_parentContext();
+    }
+
+    return parentContext;
+}
+
 //获取&设置activity的状态
 function jsWorkFlow_ActivityContext$get_activityState() {
     return this._activityState;
@@ -1374,6 +1395,7 @@ function jsWorkFlow_ActivityContext$get_activityState() {
 
 function jsWorkFlow_ActivityContext$set_activityState(value) {
     var oldState = this._activityState;
+    var curState = value;
 
     //状态相同不触发状态变更
     if (oldState == value) {
@@ -1382,14 +1404,22 @@ function jsWorkFlow_ActivityContext$set_activityState(value) {
 
     this._activityState = value;
 
+    var data = { oldState: oldState, curState: curState };
+    var eventArgs = new jsWorkFlow.ActivityEventArgs(this, data);
+
     //通知activity状态变更，activity得到基类会处理jsWorkFlow.ActivityState.start和jsWorkFlow.ActivityState.end
     this._activity.notifyStateChanged(this, oldState, value);
 
-    //如果activity的当前状态为jsWorkFlow.ActivityState.end，表示活动以及结束，触发activityExecutor的complete事件
+    //如果activity的当前状态为jsWorkFlow.ActivityState.end，表示活动已经结束，触发activityExecutor的complete事件
     if (value == jsWorkFlow.ActivityState.end) {
-        var eventArgs = new jsWorkFlow.ActivityEventArgs(this);
         this._executor.raiseCompleteEvent(eventArgs);
     }
+
+    //如果activity的当前状态为jsWorkFlow.ActivityState.error，需activityExecutor激活运行期错误的处理过程
+    if (value == jsWorkFlow.ActivityState.error) {
+        this._executor.processRuntimeError(eventArgs);
+    }
+
 }
 
 //获取&设置activity的返回值
@@ -1401,6 +1431,15 @@ function jsWorkFlow_ActivityContext$set_result(value) {
     this._result = value;
 }
 
+function jsWorkFlow_ActivityContext$get_errorInfo() {
+    return this._errorInfo;
+}
+
+function jsWorkFlow_ActivityContext$set_errorInfo(value) {
+    this._errorInfo = value;
+}
+
+
 
 jsWorkFlow.ActivityContext.prototype = {
     _application: null,
@@ -1409,11 +1448,13 @@ jsWorkFlow.ActivityContext.prototype = {
     _activityState: jsWorkFlow.ActivityState.none,
     _args: null,
     _result: null,
+    _errorInfo: null,
     dispose: jsWorkFlow_ActivityContext$dispose,
     //method
     //获取传递给activity的参数
     getParam: jsWorkFlow_ActivityContext$getParam,
-
+    //判断是否存在异常
+    isError: jsWorkFlow_ActivityContext$isError,
     //property
     //和activityContext关联的application
     get_application: jsWorkFlow_ActivityContext$get_application,
@@ -1421,13 +1462,18 @@ jsWorkFlow.ActivityContext.prototype = {
     get_activity: jsWorkFlow_ActivityContext$get_activity,
     //executor
     get_executor: jsWorkFlow_ActivityContext$get_executor,
+    //get_parentContext
+    get_parentContext: jsWorkFlow_ActivityContext$get_parentContext,
 
     //获取&设置activity的状态
     get_activityState: jsWorkFlow_ActivityContext$get_activityState,
     set_activityState: jsWorkFlow_ActivityContext$set_activityState,
     //获取&设置activity的返回值
     get_result: jsWorkFlow_ActivityContext$get_result,
-    set_result: jsWorkFlow_ActivityContext$set_result
+    set_result: jsWorkFlow_ActivityContext$set_result,
+    //获取&设置activity的exception值，和error状态结合使用
+    get_errorInfo: jsWorkFlow_ActivityContext$get_errorInfo,
+    set_errorInfo: jsWorkFlow_ActivityContext$set_errorInfo
 
 
 };
@@ -1449,13 +1495,22 @@ jsWorkFlow.ActivityContext.registerClass('jsWorkFlow.ActivityContext', jsWorkFlo
 //    (3) complete发生在doComplete之前，执行环境还在。
 //    (4) postComplete发生在doComplete之后，执行环境以及完全清除。
 //
-jsWorkFlow.ActivityExecutor = function jsWorkFlow_ActivityExecutor(application, activity) {
+//    关于异常处理：
+//    ActivityExecutor需要处理两种情况，一种是在其本身执行过程中俘获的异常；另外是从其子的
+//ActivityContext中传递过来的异常。
+//    ActivityExecutor在处理异常的时候，会将异常对象(exception)保存到其ActivityContext的exception
+//属性中，并设置ActivityContext的状态为error，完成异常的传递。而状态到error的迁移会触发executor的
+//doCatchException的执行，在这个方法里，会判断当前的executor是否存在异常的handler，是否对异常有修复，
+//如果修复了，会中止异常的向上的传递；
+//
+jsWorkFlow.ActivityExecutor = function jsWorkFlow_ActivityExecutor(application, activity, parentContext) {
     var log = jwf$getLogger();
     log.debug("ActivityExecutor create!");
 
     this._application = application;
     this._activity = activity;
     this._activityContext = null;
+    this._parentContext = parentContext;
     this._events = new jsWorkFlow.Events(this);
 };
 
@@ -1476,58 +1531,20 @@ function jsWorkFlow_ActivityExecutor$get_activityContext() {
     return this._activityContext;
 }
 
+function jsWorkFlow_ActivityExecutor$get_parentContext() {
+    return this._parentContext;
+}
+
 function _jwf$ae$run_and_check(activityContext, callback, callbackContext) {
 
-    var activity = activityContext.get_activity();
-    var application = activityContext.get_application();
-
-    var errorStrategy = activity.get_errorStrategy();
-
-    if (errorStrategy === jsWorkFlow.ActivityExecuteStrategy.none) {
-        //使用应用级别的错误处理定义
-        errorStrategy = application.get_errorStrategy();
-    }
+    var activityExecutor = activityContext.get_executor();
 
     try {
         //执行callback
         callback(callbackContext);
     } catch (e) {
         //运行出现异常
-        //看activity中是否会做错误的修正
-        var eventArgs = new jsWorkFlow.ActivityCustomErrorEventArgs(activityContext, e);
-        activity.notifyError(eventArgs);
-
-        //如果eventArgs中包含了不同的错误定义，优先使用这个
-        var curErrorStrategy = eventArgs.get_errorStrategy();
-
-        if (curErrorStrategy !== jsWorkFlow.ActivityExecuteStrategy.none) {
-            errorStrategy = curErrorStrategy;
-        }
-
-        switch (errorStrategy) {
-            case jsWorkFlow.ActivityExecuteStrategy.ignore:
-                {
-                    //ignore，workflow会处于一种不稳定的状态
-
-                    //因为已经出现异常了，如果忽略，强制设置当前的activity为结束状态，尽量驱动后续的activity继续执行
-                    //activity的状态驱动的机制可以保证驱动相同的状态不会触发状态变更
-                    $jwf.endActivity(activityContext);
-                    return;
-                }
-            case jsWorkFlow.ActivityExecuteStrategy.stop:
-                {
-                    //强制application结束
-                    application.forceStop();
-                    return;
-                }
-            case jsWorkFlow.ActivityExecuteStrategy.exception:
-            case jsWorkFlow.ActivityExecuteStrategy.none:
-            default:
-                {
-                    //直接抛出异常，由上层的程序来处理
-                    throw e;
-                }
-        }
+        activityExecutor.doCatchException(e);
     }
 } 
 
@@ -1609,6 +1626,59 @@ function jsWorkFlow_ActivityExecutor$doComplete(eventArgs) {
 
 }
 
+function jsWorkFlow_ActivityExecutor$doCatchException(exception) {
+    var log = jwf$getLogger();
+    log.info("ActivityExecutor doCatchException!", exception);
+    //设置context的exception
+    //推送context进入error状态
+
+    var activityContext = this._activityContext;
+
+    //使activity进入error状态
+    $jwf.raiseError(activityContext, exception);
+}
+
+//当activityState变成error的时候会被调用
+//processRuntimeError，处理在activityContext之间的异常的传递
+function jsWorkFlow_ActivityExecutor$processRuntimeError(eventArgs) {
+    var log = jwf$getLogger();
+    log.debug("ActivityExecutor processRuntimeError!");
+
+    var activityContext = this._activityContext;
+    var data = eventArgs.get_data();
+    var oldState = data.oldState;
+    var curState = data.curState;
+
+    //检查当前的executor上是否存在error Handler，如果有，调用其执行
+    //如果没有错误的恢复处理，将error状态向parentContext传递
+    //如果有errorHandler，errorhandler会通过
+
+    //触发注册的error事件，如果有error的handler，会在error期间将activity的状态变更成非error的状态
+    this._events.raiseEvent('error', eventArgs);
+
+    //如果还是错误状态，将错误状态从当前的activity向上传递
+    if (activityContext.get_activityState() === jsWorkFlow.ActivityState.error) {
+        //向上传递错误信息
+        $jwf._deliverError(activityContext);
+    }
+
+}
+
+function jsWorkFlow_ActivityExecutor$doErrorRecovery(activityState) {
+    var log = jwf$getLogger();
+    log.debug("ActivityExecutor doErrorRecovery!");
+    //修正activityContext中的异常，并使activityContext进入指定的状态
+    var activityContext = this._activityContext;
+    if (activityContext.get_activityState() !== jsWorkFlow.ActivityState.error) {
+        //重复错误恢复？
+        log.error("activityState is not [jsWorkFlow.ActivityState.error]!");
+        
+        return;
+    }
+
+    $jwf._recoverError(activityContext, activityState);
+}
+
 //触发init相关事件
 function jsWorkFlow_ActivityExecutor$raiseInitEvent(eventArgs) {
     var log = jwf$getLogger();
@@ -1638,7 +1708,6 @@ function jsWorkFlow_ActivityExecutor$raiseCompleteEvent(eventArgs) {
     //触发注册的postComplete事件
     this._events.raiseEvent('postComplete', eventArgs);
 }
-
 
 
 function jsWorkFlow_ActivityExecutor$add_preInit(handler) {
@@ -1677,12 +1746,14 @@ jsWorkFlow.ActivityExecutor.prototype = {
     _application: null,
     _activity: null,
     _activityContext: null,
+    _parentContext: null,
     _events: null,
     //应该包含activity，提供activity的执行的上下文环境
     dispose: jsWorkFlow_ActivityExecutor$dispose,
 
     //property
     get_activityContext: jsWorkFlow_ActivityExecutor$get_activityContext,
+    get_parentContext: jsWorkFlow_ActivityExecutor$get_parentContext,
     //method
     //内部使用，job的callback的handler
     doJobCallback: jsWorkFlow_ActivityExecutor$doJobCallback,
@@ -1692,6 +1763,12 @@ jsWorkFlow.ActivityExecutor.prototype = {
     doInit: jsWorkFlow_ActivityExecutor$doInit,
     //执行complete相关操作
     doComplete: jsWorkFlow_ActivityExecutor$doComplete,
+    //俘获运行期的异常
+    doCatchException: jsWorkFlow_ActivityExecutor$doCatchException,
+    //处理运行期的错误
+    processRuntimeError: jsWorkFlow_ActivityExecutor$processRuntimeError,
+    //从错误状态中恢复
+    doErrorRecovery: jsWorkFlow_ActivityExecutor$doErrorRecovery,
     //events
     //事件触发
     raiseInitEvent: jsWorkFlow_ActivityExecutor$raiseInitEvent,

@@ -110,10 +110,7 @@ function jsWorkFlow_Activities_WhileActivity$doEvalCondition(context) {
 
     //构造ActivityExecutor执行conditionActivity
     var application = context.get_application();
-    var activityExecutor = new jsWorkFlow.ActivityExecutor(application, activity);
-
-    //将上下文的数据存放在activityExecutor之中
-    activityExecutor.parentContext = context;
+    var activityExecutor = new jsWorkFlow.ActivityExecutor(application, activity, context);
 
     activityExecutor.add_postComplete(this._doEvalConditionCompleteHandler);
 
@@ -128,7 +125,7 @@ function jsWorkFlow_Activities_WhileActivity$doEvalConditionCompleteHandler(send
     //根据condition的执行结果，来执行
     var context = eventArgs.get_context();
     var executor = context.get_executor();
-    var parentContext = executor.parentContext;
+    var parentContext = executor.get_parentContext();
 
     //从context取执行结果
     var condition = context.get_result();
@@ -159,10 +156,7 @@ function jsWorkFlow_Activities_WhileActivity$doExecuteBody(context, condition) {
     }
 
     var application = context.get_application();
-    var activityExecutor = new jsWorkFlow.ActivityExecutor(application, activity);
-
-    //将上下文的数据存放在activityExecutor之中
-    activityExecutor.parentContext = context;
+    var activityExecutor = new jsWorkFlow.ActivityExecutor(application, activity, context);
 
     activityExecutor.add_postComplete(this._doExecuteBodyCompleteHandler);
 
@@ -176,7 +170,7 @@ function jsWorkFlow_Activities_WhileActivity$doExecuteBodyCompleteHandler(sender
 
     var context = eventArgs.get_context();
     var executor = context.get_executor();
-    var parentContext = executor.parentContext;
+    var parentContext = executor.get_parentContext();
 
     //将activity的执行解结果作为自身的结果
     var result = context.get_result();

@@ -137,10 +137,9 @@ function jsWorkFlow_Activities_SequenceActivity$doExecActivity(context, index) {
     //选择activity，并执行
     var application = context.get_application();
     var activity = this._activities[index];
-    var activityExecutor = new jsWorkFlow.ActivityExecutor(application, activity);
+    var activityExecutor = new jsWorkFlow.ActivityExecutor(application, activity, context);
 
     //将上下文的数据存放在activityExecutor之中
-    activityExecutor.parentContext = context;
     activityExecutor.currentIndex = index;
 
     activityExecutor.add_postComplete(this._doActivityCompleteHandler);
@@ -158,11 +157,10 @@ function jsWorkFlow_Activities_SequenceActivity$doActivityCompleteHandler(sender
     //post complete事件
     var context = eventArgs.get_context();
     var executor = context.get_executor();
-    var parentContext = executor.parentContext;
+    var parentContext = executor.get_parentContext();
     var currentIndex = executor.currentIndex;
 
     //cleanup old executor
-    executor.parentContext = null;
     executor.remove_postComplete(this._doActivityCompleteHandler);
 
     //set last context's result as current context's result

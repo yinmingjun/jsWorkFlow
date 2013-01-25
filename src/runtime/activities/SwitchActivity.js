@@ -210,7 +210,7 @@ function jsWorkFlow_Activities_SwitchActivity$doEvalCondition(context) {
     }
 
     var application = context.get_application();
-    var activityExecutor = new jsWorkFlow.ActivityExecutor(application, activity);
+    var activityExecutor = new jsWorkFlow.ActivityExecutor(application, activity, context);
 
     //将上下文的数据存放在activityExecutor之中
     activityExecutor.parentContext = context;
@@ -227,7 +227,7 @@ function jsWorkFlow_Activities_SwitchActivity$doEvalConditionCompleteHandler(sen
 
     var context = eventArgs.get_context();
     var executor = context.get_executor();
-    var parentContext = executor.parentContext;
+    var parentContext = executor.get_parentContext();
 
     //从context取执行结果
     var condition = context.get_result();
@@ -270,10 +270,9 @@ function jsWorkFlow_Activities_SwitchActivity$doEvalCaseCondition(context, condi
     }
 
     var application = context.get_application();
-    var activityExecutor = new jsWorkFlow.ActivityExecutor(application, activity);
+    var activityExecutor = new jsWorkFlow.ActivityExecutor(application, activity, context);
 
     //将上下文的数据存放在activityExecutor之中
-    activityExecutor.parentContext = context;
     activityExecutor.condition = condition;
     activityExecutor.currentIndex = index;
 
@@ -289,7 +288,7 @@ function jsWorkFlow_Activities_SwitchActivity$doEvalCaseConditionCompleteHandler
 
     var context = eventArgs.get_context();
     var executor = context.get_executor();
-    var parentContext = executor.parentContext;
+    var parentContext = executor.get_parentContext();
     var condition = executor.condition;
     var index = executor.currentIndex;
 
@@ -329,10 +328,7 @@ function jsWorkFlow_Activities_SwitchActivity$doExecuteCaseBody(context, index) 
     }
 
     var application = context.get_application();
-    var activityExecutor = new jsWorkFlow.ActivityExecutor(application, activity);
-
-    //将上下文的数据存放在activityExecutor之中
-    activityExecutor.parentContext = context;
+    var activityExecutor = new jsWorkFlow.ActivityExecutor(application, activity, context);
 
     activityExecutor.add_postComplete(this._doExecuteCaseBodyCompleteHandler);
 
@@ -346,7 +342,7 @@ function jsWorkFlow_Activities_SwitchActivity$doExecuteCaseBodyCompleteHandler(s
 
     var context = eventArgs.get_context();
     var executor = context.get_executor();
-    var parentContext = executor.parentContext;
+    var parentContext = executor.get_parentContext();
 
     //执行完case body，可以结束switch activity的执行了
     $jwf.endActivity(parentContext);
@@ -369,10 +365,7 @@ function jsWorkFlow_Activities_SwitchActivity$doExecuteElseCase(context) {
     //执行对应的activity
 
     var application = context.get_application();
-    var activityExecutor = new jsWorkFlow.ActivityExecutor(application, activity);
-
-    //将上下文的数据存放在activityExecutor之中
-    activityExecutor.parentContext = context;
+    var activityExecutor = new jsWorkFlow.ActivityExecutor(application, activity, context);
 
     activityExecutor.add_postComplete(this._doExecuteElseCaseCompleteHandler);
 
@@ -386,7 +379,7 @@ function jsWorkFlow_Activities_SwitchActivity$doExecuteElseCaseCompleteHandler(s
 
     var context = eventArgs.get_context();
     var executor = context.get_executor();
-    var parentContext = executor.parentContext;
+    var parentContext = executor.get_parentContext();
 
     //执行完case body，可以结束switch activity的执行了
     $jwf.endActivity(parentContext);
