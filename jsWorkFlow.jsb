@@ -20,6 +20,7 @@
     <include name="src\runtime\activities\FunctionActivity.js" />
     <include name="src\runtime\activities\IfElseActivity.js" />
     <include name="src\runtime\activities\NoopActivity.js" />
+    <include name="src\runtime\activities\GetExceptionActivity.js" />
     <include name="src\runtime\activities\ContextDataActivity.js" />
     <include name="src\runtime\activities\ParallelActivity.js" />
     <include name="src\runtime\activities\SequenceActivity.js" />
@@ -33,6 +34,7 @@
     <include name="src\runtime\designer\ActivityDesigner.js" />
     <include name="src\runtime\activities\TryCatchActivity.js" />
     <include name="src\runtime\activities\RaiseExceptionActivity.js" />
+    <include name="src\runtime\activities\GetTypeNameActivity.js" />
   </target>
   <file name="src\runtime\designer\ActivityDesigner.js" path="runtime\designer" />
   <file name="src\runtime\designer\PrimaryValueDesigner.js" path="runtime\designer" />
@@ -44,4 +46,6 @@
   <file name="src\runtime\activities\RaiseExceptionActivity.js" path="runtime\activities" />
   <file name="src\runtime\activities\TryCatchActivity.js" path="runtime\activities" />
   <file name="src\runtime\log.js" path="runtime" />
+  <file name="src\runtime\activities\GetExceptionActivity.js" path="runtime\activities" />
+  <file name="src\runtime\activities\GetTypeNameActivity.js" path="runtime\activities" />
 </project>

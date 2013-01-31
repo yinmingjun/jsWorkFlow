@@ -10,8 +10,6 @@
 
 Type.registerNamespace('jsWorkFlow.Activities');
 
-//TODO:
-//    Raise exception with message
 //////////////////////////////////////////////////////////////////////////////////////////
 //RaiseExceptionActivity
 //
@@ -25,6 +23,7 @@ jsWorkFlow.Activities.RaiseExceptionActivity = function jsWorkFlow_Activities_Ra
 
     jsWorkFlow.Activities.RaiseExceptionActivity.initializeBase(this);
 
+    this._exceptionActivity = exceptionActivity;
     this._doEvalExceptionActivityCompleteHandler = Function.createDelegate(this, this.doEvalExceptionActivityCompleteHandler);
 
 };

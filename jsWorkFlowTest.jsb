@@ -16,6 +16,8 @@
     <include name="test\testWhile.js" />
     <include name="test\testSwitch.js" />
     <include name="test\testContextData.js" />
+    <include name="test\testTryCatch.js" />
+    <include name="test\testGetTypeName.js" />
   </target>
   <file name="test\testIfElse.js" path="" />
   <file name="test\testDelay.js" path="" />
@@ -27,4 +29,6 @@
   <file name="test\testStateMachine.js" path="" />
   <file name="test\testContextData.js" path="" />
   <file name="test\testLogicalOpt.js" path="" />
+  <file name="test\testTryCatch.js" path="" />
+  <file name="test\testGetTypeName.js" path="" />
 </project>

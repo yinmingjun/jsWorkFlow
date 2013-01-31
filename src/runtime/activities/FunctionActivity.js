@@ -142,6 +142,8 @@ jsWorkFlow.Activities.FunctionActivity.prototype = {
     get_func: jsWorkFlow_Activities_FunctionActivity$get_func,
     set_func: jsWorkFlow_Activities_FunctionActivity$set_func,
     //method
+    loadSerializeContext: jsWorkFlow_Activities_FunctionActivity$loadSerializeContext,
+    saveSerializeContext: jsWorkFlow_Activities_FunctionActivity$saveSerializeContext,
     execute: jsWorkFlow_Activities_FunctionActivity$execute
 };
 

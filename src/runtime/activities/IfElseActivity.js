@@ -226,6 +226,8 @@ jsWorkFlow.Activities.IfElseActivity.prototype = {
     get_elseActivity: jsWorkFlow_Activities_IfElseActivity$get_elseActivity,
     set_elseActivity: jsWorkFlow_Activities_IfElseActivity$set_elseActivity,
     //method
+    loadSerializeContext: jsWorkFlow_Activities_IfElseActivity$loadSerializeContext,
+    saveSerializeContext: jsWorkFlow_Activities_IfElseActivity$saveSerializeContext,
     doEvalCondition: jsWorkFlow_Activities_IfElseActivity$doEvalCondition,
     doEvalConditionCompleteHandler: jsWorkFlow_Activities_IfElseActivity$doEvalConditionCompleteHandler,
     doExecuteBody: jsWorkFlow_Activities_IfElseActivity$doExecuteBody,

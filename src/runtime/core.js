@@ -209,7 +209,6 @@ function jsWorkFlow_Application$forceStop() {
             //释放job
             job.dispose();
         } catch (e) {
-            var log = jwf$getLogger();
             log.error("app catch exception in forceStop!", e);
         }
     }
@@ -626,6 +625,22 @@ jsWorkFlow.ActivityHelper._recoverError = function jsWorkFlow_ActivityHelper$_re
 
 }
 
+//获取指定栈向上的栈中的错误信息
+jsWorkFlow.ActivityHelper._getErrorInfo = function jsWorkFlow_ActivityHelper$_getErrorInfo(activityContext) {
+    var errorInfo = null;
+    while (activityContext) {
+        if (activityContext.get_activityState() !== jsWorkFlow.ActivityState.error) {
+            activityContext = activityContext.get_parentContext();
+            continue;
+        }
+
+        //获取error信息
+        errorInfo = activityContext.get_errorInfo();
+        break;
+    }
+
+    return errorInfo;
+}
 
 //查找Local数据项helper
 jsWorkFlow.ActivityHelper.getLocalDataItem = function jsWorkFlow_ActivityHelper$getLocalDataItem(context, key) {
@@ -639,7 +654,7 @@ jsWorkFlow.ActivityHelper.getLocalData = function jsWorkFlow_ActivityHelper$getL
     return retval;
 }
 
-jsWorkFlow.ActivityHelper.setAppData = function jsWorkFlow_ActivityHelper$setAppData(context, key, value) {
+jsWorkFlow.ActivityHelper.setLocalData = function jsWorkFlow_ActivityHelper$setLocalData(context, key, value) {
     context.setData(key, value);
 }
 
@@ -914,11 +929,13 @@ function jsWorkFlow_Activity$notifyStateChanged(context, oldState, curState) {
     var eventArgs = new jsWorkFlow.ActivityEventArgs(context, data);
 
     //如果是状态不是从error迁移过来，可以通知事件的变更
-    //从error状态恢复，简单的将activityContext的状态设置成目标状态，不通知状态的迁移
+    //从error状态恢复(oldState是error，而curState不是error)，简单的将activityContext的状态设置成目标状态，不通知状态的迁移
     if (oldState === jsWorkFlow.ActivityState.error) {
-        this._events.raiseEvent('errorRecovery', eventArgs);
-        log.debug("Activity notifyStateChanged jsWorkFlow.ActivityState.start!");
-        return;
+        if (curState !== jsWorkFlow.ActivityState.error) {
+            this._events.raiseEvent('errorRecovery', eventArgs);
+            log.debug("Activity notifyStateChanged jsWorkFlow.ActivityState.start!");
+            return;
+        }
     }
 
 
@@ -1297,6 +1314,9 @@ jsWorkFlow.ApplicationContext.registerClass('jsWorkFlow.ApplicationContext', jsW
 //的执行路径。
 //
 jsWorkFlow.ActivityErrorInfo = function jsWorkFlow_ActivityErrorInfo(originalContext, exception) {
+    this._originalContext = originalContext;
+    this._exception = exception;
+
 }
 
 function jsWorkFlow_ActivityErrorInfo$get_originalContext() {
@@ -1397,8 +1417,8 @@ function jsWorkFlow_ActivityContext$set_activityState(value) {
     var oldState = this._activityState;
     var curState = value;
 
-    //状态相同不触发状态变更
-    if (oldState == value) {
+    //状态相同不触发状态变更(jsWorkFlow.ActivityState.error每次都触发状态变更，允许error状态的叠加)
+    if ((oldState == value) && (value !== jsWorkFlow.ActivityState.error)) {
         return;
     }
 
@@ -1525,6 +1545,7 @@ function jsWorkFlow_ActivityExecutor$dispose() {
     this._activity = null;
     this._activityContext = null;
     this._events = null;
+    this._deliverError = true;
 }
 
 function jsWorkFlow_ActivityExecutor$get_activityContext() {
@@ -1534,6 +1555,16 @@ function jsWorkFlow_ActivityExecutor$get_activityContext() {
 function jsWorkFlow_ActivityExecutor$get_parentContext() {
     return this._parentContext;
 }
+
+//是否向上提交错误
+function jsWorkFlow_ActivityExecutor$get_deliverError() {
+    return this._deliverError;
+}
+
+function jsWorkFlow_ActivityExecutor$set_deliverError(value) {
+    this._deliverError = !!value;
+}
+
 
 function _jwf$ae$run_and_check(activityContext, callback, callbackContext) {
 
@@ -1656,11 +1687,18 @@ function jsWorkFlow_ActivityExecutor$processRuntimeError(eventArgs) {
     //触发注册的error事件，如果有error的handler，会在error期间将activity的状态变更成非error的状态
     this._events.raiseEvent('error', eventArgs);
 
-    //如果还是错误状态，将错误状态从当前的activity向上传递
+    //如果还是错误状态，根据executor的deliverError决定是否将错误状态从当前的activity向上传递
     if (activityContext.get_activityState() === jsWorkFlow.ActivityState.error) {
-        //向上传递错误信息
-        $jwf._deliverError(activityContext);
+        //除了deliverError标志，另外还需要检查oldState标志，如果是error向error状态迁移，
+        //说明在executor的error处理上下文中又产生了一次error，这种情况下也需要向上传递。
+        if (this.get_deliverError() || (oldState === jsWorkFlow.ActivityState.error)) {
+            //向上传递错误信息
+            $jwf._deliverError(activityContext);
+        }
     }
+
+    this._events.raiseEvent('errorComplete', eventArgs);
+
 
 }
 
@@ -1742,18 +1780,40 @@ function jsWorkFlow_ActivityExecutor$remove_postComplete(handler) {
     this._events.removeHandler('postComplete', handler);
 }
 
+function jsWorkFlow_ActivityExecutor$add_error(handler) {
+    this._events.addHandler('error', handler);
+}
+
+function jsWorkFlow_ActivityExecutor$remove_error(handler) {
+    this._events.removeHandler('error', handler);
+}
+
+
+//errorComplete事件，做activity运行期异常的修正
+function jsWorkFlow_ActivityExecutor$add_errorComplete(handler) {
+    this._events.addHandler('errorComplete', handler);
+}
+
+function jsWorkFlow_ActivityExecutor$remove_errorComplete(handler) {
+    this._events.removeHandler('errorComplete', handler);
+}
+
 jsWorkFlow.ActivityExecutor.prototype = {
     _application: null,
     _activity: null,
     _activityContext: null,
     _parentContext: null,
     _events: null,
+    _deliverError: true,
     //应该包含activity，提供activity的执行的上下文环境
     dispose: jsWorkFlow_ActivityExecutor$dispose,
 
     //property
     get_activityContext: jsWorkFlow_ActivityExecutor$get_activityContext,
     get_parentContext: jsWorkFlow_ActivityExecutor$get_parentContext,
+    //是否向上提交错误
+    get_deliverError: jsWorkFlow_ActivityExecutor$get_deliverError,
+    set_deliverError: jsWorkFlow_ActivityExecutor$set_deliverError,
     //method
     //内部使用，job的callback的handler
     doJobCallback: jsWorkFlow_ActivityExecutor$doJobCallback,
@@ -1784,7 +1844,13 @@ jsWorkFlow.ActivityExecutor.prototype = {
     remove_complete: jsWorkFlow_ActivityExecutor$remove_complete,
     //postComplete事件，做activity执行结束后的清理工作
     add_postComplete: jsWorkFlow_ActivityExecutor$add_postComplete,
-    remove_postComplete: jsWorkFlow_ActivityExecutor$remove_postComplete
+    remove_postComplete: jsWorkFlow_ActivityExecutor$remove_postComplete,
+    //error事件，做activity运行期异常的修正
+    add_error: jsWorkFlow_ActivityExecutor$add_error,
+    remove_error: jsWorkFlow_ActivityExecutor$remove_error,
+    //errorComplete事件，做activity运行期异常的修正
+    add_errorComplete: jsWorkFlow_ActivityExecutor$add_errorComplete,
+    remove_errorComplete: jsWorkFlow_ActivityExecutor$remove_errorComplete
 };
 
 //class method
