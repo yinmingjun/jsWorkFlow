@@ -8,7 +8,11 @@
 *
 */
 
-Type.registerNamespace('jsWorkFlow.Activities');
+//require namsepace
+//jsWorkFlow.Activities namespace registed at core
+jsoop.ns('jsWorkFlow.Activities', true);
+var jsWorkFlow = jsoop.ns('jsWorkFlow');
+
 
 //////////////////////////////////////////////////////////////////////////////////////////
 //SwitchActivity
@@ -23,16 +27,16 @@ jsWorkFlow.Activities.SwitchActivity = function jsWorkFlow_Activities_SwitchActi
     var log = jwf$getLogger();
     log.debug("jsWorkFlow.Activities.SwitchActivity create!");
 
-    jsWorkFlow.Activities.SwitchActivity.initializeBase(this);
+    jsoop.initializeBase(jsWorkFlow.Activities.SwitchActivity, this);
 
     this._conditionActivity = conditionActivity ? conditionActivity : null;
     this._elseActivity = elseActivity ? elseActivity : null;
     this._allCase = allCase ? allCase : [];
 
-    this._doEvalConditionCompleteHandler = Function.createDelegate(this, this.doEvalConditionCompleteHandler);
-    this._doEvalCaseConditionCompleteHandler = Function.createDelegate(this, this.doEvalCaseConditionCompleteHandler);
-    this._doExecuteCaseBodyCompleteHandler = Function.createDelegate(this, this.doExecuteCaseBodyCompleteHandler);
-    this._doExecuteElseCaseCompleteHandler = Function.createDelegate(this, this.doExecuteElseCaseCompleteHandler);
+    this._doEvalConditionCompleteHandler = jsoop.createDelegate(this, this.doEvalConditionCompleteHandler);
+    this._doEvalCaseConditionCompleteHandler = jsoop.createDelegate(this, this.doEvalCaseConditionCompleteHandler);
+    this._doExecuteCaseBodyCompleteHandler = jsoop.createDelegate(this, this.doExecuteCaseBodyCompleteHandler);
+    this._doExecuteElseCaseCompleteHandler = jsoop.createDelegate(this, this.doExecuteElseCaseCompleteHandler);
 
 };
 
@@ -44,7 +48,7 @@ function jsWorkFlow_Activities_SwitchActivity$dispose() {
     this._elseActivity = null;
     this._allCase = [];
 
-    jsWorkFlow.Activities.SwitchActivity.callBaseMethod(this, 'dispose');
+    jsoop.callBaseMethod(jsWorkFlow.Activities.SwitchActivity, this, 'dispose');
 }
 
 
@@ -79,15 +83,15 @@ function jsWorkFlow_Activities_SwitchActivity$loadSerializeContext(serializeCont
     log.debug("jsWorkFlow.Activities.SwitchActivity loadSerializeContext!");
 
     //检查类型 ===> 这是规范
-    if (serializeContext['_@_activityType'] !== this.getType().getName()) {
-        throw Error.invalidOperation("loadSerializeContext missmatch type!");
+    if (serializeContext['_@_activityType'] !== 'jsWorkFlow.Activities.SwitchActivity') {
+        throw jsoop.errorInvalidOperation("loadSerializeContext missmatch type!");
     }
 
 
     //恢复base
     var baseSerializeContext = serializeContext['_@_base'];
 
-    jsWorkFlow.Activities.SwitchActivity.callBaseMethod(this, 'loadSerializeContext', [baseSerializeContext]);
+    jsoop.callBaseMethod(jsWorkFlow.Activities.SwitchActivity, this, 'loadSerializeContext', [baseSerializeContext]);
 
     //恢复自身
     var conditionActivitySC = serializeContext["conditionActivity"];
@@ -108,7 +112,7 @@ function jsWorkFlow_Activities_SwitchActivity$loadSerializeContext(serializeCont
             caseItem["key"] = $jwf.loadActivity(caseItemSC["key"]);
             caseItem["value"] = $jwf.loadActivity(caseItemSC["value"]);
 
-            Array.add(allCase, caseItem);
+            jsoop.arrayAdd(allCase, caseItem);
         }
     }
 
@@ -121,7 +125,7 @@ function jsWorkFlow_Activities_SwitchActivity$saveSerializeContext(serializeCont
     log.debug("jsWorkFlow.Activities.SwitchActivity saveSerializeContext!");
 
     //保存类型 ===> 这是规范
-    serializeContext['_@_activityType'] = this.getType().getName();
+    serializeContext['_@_activityType'] = 'jsWorkFlow.Activities.SwitchActivity';
 
     //保存自身
     var conditionActivity = this.get_conditionActivity();
@@ -140,7 +144,7 @@ function jsWorkFlow_Activities_SwitchActivity$saveSerializeContext(serializeCont
             caseItemSC["key"] = $jwf.saveActivity(caseItem["key"]);
             caseItemSC["value"] = $jwf.saveActivity(caseItem["value"]);
 
-            Array.add(allCaseSC, caseItemSC);
+            jsoop.arrayAdd(allCaseSC, caseItemSC);
         }
     }
 
@@ -149,7 +153,7 @@ function jsWorkFlow_Activities_SwitchActivity$saveSerializeContext(serializeCont
     //保存base
     var baseSerializeContext = {};
 
-    jsWorkFlow.Activities.SwitchActivity.callBaseMethod(this, 'saveSerializeContext', [baseSerializeContext]);
+    jsoop.callBaseMethod(jsWorkFlow.Activities.SwitchActivity, this, 'saveSerializeContext', [baseSerializeContext]);
 
     serializeContext['_@_base'] = baseSerializeContext;
 }
@@ -164,7 +168,7 @@ function jsWorkFlow_Activities_SwitchActivity$addCase(caseConditionActivity, cas
 
 function jsWorkFlow_Activities_SwitchActivity$addCaseItem(caseItem) {
     var allCase = this.get_allCase();
-    Array.add(allCase, caseItem);
+    jsoop.arrayAdd(allCase, caseItem);
 }
 
 function jsWorkFlow_Activities_SwitchActivity$getCaseCount() {
@@ -391,7 +395,7 @@ function jsWorkFlow_Activities_SwitchActivity$execute(context) {
     var log = jwf$getLogger();
     log.debug("jsWorkFlow.Activities.SwitchActivity execute!");
 
-    jsWorkFlow.Activities.SwitchActivity.callBaseMethod(this, 'execute', [context]);
+    jsoop.callBaseMethod(jsWorkFlow.Activities.SwitchActivity, this, 'execute', [context]);
 
     //初始化是否执行case的标记
     context.runCase = false;
@@ -437,6 +441,7 @@ jsWorkFlow.Activities.SwitchActivity.prototype = {
     execute: jsWorkFlow_Activities_SwitchActivity$execute
 };
 
-jsWorkFlow.Activities.SwitchActivity.registerClass('jsWorkFlow.Activities.SwitchActivity', jsWorkFlow.Activity);
-
+jsoop.registerClass(
+    jsoop.setTypeName(jsWorkFlow.Activities.SwitchActivity, 'jsWorkFlow.Activities.SwitchActivity'), 
+    jsWorkFlow.Activity);
 

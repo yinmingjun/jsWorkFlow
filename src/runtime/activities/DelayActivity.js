@@ -8,7 +8,10 @@
 *
 */
 
-Type.registerNamespace('jsWorkFlow.Activities');
+//require namsepace
+//jsWorkFlow.Activities namespace registed at core
+jsoop.ns('jsWorkFlow.Activities', true);
+var jsWorkFlow = jsoop.ns('jsWorkFlow');
 
 //////////////////////////////////////////////////////////////////////////////////////////
 //DelayActivity，延迟执行时间
@@ -19,7 +22,7 @@ jsWorkFlow.Activities.DelayActivity = function jsWorkFlow_Activities_DelayActivi
     var log = jwf$getLogger();
     log.debug("jsWorkFlow.Activities.DelayActivity create!");
 
-    jsWorkFlow.Activities.DelayActivity.initializeBase(this);
+    jsoop.initializeBase(jsWorkFlow.Activities.DelayActivity, this);
     this._delayTime = delayTime;
 };
 
@@ -27,7 +30,7 @@ function jsWorkFlow_Activities_DelayActivity$dispose() {
     var log = jwf$getLogger();
     log.debug("jsWorkFlow.Activities.DelayActivity dispose!");
 
-    jsWorkFlow.Activities.DelayActivity.callBaseMethod(this, 'dispose');
+    jsoop.callBaseMethod(jsWorkFlow.Activities.DelayActivity, this, 'dispose');
 }
 
 function jsWorkFlow_Activities_DelayActivity$get_delayTime() {
@@ -44,14 +47,14 @@ function jsWorkFlow_Activities_DelayActivity$loadSerializeContext(serializeConte
     log.debug("jsWorkFlow.Activities.DelayActivity loadSerializeContext!");
 
     //检查类型 ===> 这是规范
-    if (serializeContext['_@_activityType'] !== this.getType().getName()) {
-        throw Error.invalidOperation("loadSerializeContext missmatch type!");
+    if (serializeContext['_@_activityType'] !== 'jsWorkFlow.Activities.DelayActivity') {
+        throw jsoop.errorInvalidOperation("loadSerializeContext missmatch type!");
     }
 
     //恢复base
     var baseSerializeContext = serializeContext['_@_base'];
 
-    jsWorkFlow.Activities.DelayActivity.callBaseMethod(this, 'loadSerializeContext', [baseSerializeContext]);
+    jsoop.callBaseMethod(jsWorkFlow.Activities.DelayActivity, this, 'loadSerializeContext', [baseSerializeContext]);
 
     //恢复自身
     this.set_delayTime(serializeContext['delayTime']);
@@ -65,7 +68,7 @@ function jsWorkFlow_Activities_DelayActivity$saveSerializeContext(serializeConte
 
 
     //保存类型 ===> 这是规范
-    serializeContext['_@_activityType'] = this.getType().getName();
+    serializeContext['_@_activityType'] = 'jsWorkFlow.Activities.DelayActivity';
 
     //保存自身
     serializeContext['delayTime'] = this.get_delayTime();
@@ -73,7 +76,7 @@ function jsWorkFlow_Activities_DelayActivity$saveSerializeContext(serializeConte
     //保存base
     var baseSerializeContext = {};
 
-    jsWorkFlow.Activities.DelayActivity.callBaseMethod(this, 'saveSerializeContext', [baseSerializeContext]);
+    jsoop.callBaseMethod(jsWorkFlow.Activities.DelayActivity, this, 'saveSerializeContext', [baseSerializeContext]);
 
     serializeContext['_@_base'] = baseSerializeContext;
 }
@@ -84,7 +87,7 @@ function jsWorkFlow_Activities_DelayActivity$execute(context) {
     var log = jwf$getLogger();
     log.debug("jsWorkFlow.Activities.DelayActivity execute!");
 
-    jsWorkFlow.Activities.DelayActivity.callBaseMethod(this, 'execute', [context]);
+    jsoop.callBaseMethod(jsWorkFlow.Activities.DelayActivity, this, 'execute', [context]);
 
     //通过lamda设置回调
     jsWorkFlow.setTimeout(function () {
@@ -106,6 +109,5 @@ jsWorkFlow.Activities.DelayActivity.prototype = {
 
 };
 
-jsWorkFlow.Activities.DelayActivity.registerClass('jsWorkFlow.Activities.DelayActivity', jsWorkFlow.Activity);
-
+jsoop.registerClass(jsoop.setTypeName(jsWorkFlow.Activities.DelayActivity, 'jsWorkFlow.Activities.DelayActivity'), jsWorkFlow.Activity);
 

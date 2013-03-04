@@ -8,7 +8,10 @@
 *
 */
 
-Type.registerNamespace('jsWorkFlow.Activities');
+//require namsepace
+//jsWorkFlow.Activities namespace registed at core
+jsoop.ns('jsWorkFlow.Activities', true);
+var jsWorkFlow = jsoop.ns('jsWorkFlow');
 
 //////////////////////////////////////////////////////////////////////////////////////////
 //IfElseActivity
@@ -23,14 +26,14 @@ jsWorkFlow.Activities.IfElseActivity = function jsWorkFlow_Activities_IfElseActi
     var log = jwf$getLogger();
     log.debug("jsWorkFlow.Activities.IfElseActivity create!");
 
-    jsWorkFlow.Activities.IfElseActivity.initializeBase(this);
+    jsoop.initializeBase(jsWorkFlow.Activities.IfElseActivity, this);
 
     this.set_conditionActivity(conditionActivity);
     this.set_thenActivity(thenActivity);
     this.set_elseActivity(elseActivity);
 
-    this._doEvalConditionCompleteHandler = Function.createDelegate(this, this.doEvalConditionCompleteHandler);
-    this._doExecuteBodyCompleteHandler = Function.createDelegate(this, this.doExecuteBodyCompleteHandler);
+    this._doEvalConditionCompleteHandler = jsoop.createDelegate(this, this.doEvalConditionCompleteHandler);
+    this._doExecuteBodyCompleteHandler = jsoop.createDelegate(this, this.doExecuteBodyCompleteHandler);
 };
 
 function jsWorkFlow_Activities_IfElseActivity$dispose() {
@@ -40,7 +43,7 @@ function jsWorkFlow_Activities_IfElseActivity$dispose() {
     this._conditionActivity = null;
     this._elseActivity = null;
     this._thenActivity = null;
-    jsWorkFlow.Activities.IfElseActivity.callBaseMethod(this, 'dispose');
+    jsoop.callBaseMethod(jsWorkFlow.Activities.IfElseActivity, this, 'dispose');
 }
 
 function jsWorkFlow_Activities_IfElseActivity$get_conditionActivity() {
@@ -73,14 +76,14 @@ function jsWorkFlow_Activities_IfElseActivity$loadSerializeContext(serializeCont
     log.debug("jsWorkFlow.Activities.IfElseActivity loadSerializeContext!");
 
     //检查类型 ===> 这是规范
-    if (serializeContext['_@_activityType'] !== this.getType().getName()) {
-        throw Error.invalidOperation("loadSerializeContext missmatch type!");
+    if (serializeContext['_@_activityType'] !== 'jsWorkFlow.Activities.IfElseActivity') {
+        throw jsoop.errorInvalidOperation("loadSerializeContext missmatch type!");
     }
 
     //恢复base
     var baseSerializeContext = serializeContext['_@_base'];
 
-    jsWorkFlow.Activities.IfElseActivity.callBaseMethod(this, 'loadSerializeContext', [baseSerializeContext]);
+    jsoop.callBaseMethod(jsWorkFlow.Activities.IfElseActivity, this, 'loadSerializeContext', [baseSerializeContext]);
 
 
     //恢复自身
@@ -105,7 +108,7 @@ function jsWorkFlow_Activities_IfElseActivity$saveSerializeContext(serializeCont
 
 
     //保存类型 ===> 这是规范
-    serializeContext['_@_activityType'] = this.getType().getName();
+    serializeContext['_@_activityType'] = 'jsWorkFlow.Activities.IfElseActivity';
 
     //保存自身
     serializeContext['conditionActivity'] = $jwf.saveActivity(this.get_conditionActivity());
@@ -115,7 +118,7 @@ function jsWorkFlow_Activities_IfElseActivity$saveSerializeContext(serializeCont
     //保存base
     var baseSerializeContext = {};
 
-    jsWorkFlow.Activities.IfElseActivity.callBaseMethod(this, 'saveSerializeContext', [baseSerializeContext]);
+    jsoop.callBaseMethod(jsWorkFlow.Activities.IfElseActivity, this, 'saveSerializeContext', [baseSerializeContext]);
 
     serializeContext['_@_base'] = baseSerializeContext;
 }
@@ -205,7 +208,7 @@ function jsWorkFlow_Activities_IfElseActivity$execute(context) {
     var log = jwf$getLogger();
     log.debug("jsWorkFlow.Activities.IfElseActivity execute!");
 
-    jsWorkFlow.Activities.IfElseActivity.callBaseMethod(this, 'execute', [context]);
+    jsoop.callBaseMethod(jsWorkFlow.Activities.IfElseActivity, this, 'execute', [context]);
 
     //从执行条件开始kick out
     this.doEvalCondition(context);
@@ -235,6 +238,8 @@ jsWorkFlow.Activities.IfElseActivity.prototype = {
     execute: jsWorkFlow_Activities_IfElseActivity$execute
 };
 
-jsWorkFlow.Activities.IfElseActivity.registerClass('jsWorkFlow.Activities.IfElseActivity', jsWorkFlow.Activity);
+jsoop.registerClass(
+    jsoop.setTypeName(jsWorkFlow.Activities.IfElseActivity, 'jsWorkFlow.Activities.IfElseActivity'), 
+    jsWorkFlow.Activity);
 
 

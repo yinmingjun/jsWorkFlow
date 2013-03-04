@@ -8,7 +8,10 @@
 *
 */
 
-Type.registerNamespace('jsWorkFlow.Activities');
+//require namsepace
+//jsWorkFlow.Activities namespace registed at core
+jsoop.ns('jsWorkFlow.Activities', true);
+var jsWorkFlow = jsoop.ns('jsWorkFlow');
 
 //////////////////////////////////////////////////////////////////////////////////////////
 //GetTypeNameActivity
@@ -20,10 +23,10 @@ jsWorkFlow.Activities.GetTypeNameActivity = function jsWorkFlow_Activities_GetTy
     var log = jwf$getLogger();
     log.debug("jsWorkFlow.Activities.GetTypeNameActivity create!");
 
-    jsWorkFlow.Activities.GetTypeNameActivity.initializeBase(this);
+    jsoop.initializeBase(jsWorkFlow.Activities.GetTypeNameActivity, this);
 
     this._objActivity = objActivity;
-    this._doEvalObjActivityCompleteHandler = Function.createDelegate(this, this.doEvalObjActivityCompleteHandler);
+    this._doEvalObjActivityCompleteHandler = jsoop.createDelegate(this, this.doEvalObjActivityCompleteHandler);
 
 };
 
@@ -31,7 +34,7 @@ function jsWorkFlow_Activities_GetTypeNameActivity$dispose() {
     var log = jwf$getLogger();
     log.debug("jsWorkFlow.Activities.GetTypeNameActivity dispose!");
 
-    jsWorkFlow.Activities.GetTypeNameActivity.callBaseMethod(this, 'dispose');
+    jsoop.callBaseMethod(jsWorkFlow.Activities.GetTypeNameActivity, this, 'dispose');
 }
 
 
@@ -50,15 +53,15 @@ function jsWorkFlow_Activities_GetTypeNameActivity$loadSerializeContext(serializ
     log.debug("jsWorkFlow.Activities.GetTypeNameActivity loadSerializeContext!");
 
     //检查类型 ===> 这是规范
-    if (serializeContext['_@_activityType'] !== this.getType().getName()) {
-        throw Error.invalidOperation("loadSerializeContext missmatch type!");
+    if (serializeContext['_@_activityType'] !== 'jsWorkFlow.Activities.GetTypeNameActivity') {
+        throw jsoop.errorInvalidOperation("loadSerializeContext missmatch type!");
     }
 
 
     //恢复base
     var baseSerializeContext = serializeContext['_@_base'];
 
-    jsWorkFlow.Activities.GetTypeNameActivity.callBaseMethod(this, 'loadSerializeContext', [baseSerializeContext]);
+    jsoop.callBaseMethod(jsWorkFlow.Activities.GetTypeNameActivity, this, 'loadSerializeContext', [baseSerializeContext]);
 
     //恢复自身
     var objActivitySC = serializeContext["objActivity"];
@@ -72,7 +75,7 @@ function jsWorkFlow_Activities_GetTypeNameActivity$saveSerializeContext(serializ
     log.debug("jsWorkFlow.Activities.GetTypeNameActivity saveSerializeContext!");
 
     //保存类型 ===> 这是规范
-    serializeContext['_@_activityType'] = this.getType().getName();
+    serializeContext['_@_activityType'] = 'jsWorkFlow.Activities.GetTypeNameActivity';
 
     //保存自身
     serializeContext['objActivity'] = $jwf.saveActivity(this.get_objActivity());
@@ -80,7 +83,7 @@ function jsWorkFlow_Activities_GetTypeNameActivity$saveSerializeContext(serializ
     //保存base
     var baseSerializeContext = {};
 
-    jsWorkFlow.Activities.GetTypeNameActivity.callBaseMethod(this, 'saveSerializeContext', [baseSerializeContext]);
+    jsoop.callBaseMethod(jsWorkFlow.Activities.GetTypeNameActivity, this, 'saveSerializeContext', [baseSerializeContext]);
 
     serializeContext['_@_base'] = baseSerializeContext;
 }
@@ -148,7 +151,7 @@ function jsWorkFlow_Activities_GetTypeNameActivity$execute(context) {
     var log = jwf$getLogger();
     log.debug("jsWorkFlow.Activities.GetTypeNameActivity execute!");
 
-    jsWorkFlow.Activities.GetTypeNameActivity.callBaseMethod(this, 'execute', [context]);
+    jsoop.callBaseMethod(jsWorkFlow.Activities.GetTypeNameActivity, this, 'execute', [context]);
 
     this.doEvalObjActivity(context);
 
@@ -170,6 +173,6 @@ jsWorkFlow.Activities.GetTypeNameActivity.prototype = {
     execute: jsWorkFlow_Activities_GetTypeNameActivity$execute
 };
 
-jsWorkFlow.Activities.GetTypeNameActivity.registerClass('jsWorkFlow.Activities.GetTypeNameActivity', jsWorkFlow.Activity);
+jsoop.registerClass(jsoop.setTypeName(jsWorkFlow.Activities.GetTypeNameActivity, 'jsWorkFlow.Activities.GetTypeNameActivity'), jsWorkFlow.Activity);
 
 

@@ -8,7 +8,10 @@
 *
 */
 
-Type.registerNamespace('jsWorkFlow.Activities');
+//require namsepace
+//jsWorkFlow.Activities namespace registed at core
+jsoop.ns('jsWorkFlow.Activities', true);
+var jsWorkFlow = jsoop.ns('jsWorkFlow');
 
 //////////////////////////////////////////////////////////////////////////////////////////
 //DataContextLayer枚举，表示可以定义的数据层
@@ -24,7 +27,7 @@ jsWorkFlow.DataContextLayer.prototype = {
     global: 2         //全局，跨APP
 };
 
-jsWorkFlow.DataContextLayer.registerEnum('jsWorkFlow.DataContextLayer');
+jsoop.registerEnum(jsoop.setTypeName(jsWorkFlow.DataContextLayer, 'jsWorkFlow.DataContextLayer'));
 
 
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -41,7 +44,7 @@ jsWorkFlow.Activities.DefineContextDataActivity = function jsWorkFlow_Activities
     var log = jwf$getLogger();
     log.debug("jsWorkFlow.Activities.DefineContextDataActivity execute!");
 
-    jsWorkFlow.Activities.DefineContextDataActivity.initializeBase(this);
+    jsoop.initializeBase(jsWorkFlow.Activities.DefineContextDataActivity, this);
 
     if (typeof (dataContextLayer) === "undefined") {
         //默认数据存储在activity层级上
@@ -53,7 +56,7 @@ jsWorkFlow.Activities.DefineContextDataActivity = function jsWorkFlow_Activities
     this._dataContextLayer = dataContextLayer;
     this._isPrivate = !!isPrivate;
 
-    this._doEvalDataValueActivityCompleteHandler = Function.createDelegate(this, this.doEvalDataValueActivityCompleteHandler);
+    this._doEvalDataValueActivityCompleteHandler = jsoop.createDelegate(this, this.doEvalDataValueActivityCompleteHandler);
 
 };
 
@@ -61,7 +64,7 @@ function jsWorkFlow_Activities_DefineContextDataActivity$dispose() {
     var log = jwf$getLogger();
     log.debug("jsWorkFlow.Activities.DefineContextDataActivity dispose!");
 
-    jsWorkFlow.Activities.DefineContextDataActivity.callBaseMethod(this, 'dispose');
+    jsoop.callBaseMethod(jsWorkFlow.Activities.DefineContextDataActivity, this, 'dispose');
 
     this._dataKey = null;
     this._dataValueActivity = null;
@@ -105,14 +108,14 @@ function jsWorkFlow_Activities_DefineContextDataActivity$loadSerializeContext(se
     log.debug("jsWorkFlow.Activities.DefineContextDataActivity loadSerializeContext!");
 
     //检查类型 ===> 这是规范
-    if (serializeContext['_@_activityType'] !== this.getType().getName()) {
-        throw Error.invalidOperation("loadSerializeContext missmatch type!");
+    if (serializeContext['_@_activityType'] !== 'jsWorkFlow.Activities.DefineContextDataActivity') {
+        throw jsoop.errorInvalidOperation("loadSerializeContext missmatch type!");
     }
 
     //恢复base
     var baseSerializeContext = serializeContext['_@_base'];
 
-    jsWorkFlow.Activities.DefineContextDataActivity.callBaseMethod(this, 'loadSerializeContext', [baseSerializeContext]);
+    jsoop.callBaseMethod(jsWorkFlow.Activities.DefineContextDataActivity, this, 'loadSerializeContext', [baseSerializeContext]);
 
     //恢复自身
     //dataKey
@@ -136,7 +139,7 @@ function jsWorkFlow_Activities_DefineContextDataActivity$saveSerializeContext(se
     log.debug("jsWorkFlow.Activities.DefineContextDataActivity saveSerializeContext!");
 
     //保存类型 ===> 这是规范
-    serializeContext['_@_activityType'] = this.getType().getName();
+    serializeContext['_@_activityType'] = 'jsWorkFlow.Activities.DefineContextDataActivity';
 
     //保存自身
     //dataKey
@@ -152,7 +155,7 @@ function jsWorkFlow_Activities_DefineContextDataActivity$saveSerializeContext(se
     //保存base
     var baseSerializeContext = {};
 
-    jsWorkFlow.Activities.DefineContextDataActivity.callBaseMethod(this, 'saveSerializeContext', [baseSerializeContext]);
+    jsoop.callBaseMethod(jsWorkFlow.Activities.DefineContextDataActivity, this, 'saveSerializeContext', [baseSerializeContext]);
 
     serializeContext['_@_base'] = baseSerializeContext;
 }
@@ -183,7 +186,7 @@ function jsWorkFlow_Activities_DefineContextDataActivity$doInitContextDataValue(
     }
     else {
         //LOG Here!
-        throw Error.invalidOperation("Unknown dataContextLayer value [" + dataContextLayer + "]!");
+        throw jsoop.errorInvalidOperation("Unknown dataContextLayer value [" + dataContextLayer + "]!");
     }
     //根据
     var isPublic = !isPrivate;
@@ -225,7 +228,7 @@ function jsWorkFlow_Activities_DefineContextDataActivity$execute(context) {
     var log = jwf$getLogger();
     log.debug("jsWorkFlow.Activities.DefineContextDataActivity execute!");
 
-    jsWorkFlow.Activities.DefineContextDataActivity.callBaseMethod(this, 'execute', [context]);
+    jsoop.callBaseMethod(jsWorkFlow.Activities.DefineContextDataActivity, this, 'execute', [context]);
 
     //对dataValueActivity求值
     //将值放到dataKey之中
@@ -275,7 +278,9 @@ jsWorkFlow.Activities.DefineContextDataActivity.prototype = {
 
 };
 
-jsWorkFlow.Activities.DefineContextDataActivity.registerClass('jsWorkFlow.Activities.DefineContextDataActivity', jsWorkFlow.Activity);
+jsoop.registerClass(
+    jsoop.setTypeName(jsWorkFlow.Activities.DefineContextDataActivity, 'jsWorkFlow.Activities.DefineContextDataActivity'), 
+    jsWorkFlow.Activity);
 
 //////////////////////////////////////////////////////////////////////////////////////////
 //GetContextDataActivity
@@ -288,7 +293,7 @@ jsWorkFlow.Activities.GetContextDataActivity = function jsWorkFlow_Activities_Ge
     var log = jwf$getLogger();
     log.debug("jsWorkFlow.Activities.GetContextDataActivity execute!");
 
-    jsWorkFlow.Activities.GetContextDataActivity.initializeBase(this);
+    jsoop.initializeBase(jsWorkFlow.Activities.GetContextDataActivity, this);
 
     if (typeof (dataContextLayer) === "undefined") {
         dataContextLayer = jsWorkFlow.DataContextLayer.auto;
@@ -302,7 +307,7 @@ function jsWorkFlow_Activities_GetContextDataActivity$dispose() {
     var log = jwf$getLogger();
     log.debug("jsWorkFlow.Activities.GetContextDataActivity dispose!");
 
-    jsWorkFlow.Activities.GetContextDataActivity.callBaseMethod(this, 'dispose');
+    jsoop.callBaseMethod(jsWorkFlow.Activities.GetContextDataActivity, this, 'dispose');
 }
 
 function jsWorkFlow_Activities_GetContextDataActivity$get_dataKey() {
@@ -326,14 +331,14 @@ function jsWorkFlow_Activities_GetContextDataActivity$loadSerializeContext(seria
     log.debug("jsWorkFlow.Activities.GetContextDataActivity loadSerializeContext!");
 
     //检查类型 ===> 这是规范
-    if (serializeContext['_@_activityType'] !== this.getType().getName()) {
-        throw Error.invalidOperation("loadSerializeContext missmatch type!");
+    if (serializeContext['_@_activityType'] !== 'jsWorkFlow.Activities.GetContextDataActivity') {
+        throw jsoop.errorInvalidOperation("loadSerializeContext missmatch type!");
     }
 
     //恢复base
     var baseSerializeContext = serializeContext['_@_base'];
 
-    jsWorkFlow.Activities.GetContextDataActivity.callBaseMethod(this, 'loadSerializeContext', [baseSerializeContext]);
+    jsoop.callBaseMethod(jsWorkFlow.Activities.GetContextDataActivity, this, 'loadSerializeContext', [baseSerializeContext]);
 
     //恢复自身
     var dataKey = serializeContext["dataKey"];
@@ -350,7 +355,7 @@ function jsWorkFlow_Activities_GetContextDataActivity$saveSerializeContext(seria
 
 
     //保存类型 ===> 这是规范
-    serializeContext['_@_activityType'] = this.getType().getName();
+    serializeContext['_@_activityType'] = 'jsWorkFlow.Activities.GetContextDataActivity';
 
     //保存自身
     serializeContext["dataKey"] = this.get_dataKey();
@@ -359,7 +364,7 @@ function jsWorkFlow_Activities_GetContextDataActivity$saveSerializeContext(seria
     //保存base
     var baseSerializeContext = {};
 
-    jsWorkFlow.Activities.GetContextDataActivity.callBaseMethod(this, 'saveSerializeContext', [baseSerializeContext]);
+    jsoop.callBaseMethod(jsWorkFlow.Activities.GetContextDataActivity, this, 'saveSerializeContext', [baseSerializeContext]);
 
     serializeContext['_@_base'] = baseSerializeContext;
 }
@@ -369,7 +374,7 @@ function jsWorkFlow_Activities_GetContextDataActivity$execute(context) {
     var log = jwf$getLogger();
     log.debug("jsWorkFlow.Activities.GetContextDataActivity execute!");
 
-    jsWorkFlow.Activities.GetContextDataActivity.callBaseMethod(this, 'execute', [context]);
+    jsoop.callBaseMethod(jsWorkFlow.Activities.GetContextDataActivity, this, 'execute', [context]);
 
     var application = context.get_application();
     //根据指定的dataContextLayer获取数据，并存放于result之中
@@ -400,7 +405,7 @@ function jsWorkFlow_Activities_GetContextDataActivity$execute(context) {
         }
         else {
             //LOG Here!
-            throw Error.invalidOperation("Unknown dataContextLayer value [" + dataContextLayer + "]!");
+            throw jsoop.errorInvalidOperation("Unknown dataContextLayer value [" + dataContextLayer + "]!");
         }
 
         result = dataContext.getData(dataKey);
@@ -431,7 +436,9 @@ jsWorkFlow.Activities.GetContextDataActivity.prototype = {
     execute: jsWorkFlow_Activities_GetContextDataActivity$execute
 };
 
-jsWorkFlow.Activities.GetContextDataActivity.registerClass('jsWorkFlow.Activities.GetContextDataActivity', jsWorkFlow.Activity);
+jsoop.registerClass(
+    jsoop.setTypeName(jsWorkFlow.Activities.GetContextDataActivity, 'jsWorkFlow.Activities.GetContextDataActivity'), 
+    jsWorkFlow.Activity);
 
 
 
@@ -450,7 +457,7 @@ jsWorkFlow.Activities.SetContextDataActivity = function jsWorkFlow_Activities_Se
     log.debug("jsWorkFlow.Activities.SetContextDataActivity execute!");
 
 
-    jsWorkFlow.Activities.SetContextDataActivity.initializeBase(this);
+    jsoop.initializeBase(jsWorkFlow.Activities.SetContextDataActivity, this);
 
     if (typeof (dataContextLayer) === "undefined") {
         //默认数据存储在activity层级上
@@ -461,7 +468,7 @@ jsWorkFlow.Activities.SetContextDataActivity = function jsWorkFlow_Activities_Se
     this._dataValueActivity = dataValueActivity;
     this._dataContextLayer = dataContextLayer;
 
-    this._doEvalDataValueActivityCompleteHandler = Function.createDelegate(this, this.doEvalDataValueActivityCompleteHandler);
+    this._doEvalDataValueActivityCompleteHandler = jsoop.createDelegate(this, this.doEvalDataValueActivityCompleteHandler);
 
 };
 
@@ -469,7 +476,7 @@ function jsWorkFlow_Activities_SetContextDataActivity$dispose() {
     var log = jwf$getLogger();
     log.debug("jsWorkFlow.Activities.SetContextDataActivity dispose!");
 
-    jsWorkFlow.Activities.SetContextDataActivity.callBaseMethod(this, 'dispose');
+    jsoop.callBaseMethod(jsWorkFlow.Activities.SetContextDataActivity, this, 'dispose');
 
     this._dataKey = null;
     this._dataValueActivity = null;
@@ -505,14 +512,14 @@ function jsWorkFlow_Activities_SetContextDataActivity$loadSerializeContext(seria
     log.debug("jsWorkFlow.Activities.SetContextDataActivity loadSerializeContext!");
 
     //检查类型 ===> 这是规范
-    if (serializeContext['_@_activityType'] !== this.getType().getName()) {
-        throw Error.invalidOperation("loadSerializeContext missmatch type!");
+    if (serializeContext['_@_activityType'] !== 'jsWorkFlow.Activities.SetContextDataActivity') {
+        throw jsoop.errorInvalidOperation("loadSerializeContext missmatch type!");
     }
 
     //恢复base
     var baseSerializeContext = serializeContext['_@_base'];
 
-    jsWorkFlow.Activities.SetContextDataActivity.callBaseMethod(this, 'loadSerializeContext', [baseSerializeContext]);
+    jsoop.callBaseMethod(jsWorkFlow.Activities.SetContextDataActivity, this, 'loadSerializeContext', [baseSerializeContext]);
 
     //恢复自身
     //dataKey
@@ -536,7 +543,7 @@ function jsWorkFlow_Activities_SetContextDataActivity$saveSerializeContext(seria
 
 
     //保存类型 ===> 这是规范
-    serializeContext['_@_activityType'] = this.getType().getName();
+    serializeContext['_@_activityType'] = 'jsWorkFlow.Activities.SetContextDataActivity';
 
     //保存自身
     //dataKey
@@ -550,7 +557,7 @@ function jsWorkFlow_Activities_SetContextDataActivity$saveSerializeContext(seria
     //保存base
     var baseSerializeContext = {};
 
-    jsWorkFlow.Activities.SetContextDataActivity.callBaseMethod(this, 'saveSerializeContext', [baseSerializeContext]);
+    jsoop.callBaseMethod(jsWorkFlow.Activities.SetContextDataActivity, this, 'saveSerializeContext', [baseSerializeContext]);
 
     serializeContext['_@_base'] = baseSerializeContext;
 }
@@ -589,7 +596,7 @@ function jsWorkFlow_Activities_SetContextDataActivity$doSetContextDataValue(appl
         }
         else {
             //LOG Here!
-            throw Error.invalidOperation("Unknown dataContextLayer value [" + dataContextLayer + "]!");
+            throw jsoop.errorInvalidOperation("Unknown dataContextLayer value [" + dataContextLayer + "]!");
         }
 
         var dataItem = dataContext.getDataItem(dataKey);
@@ -638,7 +645,7 @@ function jsWorkFlow_Activities_SetContextDataActivity$execute(context) {
     var log = jwf$getLogger();
     log.debug("jsWorkFlow.Activities.SetContextDataActivity execute!");
 
-    jsWorkFlow.Activities.SetContextDataActivity.callBaseMethod(this, 'execute', [context]);
+    jsoop.callBaseMethod(jsWorkFlow.Activities.SetContextDataActivity, this, 'execute', [context]);
 
     //对dataValueActivity求值
     //将值放到dataKey之中
@@ -687,4 +694,6 @@ jsWorkFlow.Activities.SetContextDataActivity.prototype = {
 
 };
 
-jsWorkFlow.Activities.SetContextDataActivity.registerClass('jsWorkFlow.Activities.SetContextDataActivity', jsWorkFlow.Activity);
+jsoop.registerClass(
+    jsoop.setTypeName(jsWorkFlow.Activities.SetContextDataActivity, 'jsWorkFlow.Activities.SetContextDataActivity'), 
+    jsWorkFlow.Activity);

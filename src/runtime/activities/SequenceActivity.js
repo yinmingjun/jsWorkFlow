@@ -8,7 +8,12 @@
 *
 */
 
-Type.registerNamespace('jsWorkFlow.Activities');
+//require namsepace
+//jsWorkFlow.Activities namespace registed at core
+jsoop.ns('jsWorkFlow.Activities', true);
+var jsWorkFlow = jsoop.ns('jsWorkFlow');
+
+
 
 //////////////////////////////////////////////////////////////////////////////////////////
 //SequenceActivity，包装基本的activity队列，按次序执行
@@ -21,21 +26,21 @@ jsWorkFlow.Activities.SequenceActivity = function jsWorkFlow_Activities_Sequence
     var log = jwf$getLogger();
     log.debug("jsWorkFlow.Activities.SequenceActivity create!");
 
-    jsWorkFlow.Activities.SequenceActivity.initializeBase(this);
+    jsoop.initializeBase(jsWorkFlow.Activities.SequenceActivity, this);
 
     if (!activities) {
         activities = [];
     }
 
     this._activities = activities;
-    this._doActivityCompleteHandler = Function.createDelegate(this, this.doActivityCompleteHandler);
+    this._doActivityCompleteHandler = jsoop.createDelegate(this, this.doActivityCompleteHandler);
 };
 
 function jsWorkFlow_Activities_SequenceActivity$dispose() {
     var log = jwf$getLogger();
     log.debug("jsWorkFlow.Activities.SequenceActivity dispose!");
 
-    jsWorkFlow.Activities.SequenceActivity.callBaseMethod(this, 'dispose');
+    jsoop.callBaseMethod(jsWorkFlow.Activities.SequenceActivity, this, 'dispose');
 
     this._activities = null;
     this._doActivityCompleteHandler = null;
@@ -55,14 +60,14 @@ function jsWorkFlow_Activities_SequenceActivity$loadSerializeContext(serializeCo
     log.debug("jsWorkFlow.Activities.SequenceActivity loadSerializeContext!");
 
     //检查类型 ===> 这是规范
-    if (serializeContext['_@_activityType'] !== this.getType().getName()) {
-        throw Error.invalidOperation("loadSerializeContext missmatch type!");
+    if (serializeContext['_@_activityType'] !== 'jsWorkFlow.Activities.SequenceActivity') {
+        throw jsoop.errorInvalidOperation("loadSerializeContext missmatch type!");
     }
 
     //恢复base
     var baseSerializeContext = serializeContext['_@_base'];
 
-    jsWorkFlow.Activities.SequenceActivity.callBaseMethod(this, 'loadSerializeContext', [baseSerializeContext]);
+    jsoop.callBaseMethod(jsWorkFlow.Activities.SequenceActivity, this, 'loadSerializeContext', [baseSerializeContext]);
 
     //恢复自身
     var activitiesSC = serializeContext['activities'];
@@ -71,7 +76,7 @@ function jsWorkFlow_Activities_SequenceActivity$loadSerializeContext(serializeCo
     if (activitiesSC && (activitiesSC.length > 0)) {
         for (var i = 0, ilen = activitiesSC.length; i < ilen; i++) {
             var activity = $jwf.loadActivity(activitiesSC[i]);
-            Array.add(activities, activity);
+            jsoop.arrayAdd(activities, activity);
         }
     }
 
@@ -85,7 +90,7 @@ function jsWorkFlow_Activities_SequenceActivity$saveSerializeContext(serializeCo
 
 
     //保存类型 ===> 这是规范
-    serializeContext['_@_activityType'] = this.getType().getName();
+    serializeContext['_@_activityType'] = 'jsWorkFlow.Activities.SequenceActivity';
 
     //保存自身
     var activitiesSC = [];
@@ -94,7 +99,7 @@ function jsWorkFlow_Activities_SequenceActivity$saveSerializeContext(serializeCo
     if (activities && (activities.length > 0)) {
         for (var i = 0, ilen = activities.length; i < ilen; i++) {
             var activitySC = $jwf.saveActivity(activities[i]);
-            Array.add(activitiesSC, activitySC); 
+            jsoop.arrayAdd(activitiesSC, activitySC); 
         }
     }
 
@@ -103,7 +108,7 @@ function jsWorkFlow_Activities_SequenceActivity$saveSerializeContext(serializeCo
     //保存base
     var baseSerializeContext = {};
 
-    jsWorkFlow.Activities.SequenceActivity.callBaseMethod(this, 'saveSerializeContext', [baseSerializeContext]);
+    jsoop.callBaseMethod(jsWorkFlow.Activities.SequenceActivity, this, 'saveSerializeContext', [baseSerializeContext]);
 
     serializeContext['_@_base'] = baseSerializeContext;
 }
@@ -114,14 +119,14 @@ function jsWorkFlow_Activities_SequenceActivity$execute(context) {
     var log = jwf$getLogger();
     log.debug("jsWorkFlow.Activities.SequenceActivity execute!");
 
-    jsWorkFlow.Activities.SequenceActivity.callBaseMethod(this, 'execute', [context]);
+    jsoop.callBaseMethod(jsWorkFlow.Activities.SequenceActivity, this, 'execute', [context]);
 
     //从索引0开始依次执行
     this.doExecActivity(context, 0);
 }
 
 function jsWorkFlow_Activities_SequenceActivity$addActivity(activity) {
-    Array.add(this._activities, activity);
+    jsoop.arrayAdd(this._activities, activity);
 }
 
 function jsWorkFlow_Activities_SequenceActivity$doExecActivity(context, index) {
@@ -191,6 +196,8 @@ jsWorkFlow.Activities.SequenceActivity.prototype = {
 
 };
 
-jsWorkFlow.Activities.SequenceActivity.registerClass('jsWorkFlow.Activities.SequenceActivity', jsWorkFlow.Activity);
+jsoop.registerClass(
+    jsoop.setTypeName(jsWorkFlow.Activities.SequenceActivity, 'jsWorkFlow.Activities.SequenceActivity'), 
+    jsWorkFlow.Activity);
 
 

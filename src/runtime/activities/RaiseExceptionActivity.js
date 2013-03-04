@@ -8,7 +8,11 @@
 *
 */
 
-Type.registerNamespace('jsWorkFlow.Activities');
+//require namsepace
+//jsWorkFlow.Activities namespace registed at core
+jsoop.ns('jsWorkFlow.Activities', true);
+var jsWorkFlow = jsoop.ns('jsWorkFlow');
+
 
 //////////////////////////////////////////////////////////////////////////////////////////
 //RaiseExceptionActivity
@@ -21,10 +25,10 @@ jsWorkFlow.Activities.RaiseExceptionActivity = function jsWorkFlow_Activities_Ra
     log.debug("jsWorkFlow.Activities.RaiseExceptionActivity create!");
 
 
-    jsWorkFlow.Activities.RaiseExceptionActivity.initializeBase(this);
+    jsoop.initializeBase(jsWorkFlow.Activities.RaiseExceptionActivity, this);
 
     this._exceptionActivity = exceptionActivity;
-    this._doEvalExceptionActivityCompleteHandler = Function.createDelegate(this, this.doEvalExceptionActivityCompleteHandler);
+    this._doEvalExceptionActivityCompleteHandler = jsoop.createDelegate(this, this.doEvalExceptionActivityCompleteHandler);
 
 };
 
@@ -32,7 +36,7 @@ function jsWorkFlow_Activities_RaiseExceptionActivity$dispose() {
     var log = jwf$getLogger();
     log.debug("jsWorkFlow.Activities.RaiseExceptionActivity dispose!");
 
-    jsWorkFlow.Activities.RaiseExceptionActivity.callBaseMethod(this, 'dispose');
+    jsoop.callBaseMethod(jsWorkFlow.Activities.RaiseExceptionActivity, this, 'dispose');
 }
 
 function jsWorkFlow_Activities_RaiseExceptionActivity$get_exceptionActivity() {
@@ -49,15 +53,15 @@ function jsWorkFlow_Activities_RaiseExceptionActivity$loadSerializeContext(seria
     log.debug("jsWorkFlow.Activities.RaiseExceptionActivity loadSerializeContext!");
 
     //检查类型 ===> 这是规范
-    if (serializeContext['_@_activityType'] !== this.getType().getName()) {
-        throw Error.invalidOperation("loadSerializeContext missmatch type!");
+    if (serializeContext['_@_activityType'] !== 'jsWorkFlow.Activities.RaiseExceptionActivity') {
+        throw jsoop.errorInvalidOperation("loadSerializeContext missmatch type!");
     }
 
 
     //恢复base
     var baseSerializeContext = serializeContext['_@_base'];
 
-    jsWorkFlow.Activities.RaiseExceptionActivity.callBaseMethod(this, 'loadSerializeContext', [baseSerializeContext]);
+    jsoop.callBaseMethod(jsWorkFlow.Activities.RaiseExceptionActivity, this, 'loadSerializeContext', [baseSerializeContext]);
 
     //恢复自身
     var exceptionActivitySC = serializeContext["exceptionActivity"];
@@ -71,7 +75,7 @@ function jsWorkFlow_Activities_RaiseExceptionActivity$saveSerializeContext(seria
     log.debug("jsWorkFlow.Activities.RaiseExceptionActivity saveSerializeContext!");
 
     //保存类型 ===> 这是规范
-    serializeContext['_@_activityType'] = this.getType().getName();
+    serializeContext['_@_activityType'] = 'jsWorkFlow.Activities.RaiseExceptionActivity';
 
     //保存自身
     var exceptionActivity = this.get_exceptionActivity();
@@ -80,7 +84,7 @@ function jsWorkFlow_Activities_RaiseExceptionActivity$saveSerializeContext(seria
     //保存base
     var baseSerializeContext = {};
 
-    jsWorkFlow.Activities.RaiseExceptionActivity.callBaseMethod(this, 'saveSerializeContext', [baseSerializeContext]);
+    jsoop.callBaseMethod(jsWorkFlow.Activities.RaiseExceptionActivity, this, 'saveSerializeContext', [baseSerializeContext]);
 
     serializeContext['_@_base'] = baseSerializeContext;
 }
@@ -137,7 +141,7 @@ function jsWorkFlow_Activities_RaiseExceptionActivity$execute(context) {
     var log = jwf$getLogger();
     log.debug("jsWorkFlow.Activities.RaiseExceptionActivity execute!");
 
-    jsWorkFlow.Activities.RaiseExceptionActivity.callBaseMethod(this, 'execute', [context]);
+    jsoop.callBaseMethod(jsWorkFlow.Activities.RaiseExceptionActivity, this, 'execute', [context]);
 
     //获取异常信息，并抛出异常
     this.doEvalExceptionActivity(context);
@@ -161,6 +165,7 @@ jsWorkFlow.Activities.RaiseExceptionActivity.prototype = {
     execute: jsWorkFlow_Activities_RaiseExceptionActivity$execute
 };
 
-jsWorkFlow.Activities.RaiseExceptionActivity.registerClass('jsWorkFlow.Activities.RaiseExceptionActivity', jsWorkFlow.Activity);
-
+jsoop.registerClass(
+    jsoop.setTypeName(jsWorkFlow.Activities.RaiseExceptionActivity, 'jsWorkFlow.Activities.RaiseExceptionActivity'), 
+    jsWorkFlow.Activity);
 

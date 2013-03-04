@@ -8,7 +8,8 @@
 *
 */
 
-Type.registerNamespace('jsWorkFlow');
+//require namsepace
+var jsWorkFlow = jsoop.registerNamespace('jsWorkFlow');
 
 //////////////////////////////////////////////////////////////////////////////////////////
 //NullLogger，提供jsWorkFlow的默认的LOG
@@ -29,7 +30,7 @@ jsWorkFlow.NullLogger.prototype = {
     fatal: jsWorkFlow_NullLogger$dummy
 };
 
-jsWorkFlow.NullLogger.registerClass('jsWorkFlow.NullLogger');
+jsoop.registerClass(jsoop.setTypeName(jsWorkFlow.NullLogger, 'jsWorkFlow.NullLogger'));
 
 
 //////////////////////////////////////////////////////////////////////////////////////////

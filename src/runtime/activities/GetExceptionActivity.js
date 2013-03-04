@@ -8,7 +8,10 @@
 *
 */
 
-Type.registerNamespace('jsWorkFlow.Activities');
+//require namsepace
+//jsWorkFlow.Activities namespace registed at core
+jsoop.ns('jsWorkFlow.Activities', true);
+var jsWorkFlow = jsoop.ns('jsWorkFlow');
 
 //////////////////////////////////////////////////////////////////////////////////////////
 //GetExceptionActivity
@@ -25,7 +28,7 @@ jsWorkFlow.Activities.GetExceptionActivity = function jsWorkFlow_Activities_GetE
     log.debug("jsWorkFlow.Activities.GetExceptionActivity create!");
 
 
-    jsWorkFlow.Activities.GetExceptionActivity.initializeBase(this);
+    jsoop.initializeBase(jsWorkFlow.Activities.GetExceptionActivity, this);
 
 };
 
@@ -33,7 +36,7 @@ function jsWorkFlow_Activities_GetExceptionActivity$dispose() {
     var log = jwf$getLogger();
     log.debug("jsWorkFlow.Activities.GetExceptionActivity dispose!");
 
-    jsWorkFlow.Activities.GetExceptionActivity.callBaseMethod(this, 'dispose');
+    jsoop.callBaseMethod(jsWorkFlow.Activities.GetExceptionActivity, this, 'dispose');
 }
 
 
@@ -43,15 +46,15 @@ function jsWorkFlow_Activities_GetExceptionActivity$loadSerializeContext(seriali
     log.debug("jsWorkFlow.Activities.GetExceptionActivity loadSerializeContext!");
 
     //检查类型 ===> 这是规范
-    if (serializeContext['_@_activityType'] !== this.getType().getName()) {
-        throw Error.invalidOperation("loadSerializeContext missmatch type!");
+    if (serializeContext['_@_activityType'] !== 'jsWorkFlow.Activities.GetExceptionActivity') {
+        throw jsoop.errorInvalidOperation("loadSerializeContext missmatch type!");
     }
 
 
     //恢复base
     var baseSerializeContext = serializeContext['_@_base'];
 
-    jsWorkFlow.Activities.GetExceptionActivity.callBaseMethod(this, 'loadSerializeContext', [baseSerializeContext]);
+    jsoop.callBaseMethod(jsWorkFlow.Activities.GetExceptionActivity, this, 'loadSerializeContext', [baseSerializeContext]);
 
     //恢复自身
 
@@ -63,14 +66,14 @@ function jsWorkFlow_Activities_GetExceptionActivity$saveSerializeContext(seriali
     log.debug("jsWorkFlow.Activities.GetExceptionActivity saveSerializeContext!");
 
     //保存类型 ===> 这是规范
-    serializeContext['_@_activityType'] = this.getType().getName();
+    serializeContext['_@_activityType'] = 'jsWorkFlow.Activities.GetExceptionActivity';
 
     //保存自身
 
     //保存base
     var baseSerializeContext = {};
 
-    jsWorkFlow.Activities.GetExceptionActivity.callBaseMethod(this, 'saveSerializeContext', [baseSerializeContext]);
+    jsoop.callBaseMethod(jsWorkFlow.Activities.GetExceptionActivity, this, 'saveSerializeContext', [baseSerializeContext]);
 
     serializeContext['_@_base'] = baseSerializeContext;
 }
@@ -80,7 +83,7 @@ function jsWorkFlow_Activities_GetExceptionActivity$execute(context) {
     var log = jwf$getLogger();
     log.debug("jsWorkFlow.Activities.GetExceptionActivity execute!");
 
-    jsWorkFlow.Activities.GetExceptionActivity.callBaseMethod(this, 'execute', [context]);
+    jsoop.callBaseMethod(jsWorkFlow.Activities.GetExceptionActivity, this, 'execute', [context]);
 
     //获取error信息
     var exception = null;
@@ -105,6 +108,8 @@ jsWorkFlow.Activities.GetExceptionActivity.prototype = {
     execute: jsWorkFlow_Activities_GetExceptionActivity$execute
 };
 
-jsWorkFlow.Activities.GetExceptionActivity.registerClass('jsWorkFlow.Activities.GetExceptionActivity', jsWorkFlow.Activity);
+jsoop.registerClass(
+    jsoop.setTypeName(jsWorkFlow.Activities.GetExceptionActivity, 'jsWorkFlow.Activities.GetExceptionActivity'), 
+    jsWorkFlow.Activity);
 
 

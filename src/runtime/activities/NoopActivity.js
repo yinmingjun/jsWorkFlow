@@ -8,7 +8,10 @@
 *
 */
 
-Type.registerNamespace('jsWorkFlow.Activities');
+//require namsepace
+//jsWorkFlow.Activities namespace registed at core
+jsoop.ns('jsWorkFlow.Activities', true);
+var jsWorkFlow = jsoop.ns('jsWorkFlow');
 
 //////////////////////////////////////////////////////////////////////////////////////////
 //NoopActivity
@@ -22,7 +25,7 @@ jsWorkFlow.Activities.NoopActivity = function jsWorkFlow_Activities_NoopActivity
     log.debug("jsWorkFlow.Activities.NoopActivity create!");
 
 
-    jsWorkFlow.Activities.NoopActivity.initializeBase(this);
+    jsoop.initializeBase(jsWorkFlow.Activities.NoopActivity, this);
 
 };
 
@@ -30,7 +33,7 @@ function jsWorkFlow_Activities_NoopActivity$dispose() {
     var log = jwf$getLogger();
     log.debug("jsWorkFlow.Activities.NoopActivity dispose!");
 
-    jsWorkFlow.Activities.NoopActivity.callBaseMethod(this, 'dispose');
+    jsoop.callBaseMethod(jsWorkFlow.Activities.NoopActivity, this, 'dispose');
 }
 
 
@@ -40,15 +43,15 @@ function jsWorkFlow_Activities_NoopActivity$loadSerializeContext(serializeContex
     log.debug("jsWorkFlow.Activities.NoopActivity loadSerializeContext!");
 
     //检查类型 ===> 这是规范
-    if (serializeContext['_@_activityType'] !== this.getType().getName()) {
-        throw Error.invalidOperation("loadSerializeContext missmatch type!");
+    if (serializeContext['_@_activityType'] !== 'jsWorkFlow.Activities.NoopActivity') {
+        throw jsoop.errorInvalidOperation("loadSerializeContext missmatch type!");
     }
 
 
     //恢复base
     var baseSerializeContext = serializeContext['_@_base'];
 
-    jsWorkFlow.Activities.NoopActivity.callBaseMethod(this, 'loadSerializeContext', [baseSerializeContext]);
+    jsoop.callBaseMethod(jsWorkFlow.Activities.NoopActivity, this, 'loadSerializeContext', [baseSerializeContext]);
 
     //恢复自身
 
@@ -60,14 +63,14 @@ function jsWorkFlow_Activities_NoopActivity$saveSerializeContext(serializeContex
     log.debug("jsWorkFlow.Activities.NoopActivity saveSerializeContext!");
 
     //保存类型 ===> 这是规范
-    serializeContext['_@_activityType'] = this.getType().getName();
+    serializeContext['_@_activityType'] = 'jsWorkFlow.Activities.NoopActivity';
 
     //保存自身
 
     //保存base
     var baseSerializeContext = {};
 
-    jsWorkFlow.Activities.NoopActivity.callBaseMethod(this, 'saveSerializeContext', [baseSerializeContext]);
+    jsoop.callBaseMethod(jsWorkFlow.Activities.NoopActivity, this, 'saveSerializeContext', [baseSerializeContext]);
 
     serializeContext['_@_base'] = baseSerializeContext;
 }
@@ -77,7 +80,7 @@ function jsWorkFlow_Activities_NoopActivity$execute(context) {
     var log = jwf$getLogger();
     log.debug("jsWorkFlow.Activities.NoopActivity execute!");
 
-    jsWorkFlow.Activities.NoopActivity.callBaseMethod(this, 'execute', [context]);
+    jsoop.callBaseMethod(jsWorkFlow.Activities.NoopActivity, this, 'execute', [context]);
 
     //TODO:
     //    LOG noop message!
@@ -95,6 +98,8 @@ jsWorkFlow.Activities.NoopActivity.prototype = {
     execute: jsWorkFlow_Activities_NoopActivity$execute
 };
 
-jsWorkFlow.Activities.NoopActivity.registerClass('jsWorkFlow.Activities.NoopActivity', jsWorkFlow.Activity);
+jsoop.registerClass(
+    jsoop.setTypeName(jsWorkFlow.Activities.NoopActivity, 'jsWorkFlow.Activities.NoopActivity'), 
+    jsWorkFlow.Activity);
 
 

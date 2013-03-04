@@ -8,7 +8,10 @@
 *
 */
 
-Type.registerNamespace('jsWorkFlow.Activities');
+//require namsepace
+//jsWorkFlow.Activities namespace registed at core
+jsoop.ns('jsWorkFlow.Activities', true);
+var jsWorkFlow = jsoop.ns('jsWorkFlow');
 
 //////////////////////////////////////////////////////////////////////////////////////////
 //ConstActivity
@@ -21,7 +24,7 @@ jsWorkFlow.Activities.ConstActivity = function jsWorkFlow_Activities_ConstActivi
     var log = jwf$getLogger();
     log.debug("jsWorkFlow.Activities.ConstActivity create!");
 
-    jsWorkFlow.Activities.ConstActivity.initializeBase(this);
+    jsoop.initializeBase(jsWorkFlow.Activities.ConstActivity, this);
 
     this.set_constValue(constValue);
 };
@@ -30,7 +33,7 @@ function jsWorkFlow_Activities_ConstActivity$dispose() {
     var log = jwf$getLogger();
     log.debug("jsWorkFlow.Activities.ConstActivity dispose!");
 
-    jsWorkFlow.Activities.ConstActivity.callBaseMethod(this, 'dispose');
+    jsoop.callBaseMethod(jsWorkFlow.Activities.ConstActivity, this, 'dispose');
 }
 
 function jsWorkFlow_Activities_ConstActivity$get_constValue() {
@@ -47,15 +50,15 @@ function jsWorkFlow_Activities_ConstActivity$loadSerializeContext(serializeConte
     log.debug("jsWorkFlow.Activities.ConstActivity loadSerializeContext!");
 
     //检查类型 ===> 这是规范
-    if (serializeContext['_@_activityType'] !== this.getType().getName()) {
-        throw Error.invalidOperation("loadSerializeContext missmatch type!");
+    if (serializeContext['_@_activityType'] !== 'jsWorkFlow.Activities.ConstActivity') {
+        throw jsoop.errorInvalidOperation("loadSerializeContext missmatch type!");
     }
 
 
     //恢复base
     var baseSerializeContext = serializeContext['_@_base'];
 
-    jsWorkFlow.Activities.ConstActivity.callBaseMethod(this, 'loadSerializeContext', [baseSerializeContext]);
+    jsoop.callBaseMethod(jsWorkFlow.Activities.ConstActivity, this, 'loadSerializeContext', [baseSerializeContext]);
 
     //恢复自身
     var constValue = serializeContext["constValue"];
@@ -69,7 +72,7 @@ function jsWorkFlow_Activities_ConstActivity$saveSerializeContext(serializeConte
 
 
     //保存类型 ===> 这是规范
-    serializeContext['_@_activityType'] = this.getType().getName();
+    serializeContext['_@_activityType'] = 'jsWorkFlow.Activities.ConstActivity';
 
     //保存自身
     serializeContext["constValue"] = this.get_constValue();
@@ -77,7 +80,7 @@ function jsWorkFlow_Activities_ConstActivity$saveSerializeContext(serializeConte
     //保存base
     var baseSerializeContext = {};
 
-    jsWorkFlow.Activities.ConstActivity.callBaseMethod(this, 'saveSerializeContext', [baseSerializeContext]);
+    jsoop.callBaseMethod(jsWorkFlow.Activities.ConstActivity, this, 'saveSerializeContext', [baseSerializeContext]);
 
     serializeContext['_@_base'] = baseSerializeContext;
 }
@@ -87,7 +90,7 @@ function jsWorkFlow_Activities_ConstActivity$execute(context) {
     var log = jwf$getLogger();
     log.debug("jsWorkFlow.Activities.ConstActivity execute!");
 
-    jsWorkFlow.Activities.ConstActivity.callBaseMethod(this, 'execute', [context]);
+    jsoop.callBaseMethod(jsWorkFlow.Activities.ConstActivity, this, 'execute', [context]);
 
     //将constValue放到activity的result之中
     var constValue = this.get_constValue();
@@ -110,6 +113,7 @@ jsWorkFlow.Activities.ConstActivity.prototype = {
     execute: jsWorkFlow_Activities_ConstActivity$execute
 };
 
-jsWorkFlow.Activities.ConstActivity.registerClass('jsWorkFlow.Activities.ConstActivity', jsWorkFlow.Activity);
-
+jsoop.registerClass(
+    jsoop.setTypeName(jsWorkFlow.Activities.ConstActivity, 'jsWorkFlow.Activities.ConstActivity'), 
+    jsWorkFlow.Activity);
 

@@ -19,7 +19,13 @@
   *    
   */
 
-Type.registerNamespace('jsWorkFlow');
+//register core namespace
+jsoop.registerNamespace('jsWorkFlow');
+jsoop.registerNamespace('jsWorkFlow.Activities');
+jsoop.registerNamespace('jsWorkFlow.Designer');
+
+//require namsepace
+var jsWorkFlow = jsoop.registerNamespace('jsWorkFlow');
 
 //////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -43,7 +49,7 @@ jsWorkFlow.setTimeout = jsWorkFlow$setTimeout;
 //ActivityState，表示一个jsWorkFlow活动的运行状态
 
 jsWorkFlow.ActivityState = function jsWorkFlow_ActivityState() {
-    throw new Error.notImplemented();
+    throw jsoop.errorNotImplemented();
 };
 
 //系统默认的activity的状态
@@ -58,8 +64,7 @@ jsWorkFlow.ActivityState.prototype = {
 //100以内是系统保留的activity状态值，以外的状态通过类的继承关系来确定
 jsWorkFlow.ActivityState.min_value = 100;
 
-jsWorkFlow.ActivityState.registerEnum('jsWorkFlow.ActivityState');
-
+jsoop.registerEnum(jsoop.setTypeName(jsWorkFlow.ActivityState, 'jsWorkFlow.ActivityState'));
 
 
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -70,7 +75,7 @@ jsWorkFlow.ActivityState.registerEnum('jsWorkFlow.ActivityState');
 //
 jsWorkFlow.Events = function jsWorkFlow_Events(owner) {
     this._owner = owner;
-    this._events = new Sys.EventHandlerList();
+    this._events = new jsoop.EventHandlerList();
 };
 
 function jsWorkFlow_Events$dispose() {
@@ -92,11 +97,7 @@ function jsWorkFlow_Events$removeHandler(eventName, handler) {
 
 //触发事件
 function jsWorkFlow_Events$raiseEvent(eventName, eventArgs) {
-    var handler = this._events.getHandler(eventName);
-
-    if (handler) {
-        handler(this._owner, eventArgs);
-    }
+    this._events.raiseEvent(eventName, this._owner, eventArgs);
 }
 
 jsWorkFlow.Events.prototype = {
@@ -111,7 +112,7 @@ jsWorkFlow.Events.prototype = {
     raiseEvent: jsWorkFlow_Events$raiseEvent
 };
 
-jsWorkFlow.Events.registerClass('jsWorkFlow.Events');
+jsoop.registerClass(jsoop.setTypeName(jsWorkFlow.Events, 'jsWorkFlow.Events'));
 
 
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -216,7 +217,7 @@ function jsWorkFlow_Application$forceStop() {
     //设置运行状态为stop
     this._isRunning = false;
 
-    this._events.raiseEvent('stop', Sys.EventArgs.Empty);
+    this._events.raiseEvent('stop', jsoop.EventArgs.Empty);
 
 }
 
@@ -360,7 +361,7 @@ jsWorkFlow.Application.prototype = {
     setData: jsWorkFlow_Application$setData
 };
 
-jsWorkFlow.Application.registerClass('jsWorkFlow.Application');
+jsoop.registerClass(jsoop.setTypeName(jsWorkFlow.Application, 'jsWorkFlow.Application'));
 
 //////////////////////////////////////////////////////////////////////////////////////////
 //Instance，表示一个jsWorkFlow的activity组合的运行载体，主要包含rootActivity
@@ -421,8 +422,8 @@ function jsWorkFlow_Instance$execute(application) {
     var activityExecutor = new jsWorkFlow.ActivityExecutor(application, this._rootActivity, null);
 
     //创建delegates
-    this._initEventHandler = Function.createDelegate(this, this.initEventHandler);
-    this._completeEventHandler = Function.createDelegate(this, this.completeEventHandler);
+    this._initEventHandler = jsoop.createDelegate(this, this.initEventHandler);
+    this._completeEventHandler = jsoop.createDelegate(this, this.completeEventHandler);
 
     //attacth delegate to events
     activityExecutor.add_init(this._initEventHandler);
@@ -520,7 +521,7 @@ jsWorkFlow.Instance.prototype = {
 
 };
 
-jsWorkFlow.Instance.registerClass('jsWorkFlow.Instance');
+jsoop.registerClass(jsoop.setTypeName(jsWorkFlow.Instance, 'jsWorkFlow.Instance'));
 
 
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -531,8 +532,13 @@ jsWorkFlow.Instance.registerClass('jsWorkFlow.Instance');
 //    data是可选的参数，看事件上下文是否需要携带额外的数据
 //
 jsWorkFlow.ActivityEventArgs = function jsWorkFlow_ActivityEventArgs(context, data) {
+
+    jsoop.initializeBase(jsWorkFlow.ActivityEventArgs, this, []);
+
     this._context = context;
     this._data = data;
+
+
 };
 
 function jsWorkFlow_ActivityEventArgs$dispose() {
@@ -556,7 +562,7 @@ jsWorkFlow.ActivityEventArgs.prototype = {
     get_data: jsWorkFlow_ActivityEventArgs$get_data
 };
 
-jsWorkFlow.ActivityEventArgs.registerClass('jsWorkFlow.ActivityEventArgs', Sys.EventArgs);
+jsoop.registerClass(jsoop.setTypeName(jsWorkFlow.ActivityEventArgs, 'jsWorkFlow.ActivityEventArgs'), jsoop.EventArgs);
 
 //////////////////////////////////////////////////////////////////////////////////////////
 //ActivityHelper，提供activity帮助方法
@@ -566,7 +572,7 @@ jsWorkFlow.ActivityEventArgs.registerClass('jsWorkFlow.ActivityEventArgs', Sys.E
 //    ActivityHelper提供activity的公共方法，$jwf是其简写名称。
 //
 jsWorkFlow.ActivityHelper = function jsWorkFlow_ActivityHelper() {
-    throw Error.notImplemented();
+    throw jsoop.errorNotImplemented();
 };
 
 jsWorkFlow.ActivityHelper.prototype = {
@@ -823,10 +829,7 @@ jsWorkFlow.ActivityHelper.buildActivityRegistry = function jsWorkFlow_ActivityHe
     return activityRegistry;
 };
 
-
-
-
-jsWorkFlow.ActivityHelper.registerClass('jsWorkFlow.ActivityHelper');
+jsoop.registerClass(jsoop.setTypeName(jsWorkFlow.ActivityHelper, 'jsWorkFlow.ActivityHelper'));
 
 //make a shortcut for ActivityHelper
 var $jwf = jsWorkFlow.ActivityHelper;
@@ -882,8 +885,8 @@ function jsWorkFlow_Activity$loadSerializeContext(serializeContext) {
     log.debug("Activity loadSerializeContext!");
 
     //检查类型 ===> 这是规范
-    if (serializeContext['_@_activityType'] !== this.getType().getName()) {
-        throw Error.invalidOperation("loadSerializeContext missmatch type!");
+    if (serializeContext['_@_activityType'] !== 'jsWorkFlow.Activity') {
+        throw jsoop.errorInvalidOperation("loadSerializeContext missmatch type!");
     }
 
     //恢复name属性
@@ -896,7 +899,7 @@ function jsWorkFlow_Activity$saveSerializeContext(serializeContext) {
     log.debug("Activity saveSerializeContext!");
 
     //保存类型 ===> 这是规范
-    serializeContext['_@_activityType'] = this.getType().getName();
+    serializeContext['_@_activityType'] = 'jsWorkFlow.Activity';
     
     //保存name属性
     serializeContext['name'] = this.get_name();
@@ -908,9 +911,6 @@ function jsWorkFlow_Activity$execute(context) {
     log.debug("Activity execute!");
 
     //context必须是jsWorkFlow.ActivityContext类型
-    var e = Function._validateParams(arguments, [
-        { name: "context", type: jsWorkFlow.ActivityContext }
-    ]);
 
     //使activity进入start状态
     $jwf.startActivity(context);
@@ -1024,7 +1024,7 @@ jsWorkFlow.Activity.prototype = {
 
 };
 
-jsWorkFlow.Activity.registerClass('jsWorkFlow.Activity');
+jsoop.registerClass(jsoop.setTypeName(jsWorkFlow.Activity, 'jsWorkFlow.Activity'));
 
 //////////////////////////////////////////////////////////////////////////////////////////
 //DesignerSiteInfo，表示一个designer的设计器于展示相关的信息
@@ -1078,7 +1078,7 @@ jsWorkFlow.DesignerSiteInfo.prototype = {
 
 };
 
-jsWorkFlow.DesignerSiteInfo.registerClass('jsWorkFlow.DesignerSiteInfo');
+jsoop.registerClass(jsoop.setTypeName(jsWorkFlow.DesignerSiteInfo, 'jsWorkFlow.DesignerSiteInfo'));
 
 //缩进为20px
 jsWorkFlow.DesignerSiteInfo.indentWidth = 20;
@@ -1132,7 +1132,7 @@ function jsWorkFlow_PropertyDesignerBase$dispose() {
 
 //提供PropertyDesignerBase对应的类型名
 function jsWorkFlow_PropertyDesignerBase$get_siteInfo() {
-    throw Error.notImplemented();
+    throw jsoop.errorNotImplemented();
 }
 
 //显示编辑页面，开始编辑activity
@@ -1159,7 +1159,7 @@ jsWorkFlow.PropertyDesignerBase.prototype = {
     deactive: jsWorkFlow_PropertyDesignerBase$deactive
 };
 
-jsWorkFlow.PropertyDesignerBase.registerClass('jsWorkFlow.PropertyDesignerBase');
+jsoop.registerClass(jsoop.setTypeName(jsWorkFlow.PropertyDesignerBase, 'jsWorkFlow.PropertyDesignerBase'));
 
 
 
@@ -1252,7 +1252,7 @@ jsWorkFlow.ContextBase.prototype = {
     //property
 };
 
-jsWorkFlow.ContextBase.registerClass('jsWorkFlow.ContextBase');
+jsoop.registerClass(jsoop.setTypeName(jsWorkFlow.ContextBase, 'jsWorkFlow.ContextBase'));
 
 
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -1262,11 +1262,11 @@ jsWorkFlow.ContextBase.registerClass('jsWorkFlow.ContextBase');
 //    GlobalContext提供全局共享的数据，和javascript引擎是相同的生命周期，为所有application共享的数据。
 //    默认可见性为public。
 jsWorkFlow.GlobalContext = function jsWorkFlow_GlobalContext() {
-    jsWorkFlow.GlobalContext.initializeBase(this, [true]);
+    jsoop.initializeBase(jsWorkFlow.GlobalContext, this, [true]);
 };
 
 function jsWorkFlow_GlobalContext$dispose() {
-    jsWorkFlow.GlobalContext.callBaseMethod(this, 'dispose');
+    jsoop.callBaseMethod(jsWorkFlow.GlobalContext, this, 'dispose');
 }
 
 jsWorkFlow.GlobalContext.prototype = {
@@ -1274,7 +1274,7 @@ jsWorkFlow.GlobalContext.prototype = {
     //property
 };
 
-jsWorkFlow.GlobalContext.registerClass('jsWorkFlow.GlobalContext', jsWorkFlow.ContextBase);
+jsoop.registerClass(jsoop.setTypeName(jsWorkFlow.GlobalContext, 'jsWorkFlow.GlobalContext'), jsWorkFlow.ContextBase);
 
 jsWorkFlow.GlobalContext._instance = new jsWorkFlow.GlobalContext();
 
@@ -1291,11 +1291,11 @@ jsWorkFlow.GlobalContext.getInstance = function jsWorkFlow_GlobalContext$getInst
 //    默认可见性为public，ApplicationContext中的数据默认是对包含的activity开放的。
 //
 jsWorkFlow.ApplicationContext = function jsWorkFlow_ApplicationContext() {
-    jsWorkFlow.ApplicationContext.initializeBase(this, [true]);
+    jsoop.initializeBase(jsWorkFlow.ApplicationContext, this, [true]);
 };
 
 function jsWorkFlow_ApplicationContext$dispose() {
-    jsWorkFlow.ApplicationContext.callBaseMethod(this, 'dispose');
+    jsoop.callBaseMethod(jsWorkFlow.ApplicationContext, this, 'dispose');
 }
 
 jsWorkFlow.ApplicationContext.prototype = {
@@ -1304,7 +1304,7 @@ jsWorkFlow.ApplicationContext.prototype = {
     //method
 };
 
-jsWorkFlow.ApplicationContext.registerClass('jsWorkFlow.ApplicationContext', jsWorkFlow.ContextBase);
+jsoop.registerClass(jsoop.setTypeName(jsWorkFlow.ApplicationContext, 'jsWorkFlow.ApplicationContext'), jsWorkFlow.ContextBase);
 
 //////////////////////////////////////////////////////////////////////////////////////////
 //ActivityErrorInfo，表示一个jsWorkFlow活动的错误信息
@@ -1338,7 +1338,7 @@ jsWorkFlow.ActivityErrorInfo.prototype = {
     get_exception: jsWorkFlow_ActivityErrorInfo$get_exception
 };
 
-jsWorkFlow.ActivityErrorInfo.registerClass('jsWorkFlow.ActivityErrorInfo');
+jsoop.registerClass(jsoop.setTypeName(jsWorkFlow.ActivityErrorInfo, 'jsWorkFlow.ActivityErrorInfo'));
 
 //////////////////////////////////////////////////////////////////////////////////////////
 //ActivityContext，表示一个jsWorkFlow活动的运行上下文,数据依附于所在的活动
@@ -1351,7 +1351,7 @@ jsWorkFlow.ActivityErrorInfo.registerClass('jsWorkFlow.ActivityErrorInfo');
 //    Activity的执行结果放置到ActivityContext的result属性上，可以由上级的执行者来获取。
 //
 jsWorkFlow.ActivityContext = function jsWorkFlow_ActivityContext(application, activity, executor) {
-    jsWorkFlow.ActivityContext.initializeBase(this);
+    jsoop.initializeBase(jsWorkFlow.ActivityContext, this);
 
     this._application = application;
     this._executor = executor;
@@ -1369,7 +1369,7 @@ function jsWorkFlow_ActivityContext$dispose() {
     this._args = null;
     this._result = null;
 
-    jsWorkFlow.ActivityContext.callBaseMethod(this, 'dispose');
+    jsoop.callBaseMethod(jsWorkFlow.ActivityContext, this, 'dispose');
 }
 
 //获取传递给activity的参数
@@ -1498,7 +1498,8 @@ jsWorkFlow.ActivityContext.prototype = {
 
 };
 
-jsWorkFlow.ActivityContext.registerClass('jsWorkFlow.ActivityContext', jsWorkFlow.ContextBase);
+jsoop.registerClass(jsoop.setTypeName(jsWorkFlow.ActivityContext, 'jsWorkFlow.ActivityContext'), jsWorkFlow.ContextBase);
+
 
 //////////////////////////////////////////////////////////////////////////////////////////
 //ActivityExecutor，表示一个jsWorkFlow的Activity的执行器，提供activity的执行上下文
@@ -1621,7 +1622,7 @@ function jsWorkFlow_ActivityExecutor$execute() {
     this._activityContext = new jsWorkFlow.ActivityContext(application, activity, this);
 
     //将activity的执行做成一个job，放到scheduler中执行。
-    var callback = Function.createDelegate(this, this.doJobCallback);
+    var callback = jsoop.createDelegate(this, this.doJobCallback);
 
     var scheduler = this._application.get_scheduler();
 
@@ -1856,7 +1857,7 @@ jsWorkFlow.ActivityExecutor.prototype = {
 //class method
 jsWorkFlow.ActivityExecutor.run_and_check = _jwf$ae$run_and_check;
 
-jsWorkFlow.ActivityExecutor.registerClass('jsWorkFlow.ActivityExecutor');
+jsoop.registerClass(jsoop.setTypeName(jsWorkFlow.ActivityExecutor, 'jsWorkFlow.ActivityExecutor'));
 
 //////////////////////////////////////////////////////////////////////////////////////////
 //Job，提供jsWorkFlow的Scheduler的执行项目
@@ -1905,7 +1906,7 @@ jsWorkFlow.Job.prototype = {
     //property
 };
 
-jsWorkFlow.Job.registerClass('jsWorkFlow.Job');
+jsoop.registerClass(jsoop.setTypeName(jsWorkFlow.Job, 'jsWorkFlow.Job'));
 
 //////////////////////////////////////////////////////////////////////////////////////////
 //Scheduler，提供jsWorkFlow的Instance的调度器
@@ -1952,16 +1953,13 @@ function jsWorkFlow_Scheduler$dispose() {
 //将job放到运行队列
 function jsWorkFlow_Scheduler$scheduleJob(job) {
     //Job必须是jsWorkFlow.Job类型
-    var e = Function._validateParams(arguments, [
-        { name: "job", type: jsWorkFlow.Job }
-    ]);
 
     //运行状态（含pausing）下可以将job加入到执行队列
     if (!this._isRunning || this._isStopPending) {
-        throw Error.invalidOperation("Scheduler not running!");
+        throw jsoop.errorInvalidOperation("Scheduler not running!");
     }
 
-    Array.add(this._jobQueue, job);
+    jsoop.arrayAdd(this._jobQueue, job);
 }
 
 //run job的时间片的执行函数
@@ -2013,11 +2011,11 @@ function jsWorkFlow_Scheduler$start(isPausing) {
     log.debug("Scheduler start!");
 
     if (this._isRunning) {
-        throw Error.invalidOperation("Scheduler is already running!");
+        throw jsoop.errorInvalidOperation("Scheduler is already running!");
     }
 
     //start schedule engine
-    var handler = Function.createDelegate(this, this.doExecJobInterval);
+    var handler = jsoop.createDelegate(this, this.doExecJobInterval);
     this._intervalID = jsWorkFlow.setInterval(handler, jsWorkFlow.Scheduler.interval_timer);
 
     this._isRunning = true;
@@ -2025,7 +2023,7 @@ function jsWorkFlow_Scheduler$start(isPausing) {
     this._isPausing = !!isPausing;
     this._jobQueue = [];
 
-    this._events.raiseEvent('start', Sys.EventArgs.Empty);
+    this._events.raiseEvent('start', jsoop.EventArgs.Empty);
 
 }
 
@@ -2035,13 +2033,13 @@ function jsWorkFlow_Scheduler$pause() {
 
     //如果没运行，或正在停止，不允许设置为暂停
     if (!this._isRunning || this._isStopPending) {
-        throw Error.invalidOperation("Scheduler is not running!");
+        throw jsoop.errorInvalidOperation("Scheduler is not running!");
         return;
     }
 
     this._isPausing = true;
 
-    this._events.raiseEvent('pause', Sys.EventArgs.Empty);
+    this._events.raiseEvent('pause', jsoop.EventArgs.Empty);
 }
 
 function jsWorkFlow_Scheduler$resume() {
@@ -2049,11 +2047,11 @@ function jsWorkFlow_Scheduler$resume() {
     log.debug("Scheduler resume!");
 
     if (!this._isRunning || this._isStopPending) {
-        throw Error.invalidOperation("Scheduler is not running!");
+        throw jsoop.errorInvalidOperation("Scheduler is not running!");
     }
 
     this._isPausing = false;
-    this._events.raiseEvent('resume', Sys.EventArgs.Empty);
+    this._events.raiseEvent('resume', jsoop.EventArgs.Empty);
 }
 
 //forceStopNow参数如果为true，表示是强制停止，不管是否有正在运行的任务。
@@ -2062,14 +2060,14 @@ function jsWorkFlow_Scheduler$stop(forceStopNow) {
     log.debug("Scheduler stop!");
 
     if (!this._isRunning) {
-        throw Error.invalidOperation("Scheduler is not running!");
+        throw jsoop.errorInvalidOperation("Scheduler is not running!");
         return;
     }
 
     if (!forceStopNow) {
         //对于暂停的状态，如果通过stoppending的方式停止，会进入假死的状态。
         if (this._isPausing) {
-            throw Error.invalidOperation("Scheduler is pausing, can't put into stoppending state! please resume it first.");
+            throw jsoop.errorInvalidOperation("Scheduler is pausing, can't put into stoppending state! please resume it first.");
             return;
         }
 
@@ -2148,5 +2146,4 @@ jsWorkFlow.Scheduler.prototype = {
 };
 
 
-jsWorkFlow.Scheduler.registerClass('jsWorkFlow.Scheduler');
-
+jsoop.registerClass(jsoop.setTypeName(jsWorkFlow.Scheduler, 'jsWorkFlow.Scheduler'));

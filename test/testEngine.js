@@ -1,4 +1,7 @@
 ﻿
+//require namsepace
+var jsWorkFlow = jsoop.ns('jsWorkFlow');
+
 //测试Engine和EvalExprActivity
 //如果有rootActivity，表示使用testEngine建立测试框架，并不是运行该测试案例
 function testEngine(rootActivity) {
