@@ -10,8 +10,8 @@
 
 //require namsepace
 //jsWorkFlow.Activities namespace registed at core
-jsoop.ns('jsWorkFlow.Activities', true);
-var jsWorkFlow = jsoop.ns('jsWorkFlow');
+jso.ns('jsWorkFlow.Activities', true);
+var jsWorkFlow = jso.ns('jsWorkFlow');
 
 //////////////////////////////////////////////////////////////////////////////////////////
 //EvalExprActivity
@@ -25,7 +25,7 @@ jsWorkFlow.Activities.EvalExprActivity = function jsWorkFlow_Activities_EvalExpr
     var log = jwf$getLogger();
     log.debug("jsWorkFlow.Activities.EvalExprActivity create!");
 
-    jsoop.initializeBase(jsWorkFlow.Activities.EvalExprActivity, this);
+    jso.initializeBase(jsWorkFlow.Activities.EvalExprActivity, this);
 
     this.set_expr(expr);
 };
@@ -34,7 +34,7 @@ function jsWorkFlow_Activities_EvalExprActivity$dispose() {
     var log = jwf$getLogger();
     log.debug("jsWorkFlow.Activities.EvalExprActivity dispose!");
 
-    jsoop.callBaseMethod(jsWorkFlow.Activities.EvalExprActivity, this, 'dispose');
+    jso.callBaseMethod(jsWorkFlow.Activities.EvalExprActivity, this, 'dispose');
 }
 
 function jsWorkFlow_Activities_EvalExprActivity$get_expr() {
@@ -49,7 +49,7 @@ function jsWorkFlow_Activities_EvalExprActivity$set_expr(value) {
             this._expr = "";
         }
         else {
-            throw jsoop.errorInvalidOperation();
+            throw jso.errorInvalidOperation();
         }
     }
 }
@@ -62,13 +62,13 @@ function jsWorkFlow_Activities_EvalExprActivity$loadSerializeContext(serializeCo
 
     //检查类型 ===> 这是规范
     if (serializeContext['_@_activityType'] !== 'jsWorkFlow.Activities.EvalExprActivity') {
-        throw jsoop.errorInvalidOperation("loadSerializeContext missmatch type!");
+        throw jso.errorInvalidOperation("loadSerializeContext missmatch type!");
     }
 
     //恢复base
     var baseSerializeContext = serializeContext['_@_base'];
 
-    jsoop.callBaseMethod(jsWorkFlow.Activities.EvalExprActivity, this, 'loadSerializeContext', [baseSerializeContext]);
+    jso.callBaseMethod(jsWorkFlow.Activities.EvalExprActivity, this, 'loadSerializeContext', [baseSerializeContext]);
 
     //恢复自身
     this.set_expr(serializeContext['expr']);
@@ -89,7 +89,7 @@ function jsWorkFlow_Activities_EvalExprActivity$saveSerializeContext(serializeCo
     //保存base
     var baseSerializeContext = {};
 
-    jsoop.callBaseMethod(jsWorkFlow.Activities.EvalExprActivity, this, 'saveSerializeContext', [baseSerializeContext]);
+    jso.callBaseMethod(jsWorkFlow.Activities.EvalExprActivity, this, 'saveSerializeContext', [baseSerializeContext]);
 
     serializeContext['_@_base'] = baseSerializeContext;
 }
@@ -100,7 +100,7 @@ function jsWorkFlow_Activities_EvalExprActivity$execute(context) {
     log.debug("jsWorkFlow.Activities.EvalExprActivity execute!");
 
 
-    jsoop.callBaseMethod(jsWorkFlow.Activities.EvalExprActivity, this, 'execute', [context]);
+    jso.callBaseMethod(jsWorkFlow.Activities.EvalExprActivity, this, 'execute', [context]);
 
     //如果有表达式，执行，并将结果保存到context之中
     if (this._expr.length > 0) {
@@ -125,8 +125,8 @@ jsWorkFlow.Activities.EvalExprActivity.prototype = {
     execute: jsWorkFlow_Activities_EvalExprActivity$execute
 };
 
-jsoop.registerClass(
-    jsoop.setTypeName(jsWorkFlow.Activities.EvalExprActivity, 'jsWorkFlow.Activities.EvalExprActivity'), 
+jso.registerClass(
+    jso.setTypeName(jsWorkFlow.Activities.EvalExprActivity, 'jsWorkFlow.Activities.EvalExprActivity'), 
     jsWorkFlow.Activity);
 
 

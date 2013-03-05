@@ -10,8 +10,8 @@
 
 //require namsepace
 //jsWorkFlow.Activities namespace registed at core
-jsoop.ns('jsWorkFlow.Activities', true);
-var jsWorkFlow = jsoop.ns('jsWorkFlow');
+jso.ns('jsWorkFlow.Activities', true);
+var jsWorkFlow = jso.ns('jsWorkFlow');
 
 
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -33,7 +33,7 @@ jsWorkFlow.Activities.StateMachineActivity = function jsWorkFlow_Activities_Stat
     log.debug("jsWorkFlow.Activities.StateMachineActivity create!");
 
 
-    jsoop.initializeBase(jsWorkFlow.Activities.StateMachineActivity, this);
+    jso.initializeBase(jsWorkFlow.Activities.StateMachineActivity, this);
 
     this._executeActivity = executeActivity;
 };
@@ -42,7 +42,7 @@ function jsWorkFlow_Activities_StateMachineActivity$dispose() {
     var log = jwf$getLogger();
     log.debug("jsWorkFlow.Activities.StateMachineActivity dispose!");
 
-    jsoop.callBaseMethod(jsWorkFlow.Activities.StateMachineActivity, this, 'dispose');
+    jso.callBaseMethod(jsWorkFlow.Activities.StateMachineActivity, this, 'dispose');
     this._executeActivity = null;
 }
 
@@ -62,7 +62,7 @@ function jsWorkFlow_Activities_StateMachineActivity$notifyStateChanged(context, 
     log.debug("curState:[" + curState + "]!");
 
     //先执行基类的notifyStateChanged
-    jsoop.callBaseMethod(jsWorkFlow.Activities.StateMachineActivity, this, 'notifyStateChanged', [context, oldState, curState]);
+    jso.callBaseMethod(jsWorkFlow.Activities.StateMachineActivity, this, 'notifyStateChanged', [context, oldState, curState]);
 
     //如果状态不是end，通知状态变更，执行executeActivity
     if (jsWorkFlow.ActivityState.end === curState) {
@@ -93,13 +93,13 @@ function jsWorkFlow_Activities_StateMachineActivity$loadSerializeContext(seriali
 
     //检查类型 ===> 这是规范
     if (serializeContext['_@_activityType'] !== 'jsWorkFlow.Activities.StateMachineActivity') {
-        throw jsoop.errorInvalidOperation("loadSerializeContext missmatch type!");
+        throw jso.errorInvalidOperation("loadSerializeContext missmatch type!");
     }
 
     //恢复base
     var baseSerializeContext = serializeContext['_@_base'];
 
-    jsoop.callBaseMethod(jsWorkFlow.Activities.StateMachineActivity, this, 'loadSerializeContext', [baseSerializeContext]);
+    jso.callBaseMethod(jsWorkFlow.Activities.StateMachineActivity, this, 'loadSerializeContext', [baseSerializeContext]);
 
     //恢复自身
     var executeActivitySC = serializeContext["executeActivity"];
@@ -123,7 +123,7 @@ function jsWorkFlow_Activities_StateMachineActivity$saveSerializeContext(seriali
     //保存base
     var baseSerializeContext = {};
 
-    jsoop.callBaseMethod(jsWorkFlow.Activities.StateMachineActivity, this, 'saveSerializeContext', [baseSerializeContext]);
+    jso.callBaseMethod(jsWorkFlow.Activities.StateMachineActivity, this, 'saveSerializeContext', [baseSerializeContext]);
 
     serializeContext['_@_base'] = baseSerializeContext;
 }
@@ -133,7 +133,7 @@ function jsWorkFlow_Activities_StateMachineActivity$execute(context) {
     var log = jwf$getLogger();
     log.debug("jsWorkFlow.Activities.StateMachineActivity execute!");
 
-    jsoop.callBaseMethod(jsWorkFlow.Activities.StateMachineActivity, this, 'execute', [context]);
+    jso.callBaseMethod(jsWorkFlow.Activities.StateMachineActivity, this, 'execute', [context]);
 
     //TODO:
     //    LOG noop message!
@@ -158,8 +158,8 @@ jsWorkFlow.Activities.StateMachineActivity.prototype = {
     execute: jsWorkFlow_Activities_StateMachineActivity$execute
 };
 
-jsoop.registerClass(
-    jsoop.setTypeName(jsWorkFlow.Activities.StateMachineActivity, 'jsWorkFlow.Activities.StateMachineActivity'), 
+jso.registerClass(
+    jso.setTypeName(jsWorkFlow.Activities.StateMachineActivity, 'jsWorkFlow.Activities.StateMachineActivity'), 
     jsWorkFlow.Activity);
 
 //根据context搜索StateMachine的context
@@ -184,7 +184,8 @@ function $jwf$sm$findStateMachineContext(context) {
 
         var contextItemAct = contextItem.get_activity();
 
-        if (jsWorkFlow.Activities.StateMachineActivity.isInstanceOfType(contextItemAct)) {
+        //
+        if (jso.isInstanceOfType(contextItemAct, jsWorkFlow.Activities.StateMachineActivity)) {
             //OK, find it!
             return contextItem;
         }
@@ -203,7 +204,7 @@ jsWorkFlow.Activities.GetStateMachineStateActivity = function jsWorkFlow_Activit
     var log = jwf$getLogger();
     log.debug("jsWorkFlow.Activities.GetStateMachineStateActivity create!");
 
-    jsoop.initializeBase(jsWorkFlow.Activities.GetStateMachineStateActivity, this);
+    jso.initializeBase(jsWorkFlow.Activities.GetStateMachineStateActivity, this);
 
 };
 
@@ -211,7 +212,7 @@ function jsWorkFlow_Activities_GetStateMachineStateActivity$dispose() {
     var log = jwf$getLogger();
     log.debug("jsWorkFlow.Activities.GetStateMachineStateActivity dispose!");
 
-    jsoop.callBaseMethod(jsWorkFlow.Activities.GetStateMachineStateActivity, this, 'dispose');
+    jso.callBaseMethod(jsWorkFlow.Activities.GetStateMachineStateActivity, this, 'dispose');
 }
 
 
@@ -223,14 +224,14 @@ function jsWorkFlow_Activities_GetStateMachineStateActivity$loadSerializeContext
 
     //检查类型 ===> 这是规范
     if (serializeContext['_@_activityType'] !== 'jsWorkFlow.Activities.GetStateMachineStateActivity') {
-        throw jsoop.errorInvalidOperation("loadSerializeContext missmatch type!");
+        throw jso.errorInvalidOperation("loadSerializeContext missmatch type!");
     }
 
 
     //恢复base
     var baseSerializeContext = serializeContext['_@_base'];
 
-    jsoop.callBaseMethod(jsWorkFlow.Activities.GetStateMachineStateActivity, this, 'loadSerializeContext', [baseSerializeContext]);
+    jso.callBaseMethod(jsWorkFlow.Activities.GetStateMachineStateActivity, this, 'loadSerializeContext', [baseSerializeContext]);
 
     //恢复自身
 
@@ -250,7 +251,7 @@ function jsWorkFlow_Activities_GetStateMachineStateActivity$saveSerializeContext
     //保存base
     var baseSerializeContext = {};
 
-    jsoop.callBaseMethod(jsWorkFlow.Activities.GetStateMachineStateActivity, this, 'saveSerializeContext', [baseSerializeContext]);
+    jso.callBaseMethod(jsWorkFlow.Activities.GetStateMachineStateActivity, this, 'saveSerializeContext', [baseSerializeContext]);
 
     serializeContext['_@_base'] = baseSerializeContext;
 }
@@ -260,7 +261,7 @@ function jsWorkFlow_Activities_GetStateMachineStateActivity$execute(context) {
     var log = jwf$getLogger();
     log.debug("jsWorkFlow.Activities.GetStateMachineStateActivity execute!");
 
-    jsoop.callBaseMethod(jsWorkFlow.Activities.GetStateMachineStateActivity, this, 'execute', [context]);
+    jso.callBaseMethod(jsWorkFlow.Activities.GetStateMachineStateActivity, this, 'execute', [context]);
 
     var smContext = $jwf$sm$findStateMachineContext(context);
     var smState = jsWorkFlow.ActivityState.none;
@@ -288,8 +289,8 @@ jsWorkFlow.Activities.GetStateMachineStateActivity.prototype = {
     execute: jsWorkFlow_Activities_GetStateMachineStateActivity$execute
 };
 
-jsoop.registerClass(
-    jsoop.setTypeName(jsWorkFlow.Activities.GetStateMachineStateActivity, 'jsWorkFlow.Activities.GetStateMachineStateActivity'), 
+jso.registerClass(
+    jso.setTypeName(jsWorkFlow.Activities.GetStateMachineStateActivity, 'jsWorkFlow.Activities.GetStateMachineStateActivity'), 
     jsWorkFlow.Activity);
 
 
@@ -305,10 +306,10 @@ jsWorkFlow.Activities.SetStateMachineStateActivity = function jsWorkFlow_Activit
     var log = jwf$getLogger();
     log.debug("jsWorkFlow.Activities.SetStateMachineStateActivity create!");
 
-    jsoop.initializeBase(jsWorkFlow.Activities.SetStateMachineStateActivity, this);
+    jso.initializeBase(jsWorkFlow.Activities.SetStateMachineStateActivity, this);
 
     this._stateActivity = stateActivity;
-    this._doStateActivityCompleteHandler = jsoop.createDelegate(this, this.doStateActivityCompleteHandler);
+    this._doStateActivityCompleteHandler = jso.createDelegate(this, this.doStateActivityCompleteHandler);
 
 };
 
@@ -316,7 +317,7 @@ function jsWorkFlow_Activities_SetStateMachineStateActivity$dispose() {
     var log = jwf$getLogger();
     log.debug("jsWorkFlow.Activities.SetStateMachineStateActivity dispose!");
 
-    jsoop.callBaseMethod(jsWorkFlow.Activities.SetStateMachineStateActivity, this, 'dispose');
+    jso.callBaseMethod(jsWorkFlow.Activities.SetStateMachineStateActivity, this, 'dispose');
 
     this._stateActivity = null;
     this._doStateActivityCompleteHandler = null;
@@ -339,13 +340,13 @@ function jsWorkFlow_Activities_SetStateMachineStateActivity$loadSerializeContext
 
     //检查类型 ===> 这是规范
     if (serializeContext['_@_activityType'] !== this.getType().getName()) {
-        throw jsoop.errorInvalidOperation("loadSerializeContext missmatch type!");
+        throw jso.errorInvalidOperation("loadSerializeContext missmatch type!");
     }
 
     //恢复base
     var baseSerializeContext = serializeContext['_@_base'];
 
-    jsoop.callBaseMethod(jsWorkFlow.Activities.SetStateMachineStateActivity, this, 'loadSerializeContext', [baseSerializeContext]);
+    jso.callBaseMethod(jsWorkFlow.Activities.SetStateMachineStateActivity, this, 'loadSerializeContext', [baseSerializeContext]);
 
     //恢复自身
     var stateActivitySC = serializeContext["stateActivity"];
@@ -370,7 +371,7 @@ function jsWorkFlow_Activities_SetStateMachineStateActivity$saveSerializeContext
     //保存base
     var baseSerializeContext = {};
 
-    jsoop.callBaseMethod(jsWorkFlow.Activities.SetStateMachineStateActivity, this, 'saveSerializeContext', [baseSerializeContext]);
+    jso.callBaseMethod(jsWorkFlow.Activities.SetStateMachineStateActivity, this, 'saveSerializeContext', [baseSerializeContext]);
 
     serializeContext['_@_base'] = baseSerializeContext;
 }
@@ -411,7 +412,7 @@ function jsWorkFlow_Activities_SetStateMachineStateActivity$execute(context) {
     var log = jwf$getLogger();
     log.debug("jsWorkFlow.Activities.SetStateMachineStateActivity execute!");
 
-    jsoop.callBaseMethod(jsWorkFlow.Activities.SetStateMachineStateActivity, this, 'execute', [context]);
+    jso.callBaseMethod(jsWorkFlow.Activities.SetStateMachineStateActivity, this, 'execute', [context]);
 
     //如果存在stateActivity，执行其，并获取最新的状态
     var stateActivity = this.get_stateActivity();
@@ -452,8 +453,8 @@ jsWorkFlow.Activities.SetStateMachineStateActivity.prototype = {
     execute: jsWorkFlow_Activities_SetStateMachineStateActivity$execute
 };
 
-jsoop.registerClass(
-    jsoop.setTypeName(jsWorkFlow.Activities.SetStateMachineStateActivity, 'jsWorkFlow.Activities.SetStateMachineStateActivity'), 
+jso.registerClass(
+    jso.setTypeName(jsWorkFlow.Activities.SetStateMachineStateActivity, 'jsWorkFlow.Activities.SetStateMachineStateActivity'), 
     jsWorkFlow.Activity);
 
 
@@ -467,7 +468,7 @@ jsWorkFlow.Activities.EndStateMachineActivity = function jsWorkFlow_Activities_E
     var log = jwf$getLogger();
     log.debug("jsWorkFlow.Activities.EndStateMachineActivity create!");
 
-    jsoop.initializeBase(jsWorkFlow.Activities.EndStateMachineActivity, this);
+    jso.initializeBase(jsWorkFlow.Activities.EndStateMachineActivity, this);
 
 };
 
@@ -475,7 +476,7 @@ function jsWorkFlow_Activities_EndStateMachineActivity$dispose() {
     var log = jwf$getLogger();
     log.debug("jsWorkFlow.Activities.EndStateMachineActivity dispose!");
 
-    jsoop.callBaseMethod(jsWorkFlow.Activities.EndStateMachineActivity, this, 'dispose');
+    jso.callBaseMethod(jsWorkFlow.Activities.EndStateMachineActivity, this, 'dispose');
 }
 
 
@@ -486,14 +487,14 @@ function jsWorkFlow_Activities_EndStateMachineActivity$loadSerializeContext(seri
 
     //检查类型 ===> 这是规范
     if (serializeContext['_@_activityType'] !== 'jsWorkFlow.Activities.EndStateMachineActivity') {
-        throw jsoop.errorInvalidOperation("loadSerializeContext missmatch type!");
+        throw jso.errorInvalidOperation("loadSerializeContext missmatch type!");
     }
 
 
     //恢复base
     var baseSerializeContext = serializeContext['_@_base'];
 
-    jsoop.callBaseMethod(jsWorkFlow.Activities.EndStateMachineActivity, this, 'loadSerializeContext', [baseSerializeContext]);
+    jso.callBaseMethod(jsWorkFlow.Activities.EndStateMachineActivity, this, 'loadSerializeContext', [baseSerializeContext]);
 
     //恢复自身
 
@@ -513,7 +514,7 @@ function jsWorkFlow_Activities_EndStateMachineActivity$saveSerializeContext(seri
     //保存base
     var baseSerializeContext = {};
 
-    jsoop.callBaseMethod(jsWorkFlow.Activities.EndStateMachineActivity, this, 'saveSerializeContext', [baseSerializeContext]);
+    jso.callBaseMethod(jsWorkFlow.Activities.EndStateMachineActivity, this, 'saveSerializeContext', [baseSerializeContext]);
 
     serializeContext['_@_base'] = baseSerializeContext;
 }
@@ -524,7 +525,7 @@ function jsWorkFlow_Activities_EndStateMachineActivity$execute(context) {
     log.debug("jsWorkFlow.Activities.EndStateMachineActivity execute!");
 
 
-    jsoop.callBaseMethod(jsWorkFlow.Activities.EndStateMachineActivity, this, 'execute', [context]);
+    jso.callBaseMethod(jsWorkFlow.Activities.EndStateMachineActivity, this, 'execute', [context]);
 
     //获取StateMachine的context
     var smContext = $jwf$sm$findStateMachineContext(context);
@@ -558,7 +559,7 @@ jsWorkFlow.Activities.EndStateMachineActivity.prototype = {
     execute: jsWorkFlow_Activities_EndStateMachineActivity$execute
 };
 
-jsoop.registerClass(
-    jsoop.setTypeName(jsWorkFlow.Activities.EndStateMachineActivity, 'jsWorkFlow.Activities.EndStateMachineActivity'), 
+jso.registerClass(
+    jso.setTypeName(jsWorkFlow.Activities.EndStateMachineActivity, 'jsWorkFlow.Activities.EndStateMachineActivity'), 
     jsWorkFlow.Activity);
 

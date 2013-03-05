@@ -10,8 +10,8 @@
 
 //require namsepace
 //jsWorkFlow.Activities namespace registed at core
-jsoop.ns('jsWorkFlow.Activities', true);
-var jsWorkFlow = jsoop.ns('jsWorkFlow');
+jso.ns('jsWorkFlow.Activities', true);
+var jsWorkFlow = jso.ns('jsWorkFlow');
 
 
 
@@ -26,21 +26,21 @@ jsWorkFlow.Activities.SequenceActivity = function jsWorkFlow_Activities_Sequence
     var log = jwf$getLogger();
     log.debug("jsWorkFlow.Activities.SequenceActivity create!");
 
-    jsoop.initializeBase(jsWorkFlow.Activities.SequenceActivity, this);
+    jso.initializeBase(jsWorkFlow.Activities.SequenceActivity, this);
 
     if (!activities) {
         activities = [];
     }
 
     this._activities = activities;
-    this._doActivityCompleteHandler = jsoop.createDelegate(this, this.doActivityCompleteHandler);
+    this._doActivityCompleteHandler = jso.createDelegate(this, this.doActivityCompleteHandler);
 };
 
 function jsWorkFlow_Activities_SequenceActivity$dispose() {
     var log = jwf$getLogger();
     log.debug("jsWorkFlow.Activities.SequenceActivity dispose!");
 
-    jsoop.callBaseMethod(jsWorkFlow.Activities.SequenceActivity, this, 'dispose');
+    jso.callBaseMethod(jsWorkFlow.Activities.SequenceActivity, this, 'dispose');
 
     this._activities = null;
     this._doActivityCompleteHandler = null;
@@ -61,13 +61,13 @@ function jsWorkFlow_Activities_SequenceActivity$loadSerializeContext(serializeCo
 
     //检查类型 ===> 这是规范
     if (serializeContext['_@_activityType'] !== 'jsWorkFlow.Activities.SequenceActivity') {
-        throw jsoop.errorInvalidOperation("loadSerializeContext missmatch type!");
+        throw jso.errorInvalidOperation("loadSerializeContext missmatch type!");
     }
 
     //恢复base
     var baseSerializeContext = serializeContext['_@_base'];
 
-    jsoop.callBaseMethod(jsWorkFlow.Activities.SequenceActivity, this, 'loadSerializeContext', [baseSerializeContext]);
+    jso.callBaseMethod(jsWorkFlow.Activities.SequenceActivity, this, 'loadSerializeContext', [baseSerializeContext]);
 
     //恢复自身
     var activitiesSC = serializeContext['activities'];
@@ -76,7 +76,7 @@ function jsWorkFlow_Activities_SequenceActivity$loadSerializeContext(serializeCo
     if (activitiesSC && (activitiesSC.length > 0)) {
         for (var i = 0, ilen = activitiesSC.length; i < ilen; i++) {
             var activity = $jwf.loadActivity(activitiesSC[i]);
-            jsoop.arrayAdd(activities, activity);
+            jso.arrayAdd(activities, activity);
         }
     }
 
@@ -99,7 +99,7 @@ function jsWorkFlow_Activities_SequenceActivity$saveSerializeContext(serializeCo
     if (activities && (activities.length > 0)) {
         for (var i = 0, ilen = activities.length; i < ilen; i++) {
             var activitySC = $jwf.saveActivity(activities[i]);
-            jsoop.arrayAdd(activitiesSC, activitySC); 
+            jso.arrayAdd(activitiesSC, activitySC); 
         }
     }
 
@@ -108,7 +108,7 @@ function jsWorkFlow_Activities_SequenceActivity$saveSerializeContext(serializeCo
     //保存base
     var baseSerializeContext = {};
 
-    jsoop.callBaseMethod(jsWorkFlow.Activities.SequenceActivity, this, 'saveSerializeContext', [baseSerializeContext]);
+    jso.callBaseMethod(jsWorkFlow.Activities.SequenceActivity, this, 'saveSerializeContext', [baseSerializeContext]);
 
     serializeContext['_@_base'] = baseSerializeContext;
 }
@@ -119,14 +119,14 @@ function jsWorkFlow_Activities_SequenceActivity$execute(context) {
     var log = jwf$getLogger();
     log.debug("jsWorkFlow.Activities.SequenceActivity execute!");
 
-    jsoop.callBaseMethod(jsWorkFlow.Activities.SequenceActivity, this, 'execute', [context]);
+    jso.callBaseMethod(jsWorkFlow.Activities.SequenceActivity, this, 'execute', [context]);
 
     //从索引0开始依次执行
     this.doExecActivity(context, 0);
 }
 
 function jsWorkFlow_Activities_SequenceActivity$addActivity(activity) {
-    jsoop.arrayAdd(this._activities, activity);
+    jso.arrayAdd(this._activities, activity);
 }
 
 function jsWorkFlow_Activities_SequenceActivity$doExecActivity(context, index) {
@@ -196,8 +196,8 @@ jsWorkFlow.Activities.SequenceActivity.prototype = {
 
 };
 
-jsoop.registerClass(
-    jsoop.setTypeName(jsWorkFlow.Activities.SequenceActivity, 'jsWorkFlow.Activities.SequenceActivity'), 
+jso.registerClass(
+    jso.setTypeName(jsWorkFlow.Activities.SequenceActivity, 'jsWorkFlow.Activities.SequenceActivity'), 
     jsWorkFlow.Activity);
 
 

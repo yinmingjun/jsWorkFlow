@@ -8,19 +8,19 @@ var _s$varWhileCond = 0;
 function _s$buildSwitchActivity() {
     //build switch
     var cAct = new jsWorkFlow.Activities.EvalExprActivity("'t'+_s$varWhileCond;");
-    var eAct = new jsWorkFlow.Activities.EvalExprActivity("test('testSwitch [t1~4,e] else', function () { ok(true, 'Passed!'); });");
+    var eAct = new jsWorkFlow.Activities.EvalExprActivity("unitTestFW.test('testSwitch [t1~4,e] else', function () { unitTestFW.ok(true, 'Passed!'); });");
     var allCase = [
             { key: new jsWorkFlow.Activities.EvalExprActivity("'t1'"),
-                value: new jsWorkFlow.Activities.EvalExprActivity("test('testSwitch [t1~4,e] t1', function () { ok(true, 'Passed!'); });")
+                value: new jsWorkFlow.Activities.EvalExprActivity("unitTestFW.test('testSwitch [t1~4,e] t1', function () { unitTestFW.ok(true, 'Passed!'); });")
             },
             { key: new jsWorkFlow.Activities.EvalExprActivity("'t2'"),
-                value: new jsWorkFlow.Activities.EvalExprActivity("test('testSwitch [t1~4,e] t2', function () { ok(true, 'Passed!'); });")
+                value: new jsWorkFlow.Activities.EvalExprActivity("unitTestFW.test('testSwitch [t1~4,e] t2', function () { unitTestFW.ok(true, 'Passed!'); });")
             },
             { key: new jsWorkFlow.Activities.EvalExprActivity("'t3'"),
-                value: new jsWorkFlow.Activities.EvalExprActivity("test('testSwitch [t1~4,e] t3', function () { ok(true, 'Passed!'); });")
+                value: new jsWorkFlow.Activities.EvalExprActivity("unitTestFW.test('testSwitch [t1~4,e] t3', function () { unitTestFW.ok(true, 'Passed!'); });")
             },
             { key: new jsWorkFlow.Activities.EvalExprActivity("'t4'"),
-                value: new jsWorkFlow.Activities.EvalExprActivity("test('testSwitch [t1~4,e] t4', function () { ok(true, 'Passed!'); });")
+                value: new jsWorkFlow.Activities.EvalExprActivity("unitTestFW.test('testSwitch [t1~4,e] t4', function () { unitTestFW.ok(true, 'Passed!'); });")
             }];
 
     var swth = new jsWorkFlow.Activities.SwitchActivity(cAct, eAct, allCase);
@@ -39,4 +39,8 @@ function testSwitch() {
     testEngine(wAct);
 
 
+}
+
+if (typeof (exports) !== 'undefined') {
+    exports.testSwitch = testSwitch;
 }

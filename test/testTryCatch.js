@@ -4,8 +4,8 @@
 //一层的try catch
 function testTryCacheL1() {
     var raiseA = new jsWorkFlow.Activities.RaiseExceptionActivity(new jsWorkFlow.Activities.ConstActivity("test"));
-    var errorA = new jsWorkFlow.Activities.EvalExprActivity("test('testTryCatch - testTryCacheL1', function () { ok(false, 'Passed!'); });");
-    var okA = new jsWorkFlow.Activities.EvalExprActivity("test('testTryCatch - testTryCacheL1', function () { ok(true, 'Passed!'); });");
+    var errorA = new jsWorkFlow.Activities.EvalExprActivity("unitTestFW.test('testTryCatch - testTryCacheL1', function () { unitTestFW.ok(false, 'Passed!'); });");
+    var okA = new jsWorkFlow.Activities.EvalExprActivity("unitTestFW.test('testTryCatch - testTryCacheL1', function () { unitTestFW.ok(true, 'Passed!'); });");
 
     var tryA = new jsWorkFlow.Activities.SequenceActivity();
     tryA.addActivity(raiseA);
@@ -20,8 +20,8 @@ function testTryCacheL1() {
 function testTryCacheL2() {
     var raise1A = new jsWorkFlow.Activities.RaiseExceptionActivity(new jsWorkFlow.Activities.ConstActivity("test1"));
     var raise2A = new jsWorkFlow.Activities.RaiseExceptionActivity(new jsWorkFlow.Activities.ConstActivity("test2"));
-    var errorA = new jsWorkFlow.Activities.EvalExprActivity("test('testTryCatch - testTryCacheL2', function () { ok(false, 'Passed!'); });");
-    var okA = new jsWorkFlow.Activities.EvalExprActivity("test('testTryCatch - testTryCacheL2', function () { ok(true, 'Passed!'); });");
+    var errorA = new jsWorkFlow.Activities.EvalExprActivity("unitTestFW.test('testTryCatch - testTryCacheL2', function () { unitTestFW.ok(false, 'Passed!'); });");
+    var okA = new jsWorkFlow.Activities.EvalExprActivity("unitTestFW.test('testTryCatch - testTryCacheL2', function () { unitTestFW.ok(true, 'Passed!'); });");
     raise1A.set_name("raise1A");
     raise2A.set_name("raise2A");
     errorA.set_name("errorA");
@@ -50,8 +50,8 @@ function testTryCatchGetException() {
     var getEA = new jsWorkFlow.Activities.GetExceptionActivity();
     var constA = new jsWorkFlow.Activities.ConstActivity("test");
     var isEA = new jsWorkFlow.Activities.IsEqualsActivity(constA, getEA);
-    var errorA = new jsWorkFlow.Activities.EvalExprActivity("test('testTryCatch - testTryCatchGetException', function () { ok(false, 'Passed!'); });");
-    var okA = new jsWorkFlow.Activities.EvalExprActivity("test('testTryCatch - testTryCatchGetException', function () { ok(true, 'Passed!'); });");
+    var errorA = new jsWorkFlow.Activities.EvalExprActivity("unitTestFW.test('testTryCatch - testTryCatchGetException', function () { unitTestFW.ok(false, 'Passed!'); });");
+    var okA = new jsWorkFlow.Activities.EvalExprActivity("unitTestFW.test('testTryCatch - testTryCatchGetException', function () { unitTestFW.ok(true, 'Passed!'); });");
     var ifA = new jsWorkFlow.Activities.IfElseActivity(isEA, okA, errorA);
 
     var tryA = new jsWorkFlow.Activities.SequenceActivity();
@@ -66,4 +66,8 @@ function testTryCatch() {
     testTryCacheL1();
     testTryCacheL2();
     testTryCatchGetException();
+}
+
+if (typeof (exports) !== 'undefined') {
+    exports.testTryCatch = testTryCatch;
 }

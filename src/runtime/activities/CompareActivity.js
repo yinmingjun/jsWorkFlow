@@ -11,8 +11,8 @@
 
 //require namsepace
 //jsWorkFlow.Activities namespace registed at core
-jsoop.ns('jsWorkFlow.Activities', true);
-var jsWorkFlow = jsoop.ns('jsWorkFlow');
+jso.ns('jsWorkFlow.Activities', true);
+var jsWorkFlow = jso.ns('jsWorkFlow');
 
 
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -27,20 +27,20 @@ jsWorkFlow.Activities.CompareActivity = function jsWorkFlow_Activities_CompareAc
     var log = jwf$getLogger();
     log.debug("jsWorkFlow.Activities.CompareActivity create!");
 
-    jsoop.initializeBase(jsWorkFlow.Activities.CompareActivity, this);
+    jso.initializeBase(jsWorkFlow.Activities.CompareActivity, this);
     this.set_leftHandActivity(leftHandActivity);
     this.set_rightHandActivity(rightHandActivity);
     this.set_strict(strict);
 
-    this._doExecLhaCompleteHandler = jsoop.createDelegate(this, this.doExecLhaCompleteHandler);
-    this._doExecRhaCompleteHandler = jsoop.createDelegate(this, this.doExecRhaCompleteHandler);
+    this._doExecLhaCompleteHandler = jso.createDelegate(this, this.doExecLhaCompleteHandler);
+    this._doExecRhaCompleteHandler = jso.createDelegate(this, this.doExecRhaCompleteHandler);
 };
 
 function jsWorkFlow_Activities_CompareActivity$dispose() {
     var log = jwf$getLogger();
     log.debug("jsWorkFlow.Activities.CompareActivity dispose!");
 
-    jsoop.callBaseMethod(jsWorkFlow.Activities.CompareActivity, this, 'dispose');
+    jso.callBaseMethod(jsWorkFlow.Activities.CompareActivity, this, 'dispose');
 }
 
 
@@ -76,14 +76,14 @@ function jsWorkFlow_Activities_CompareActivity$loadSerializeContext(serializeCon
 
     //检查类型 ===> 这是规范
     if (serializeContext['_@_activityType'] !== 'jsWorkFlow.Activities.CompareActivity') {
-        throw jsoop.errorInvalidOperation("loadSerializeContext missmatch type!");
+        throw jso.errorInvalidOperation("loadSerializeContext missmatch type!");
     }
 
 
     //恢复base
     var baseSerializeContext = serializeContext['_@_base'];
 
-    jsoop.callBaseMethod(jsWorkFlow.Activities.CompareActivity, this, 'loadSerializeContext', [baseSerializeContext]);
+    jso.callBaseMethod(jsWorkFlow.Activities.CompareActivity, this, 'loadSerializeContext', [baseSerializeContext]);
 
     //恢复自身
     var leftHandActivitySC = serializeContext['leftHandActivity'];
@@ -114,7 +114,7 @@ function jsWorkFlow_Activities_CompareActivity$saveSerializeContext(serializeCon
     //保存base
     var baseSerializeContext = {};
 
-    jsoop.callBaseMethod(jsWorkFlow.Activities.CompareActivity, this, 'saveSerializeContext', [baseSerializeContext]);
+    jso.callBaseMethod(jsWorkFlow.Activities.CompareActivity, this, 'saveSerializeContext', [baseSerializeContext]);
 
     serializeContext['_@_base'] = baseSerializeContext;
 }
@@ -236,7 +236,7 @@ function jsWorkFlow_Activities_CompareActivity$execute(context) {
     var log = jwf$getLogger();
     log.debug("jsWorkFlow.Activities.CompareActivity execute!");
 
-    jsoop.callBaseMethod(jsWorkFlow.Activities.CompareActivity, this, 'execute', [context]);
+    jso.callBaseMethod(jsWorkFlow.Activities.CompareActivity, this, 'execute', [context]);
 
     this.doExecLha(context);
 }
@@ -267,8 +267,8 @@ jsWorkFlow.Activities.CompareActivity.prototype = {
     execute: jsWorkFlow_Activities_CompareActivity$execute
 };
 
-jsoop.registerClass(
-    jsoop.setTypeName(jsWorkFlow.Activities.CompareActivity, 'jsWorkFlow.Activities.CompareActivity'),
+jso.registerClass(
+    jso.setTypeName(jsWorkFlow.Activities.CompareActivity, 'jsWorkFlow.Activities.CompareActivity'),
     jsWorkFlow.Activity);
 
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -280,11 +280,11 @@ jsoop.registerClass(
 //    进行equals比较，如果相等，返回true
 //
 jsWorkFlow.Activities.IsEqualsActivity = function jsWorkFlow_Activities_IsEqualsActivity(leftHandActivity, rightHandActivity, strict) {
-    jsoop.initializeBase(jsWorkFlow.Activities.IsEqualsActivity, this, [leftHandActivity, rightHandActivity, strict]);
+    jso.initializeBase(jsWorkFlow.Activities.IsEqualsActivity, this, [leftHandActivity, rightHandActivity, strict]);
 };
 
 function jsWorkFlow_Activities_IsEqualsActivity$dispose() {
-    jsoop.callBaseMethod(jsWorkFlow.Activities.IsEqualsActivity, this, 'dispose');
+    jso.callBaseMethod(jsWorkFlow.Activities.IsEqualsActivity, this, 'dispose');
 }
 
 
@@ -293,14 +293,14 @@ function jsWorkFlow_Activities_IsEqualsActivity$dispose() {
 function jsWorkFlow_Activities_IsEqualsActivity$loadSerializeContext(serializeContext) {
     //检查类型 ===> 这是规范
     if (serializeContext['_@_activityType'] !== 'jsWorkFlow.Activities.IsEqualsActivity') {
-        throw jsoop.errorInvalidOperation("loadSerializeContext missmatch type!");
+        throw jso.errorInvalidOperation("loadSerializeContext missmatch type!");
     }
 
 
     //恢复base
     var baseSerializeContext = serializeContext['_@_base'];
 
-    jsoop.callBaseMethod(jsWorkFlow.Activities.IsEqualsActivity, this, 'loadSerializeContext', [baseSerializeContext]);
+    jso.callBaseMethod(jsWorkFlow.Activities.IsEqualsActivity, this, 'loadSerializeContext', [baseSerializeContext]);
 
     //恢复自身
 }
@@ -316,7 +316,7 @@ function jsWorkFlow_Activities_IsEqualsActivity$saveSerializeContext(serializeCo
     //保存base
     var baseSerializeContext = {};
 
-    jsoop.callBaseMethod(jsWorkFlow.Activities.IsEqualsActivity, this, 'saveSerializeContext', [baseSerializeContext]);
+    jso.callBaseMethod(jsWorkFlow.Activities.IsEqualsActivity, this, 'saveSerializeContext', [baseSerializeContext]);
 
     serializeContext['_@_base'] = baseSerializeContext;
 }
@@ -334,7 +334,7 @@ function jsWorkFlow_Activities_IsEqualsActivity$doExecCompare(lhaResult, rhaResu
 
 //activity的状态机的启动入口，自动驱动activity的状态机进入运行状态。
 function jsWorkFlow_Activities_IsEqualsActivity$execute(context) {
-    jsWorkFlow.Activities.IsEqualsActivity.callBaseMethod(this, 'execute', [context]);
+    jso.callBaseMethod(jsWorkFlow.Activities.IsEqualsActivity, this, 'execute', [context]);
 }
 
 jsWorkFlow.Activities.IsEqualsActivity.prototype = {
@@ -346,7 +346,7 @@ jsWorkFlow.Activities.IsEqualsActivity.prototype = {
     execute: jsWorkFlow_Activities_IsEqualsActivity$execute
 };
 
-jsoop.registerClass(
-    jsoop.setTypeName(jsWorkFlow.Activities.IsEqualsActivity, 'jsWorkFlow.Activities.IsEqualsActivity'), 
+jso.registerClass(
+    jso.setTypeName(jsWorkFlow.Activities.IsEqualsActivity, 'jsWorkFlow.Activities.IsEqualsActivity'), 
     jsWorkFlow.Activities.CompareActivity);
 

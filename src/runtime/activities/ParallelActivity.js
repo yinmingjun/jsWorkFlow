@@ -10,8 +10,8 @@
 
 //require namsepace
 //jsWorkFlow.Activities namespace registed at core
-jsoop.ns('jsWorkFlow.Activities', true);
-var jsWorkFlow = jsoop.ns('jsWorkFlow');
+jso.ns('jsWorkFlow.Activities', true);
+var jsWorkFlow = jso.ns('jsWorkFlow');
 
 
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -26,17 +26,17 @@ jsWorkFlow.Activities.ParallelActivity = function jsWorkFlow_Activities_Parallel
     var log = jwf$getLogger();
     log.debug("jsWorkFlow.Activities.ParallelActivity create!");
 
-    jsoop.initializeBase(jsWorkFlow.Activities.ParallelActivity, this);
+    jso.initializeBase(jsWorkFlow.Activities.ParallelActivity, this);
 
     this._activities = activities;
-    this._doExecuteItemCompleteHandler = jsoop.createDelegate(this, this.doExecuteItemCompleteHandler);
+    this._doExecuteItemCompleteHandler = jso.createDelegate(this, this.doExecuteItemCompleteHandler);
 };
 
 function jsWorkFlow_Activities_ParallelActivity$dispose() {
     var log = jwf$getLogger();
     log.debug("jsWorkFlow.Activities.ParallelActivity dispose!");
 
-    jsoop.callBaseMethod(jsWorkFlow.Activities.ParallelActivity, this, 'dispose');
+    jso.callBaseMethod(jsWorkFlow.Activities.ParallelActivity, this, 'dispose');
 }
 
 function jsWorkFlow_Activities_ParallelActivity$get_activities() {
@@ -53,7 +53,7 @@ function jsWorkFlow_Activities_ParallelActivity$set_activities(activities) {
 
 function jsWorkFlow_Activities_ParallelActivity$addActivity(activity) {
     var activities = this.get_activities();
-    jsoop.arrayAdd(activities, activity);
+    jso.arrayAdd(activities, activity);
 }
 
 function jsWorkFlow_Activities_ParallelActivity$removeActivity(activity) {
@@ -78,14 +78,14 @@ function jsWorkFlow_Activities_ParallelActivity$loadSerializeContext(serializeCo
 
     //检查类型 ===> 这是规范
     if (serializeContext['_@_activityType'] !== 'jsWorkFlow.Activities.ParallelActivity') {
-        throw jsoop.errorInvalidOperation("loadSerializeContext missmatch type!");
+        throw jso.errorInvalidOperation("loadSerializeContext missmatch type!");
     }
 
     //恢复base
     var baseSerializeContext = serializeContext['_@_base'];
 
     //恢复自身
-    jsoop.callBaseMethod(jsWorkFlow.Activities.ParallelActivity, this, 'loadSerializeContext', [baseSerializeContext]);
+    jso.callBaseMethod(jsWorkFlow.Activities.ParallelActivity, this, 'loadSerializeContext', [baseSerializeContext]);
 
     var activities = [];
     var activitiesSC = serializeContext["activities"];
@@ -93,7 +93,7 @@ function jsWorkFlow_Activities_ParallelActivity$loadSerializeContext(serializeCo
     if (activitiesSC && (activitiesSC.length > 0)) {
         for (var i = 0, ilen = activitiesSC.length; i < ilen; i++) {
             var item = $jwf.loadActivity(activitiesSC[i]);
-            jsoop.arrayAdd(activities, item);
+            jso.arrayAdd(activities, item);
         }
     }
 
@@ -117,7 +117,7 @@ function jsWorkFlow_Activities_ParallelActivity$saveSerializeContext(serializeCo
     if (activities && (activities.length > 0)) {
         for (var i = 0, ilen = activities.length; i < ilen; i++) {
             var itemSC = $jwf.saveActivity(activities[i]);
-            jsoop.arrayAdd(activitiesSC, itemSC);
+            jso.arrayAdd(activitiesSC, itemSC);
         }
     }
 
@@ -127,7 +127,7 @@ function jsWorkFlow_Activities_ParallelActivity$saveSerializeContext(serializeCo
     //保存base
     var baseSerializeContext = {};
 
-    jsoop.callBaseMethod(jsWorkFlow.Activities.ParallelActivity, this, 'saveSerializeContext', [baseSerializeContext]);
+    jso.callBaseMethod(jsWorkFlow.Activities.ParallelActivity, this, 'saveSerializeContext', [baseSerializeContext]);
 
     serializeContext['_@_base'] = baseSerializeContext;
 }
@@ -179,7 +179,7 @@ function jsWorkFlow_Activities_ParallelActivity$execute(context) {
     var log = jwf$getLogger();
     log.debug("jsWorkFlow.Activities.ParallelActivity execute!");
 
-    jsoop.callBaseMethod(jsWorkFlow.Activities.ParallelActivity, this, 'execute', [context]);
+    jso.callBaseMethod(jsWorkFlow.Activities.ParallelActivity, this, 'execute', [context]);
 
     //因为每个activity都是通过job来执行，本身就是异步的。循环执行activityExecutor就可以。
 
@@ -220,7 +220,7 @@ jsWorkFlow.Activities.ParallelActivity.prototype = {
     execute: jsWorkFlow_Activities_ParallelActivity$execute
 };
 
-jsoop.registerClass(
-    jsoop.setTypeName(jsWorkFlow.Activities.ParallelActivity, 'jsWorkFlow.Activities.ParallelActivity'), 
+jso.registerClass(
+    jso.setTypeName(jsWorkFlow.Activities.ParallelActivity, 'jsWorkFlow.Activities.ParallelActivity'), 
     jsWorkFlow.Activity);
 

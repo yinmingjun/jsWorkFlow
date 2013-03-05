@@ -1,6 +1,8 @@
 ﻿
+var jso = jsoop;
+
 //require namsepace
-var jsWorkFlow = jsoop.ns('jsWorkFlow');
+var jsWorkFlow = jso.ns('jsWorkFlow');
 
 //测试Engine和EvalExprActivity
 //如果有rootActivity，表示使用testEngine建立测试框架，并不是运行该测试案例
@@ -13,10 +15,10 @@ function testEngine(rootActivity) {
         rootActivity = noop;
 
         ins.add_complete(function () {
-            var log = jwf$getLogger();
-            log.debug("test engine complete!");
+//            var log = jwf$getLogger();
+//            log.debug("test engine complete!");
 
-            test("testEngine", function () { ok(true, "Passed!"); });
+            unitTestFW.test("testEngine", function () { unitTestFW.ok(true, "Passed!"); });
         });
 
     }
@@ -25,4 +27,8 @@ function testEngine(rootActivity) {
     var app = new jsWorkFlow.Application(ins);
 
     app.run();
+}
+
+if (typeof (exports) !== 'undefined') {
+    exports.testEngine = testEngine;
 }

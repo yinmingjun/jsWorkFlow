@@ -23,16 +23,16 @@ function testContextData_local_public() {
 
     //比较
     var isEqual = new jsWorkFlow.Activities.IsEqualsActivity(get, val1);
-    var okExpr = new jsWorkFlow.Activities.EvalExprActivity("test('testContextData_local_public get value', function () { ok(true, 'Passed!'); });");
-    var errorExpr = new jsWorkFlow.Activities.EvalExprActivity("test('testContextData_local_public  get value', function () { ok(false, 'Passed!'); });");
+    var okExpr = new jsWorkFlow.Activities.EvalExprActivity("unitTestFW.test('testContextData_local_public get value', function () { unitTestFW.ok(true, 'Passed!'); });");
+    var errorExpr = new jsWorkFlow.Activities.EvalExprActivity("unitTestFW.test('testContextData_local_public  get value', function () { unitTestFW.ok(false, 'Passed!'); });");
 
     var ifAct = new jsWorkFlow.Activities.IfElseActivity(isEqual, okExpr, errorExpr);
 
     var set = new jsWorkFlow.Activities.SetContextDataActivity("tlp_val", val2);
 
     var isEqual2 = new jsWorkFlow.Activities.IsEqualsActivity(get, val2);
-    var okExpr2 = new jsWorkFlow.Activities.EvalExprActivity("test('testContextData_local_public set value', function () { ok(true, 'Passed!'); });");
-    var errorExpr2 = new jsWorkFlow.Activities.EvalExprActivity("test('testContextData_local_public set value', function () { ok(false, 'Passed!'); });");
+    var okExpr2 = new jsWorkFlow.Activities.EvalExprActivity("unitTestFW.test('testContextData_local_public set value', function () { unitTestFW.ok(true, 'Passed!'); });");
+    var errorExpr2 = new jsWorkFlow.Activities.EvalExprActivity("unitTestFW.test('testContextData_local_public set value', function () { unitTestFW.ok(false, 'Passed!'); });");
 
     var ifAct2 = new jsWorkFlow.Activities.IfElseActivity(isEqual2, okExpr2, errorExpr2);
 
@@ -61,16 +61,16 @@ function testContextData_global_public() {
 
     //比较
     var isEqual = new jsWorkFlow.Activities.IsEqualsActivity(get, val1);
-    var okExpr = new jsWorkFlow.Activities.EvalExprActivity("test('testContextData_global_public get value', function () { ok(true, 'Passed!'); });");
-    var errorExpr = new jsWorkFlow.Activities.EvalExprActivity("test('testContextData_global_public get value', function () { ok(false, 'Passed!'); });");
+    var okExpr = new jsWorkFlow.Activities.EvalExprActivity("unitTestFW.test('testContextData_global_public get value', function () { unitTestFW.ok(true, 'Passed!'); });");
+    var errorExpr = new jsWorkFlow.Activities.EvalExprActivity("unitTestFW.test('testContextData_global_public get value', function () { unitTestFW.ok(false, 'Passed!'); });");
 
     var ifAct = new jsWorkFlow.Activities.IfElseActivity(isEqual, okExpr, errorExpr);
 
     var set = new jsWorkFlow.Activities.SetContextDataActivity("tgp_val", val2, jsWorkFlow.DataContextLayer.auto);
 
     var isEqual2 = new jsWorkFlow.Activities.IsEqualsActivity(get, val2);
-    var okExpr2 = new jsWorkFlow.Activities.EvalExprActivity("test('testContextData_global_public set value', function () { ok(true, 'Passed!'); });");
-    var errorExpr2 = new jsWorkFlow.Activities.EvalExprActivity("test('testContextData_global_public set value', function () { ok(false, 'Passed!'); });");
+    var okExpr2 = new jsWorkFlow.Activities.EvalExprActivity("unitTestFW.test('testContextData_global_public set value', function () { unitTestFW.ok(true, 'Passed!'); });");
+    var errorExpr2 = new jsWorkFlow.Activities.EvalExprActivity("unitTestFW.test('testContextData_global_public set value', function () { unitTestFW.ok(false, 'Passed!'); });");
 
     var ifAct2 = new jsWorkFlow.Activities.IfElseActivity(isEqual2, okExpr2, errorExpr2);
 
@@ -98,16 +98,16 @@ function testContextData_app_public() {
 
     //比较
     var isEqual = new jsWorkFlow.Activities.IsEqualsActivity(get, val1);
-    var okExpr = new jsWorkFlow.Activities.EvalExprActivity("test('testContextData_app_public get value', function () { ok(true, 'Passed!'); });");
-    var errorExpr = new jsWorkFlow.Activities.EvalExprActivity("test('testContextData_app_public get value', function () { ok(false, 'Passed!'); });");
+    var okExpr = new jsWorkFlow.Activities.EvalExprActivity("unitTestFW.test('testContextData_app_public get value', function () { unitTestFW.ok(true, 'Passed!'); });");
+    var errorExpr = new jsWorkFlow.Activities.EvalExprActivity("unitTestFW.test('testContextData_app_public get value', function () { unitTestFW.ok(false, 'Passed!'); });");
 
     var ifAct = new jsWorkFlow.Activities.IfElseActivity(isEqual, okExpr, errorExpr);
 
     var set = new jsWorkFlow.Activities.SetContextDataActivity("tap_val", val2, jsWorkFlow.DataContextLayer.auto);
 
     var isEqual2 = new jsWorkFlow.Activities.IsEqualsActivity(get, val2);
-    var okExpr2 = new jsWorkFlow.Activities.EvalExprActivity("test('testContextData_app_public auto_set value', function () { ok(true, 'Passed!'); });");
-    var errorExpr2 = new jsWorkFlow.Activities.EvalExprActivity("test('testContextData_app_public auto_set value', function () { ok(false, 'Passed!'); });");
+    var okExpr2 = new jsWorkFlow.Activities.EvalExprActivity("unitTestFW.test('testContextData_app_public auto_set value', function () { unitTestFW.ok(true, 'Passed!'); });");
+    var errorExpr2 = new jsWorkFlow.Activities.EvalExprActivity("unitTestFW.test('testContextData_app_public auto_set value', function () { unitTestFW.ok(false, 'Passed!'); });");
 
     var ifAct2 = new jsWorkFlow.Activities.IfElseActivity(isEqual2, okExpr2, errorExpr2);
 
@@ -140,26 +140,26 @@ function testContextData_local_app_global_public_mix() {
 
     //比较global
     var isEqualG = new jsWorkFlow.Activities.IsEqualsActivity(getGlobal, val1);
-    var okExprG = new jsWorkFlow.Activities.EvalExprActivity("test('testContextData_local_app_global_public_mix get global value', function () { ok(true, 'Passed!'); });");
-    var errorExprG = new jsWorkFlow.Activities.EvalExprActivity("test('testContextData_local_app_global_public_mix get global value', function () { ok(false, 'Passed!'); });");
+    var okExprG = new jsWorkFlow.Activities.EvalExprActivity("unitTestFW.test('testContextData_local_app_global_public_mix get global value', function () { unitTestFW.ok(true, 'Passed!'); });");
+    var errorExprG = new jsWorkFlow.Activities.EvalExprActivity("unitTestFW.test('testContextData_local_app_global_public_mix get global value', function () { unitTestFW.ok(false, 'Passed!'); });");
     var ifActG = new jsWorkFlow.Activities.IfElseActivity(isEqualG, okExprG, errorExprG);
 
     //比较application
     var isEqualA = new jsWorkFlow.Activities.IsEqualsActivity(getApp, val2);
-    var okExprA = new jsWorkFlow.Activities.EvalExprActivity("test('testContextData_local_app_global_public_mix get app value', function () { ok(true, 'Passed!'); });");
-    var errorExprA = new jsWorkFlow.Activities.EvalExprActivity("test('testContextData_local_app_global_public_mix get app value', function () { ok(false, 'Passed!'); });");
+    var okExprA = new jsWorkFlow.Activities.EvalExprActivity("unitTestFW.test('testContextData_local_app_global_public_mix get app value', function () { unitTestFW.ok(true, 'Passed!'); });");
+    var errorExprA = new jsWorkFlow.Activities.EvalExprActivity("unitTestFW.test('testContextData_local_app_global_public_mix get app value', function () { unitTestFW.ok(false, 'Passed!'); });");
     var ifActA = new jsWorkFlow.Activities.IfElseActivity(isEqualA, okExprA, errorExprA);
 
     //比较local
     var isEqualL = new jsWorkFlow.Activities.IsEqualsActivity(getLocal, val3);
-    var okExprL = new jsWorkFlow.Activities.EvalExprActivity("test('testContextData_local_app_global_public_mix get local value', function () { ok(true, 'Passed!'); });");
-    var errorExprL = new jsWorkFlow.Activities.EvalExprActivity("test('testContextData_local_app_global_public_mix get local value', function () { ok(false, 'Passed!'); });");
+    var okExprL = new jsWorkFlow.Activities.EvalExprActivity("unitTestFW.test('testContextData_local_app_global_public_mix get local value', function () { unitTestFW.ok(true, 'Passed!'); });");
+    var errorExprL = new jsWorkFlow.Activities.EvalExprActivity("unitTestFW.test('testContextData_local_app_global_public_mix get local value', function () { unitTestFW.ok(false, 'Passed!'); });");
     var ifActL = new jsWorkFlow.Activities.IfElseActivity(isEqualL, okExprL, errorExprL);
 
     //比较auto，取出的值应该与local相同
     var isEqualAuto = new jsWorkFlow.Activities.IsEqualsActivity(getAuto, val3);
-    var okExprAuto = new jsWorkFlow.Activities.EvalExprActivity("test('testContextData_local_app_global_public_mix get auto value', function () { ok(true, 'Passed!'); });");
-    var errorExprAuto = new jsWorkFlow.Activities.EvalExprActivity("test('testContextData_local_app_global_public_mix get auto value', function () { ok(false, 'Passed!'); });");
+    var okExprAuto = new jsWorkFlow.Activities.EvalExprActivity("unitTestFW.test('testContextData_local_app_global_public_mix get auto value', function () { unitTestFW.ok(true, 'Passed!'); });");
+    var errorExprAuto = new jsWorkFlow.Activities.EvalExprActivity("unitTestFW.test('testContextData_local_app_global_public_mix get auto value', function () { unitTestFW.ok(false, 'Passed!'); });");
     var ifActAuto = new jsWorkFlow.Activities.IfElseActivity(isEqualAuto, okExprAuto, errorExprAuto);
 
     seq.addActivity(defGlobal);
@@ -194,26 +194,26 @@ function testContextData_local_app_global_private_mix() {
 
     //比较global
     var isEqualG = new jsWorkFlow.Activities.IsEqualsActivity(getGlobal, val1);
-    var okExprG = new jsWorkFlow.Activities.EvalExprActivity("test('testContextData_local_app_global_private_mix get global value', function () { ok(true, 'Passed!'); });");
-    var errorExprG = new jsWorkFlow.Activities.EvalExprActivity("test('testContextData_local_app_global_private_mix get global value', function () { ok(false, 'Passed!'); });");
+    var okExprG = new jsWorkFlow.Activities.EvalExprActivity("unitTestFW.test('testContextData_local_app_global_private_mix get global value', function () { unitTestFW.ok(true, 'Passed!'); });");
+    var errorExprG = new jsWorkFlow.Activities.EvalExprActivity("unitTestFW.test('testContextData_local_app_global_private_mix get global value', function () { unitTestFW.ok(false, 'Passed!'); });");
     var ifActG = new jsWorkFlow.Activities.IfElseActivity(isEqualG, okExprG, errorExprG);
 
     //比较application
     var isEqualA = new jsWorkFlow.Activities.IsEqualsActivity(getApp, val2);
-    var okExprA = new jsWorkFlow.Activities.EvalExprActivity("test('testContextData_local_app_global_private_mix get app value', function () { ok(true, 'Passed!'); });");
-    var errorExprA = new jsWorkFlow.Activities.EvalExprActivity("test('testContextData_local_app_global_private_mix get app value', function () { ok(false, 'Passed!'); });");
+    var okExprA = new jsWorkFlow.Activities.EvalExprActivity("unitTestFW.test('testContextData_local_app_global_private_mix get app value', function () { unitTestFW.ok(true, 'Passed!'); });");
+    var errorExprA = new jsWorkFlow.Activities.EvalExprActivity("unitTestFW.test('testContextData_local_app_global_private_mix get app value', function () { unitTestFW.ok(false, 'Passed!'); });");
     var ifActA = new jsWorkFlow.Activities.IfElseActivity(isEqualA, okExprA, errorExprA);
 
     //比较application
     var isEqualL = new jsWorkFlow.Activities.IsEqualsActivity(getLocal, val3);
-    var okExprL = new jsWorkFlow.Activities.EvalExprActivity("test('testContextData_local_app_global_private_mix get local value', function () { ok(true, 'Passed!'); });");
-    var errorExprL = new jsWorkFlow.Activities.EvalExprActivity("test('testContextData_local_app_global_private_mix get local value', function () { ok(false, 'Passed!'); });");
+    var okExprL = new jsWorkFlow.Activities.EvalExprActivity("unitTestFW.test('testContextData_local_app_global_private_mix get local value', function () { unitTestFW.ok(true, 'Passed!'); });");
+    var errorExprL = new jsWorkFlow.Activities.EvalExprActivity("unitTestFW.test('testContextData_local_app_global_private_mix get local value', function () { unitTestFW.ok(false, 'Passed!'); });");
     var ifActL = new jsWorkFlow.Activities.IfElseActivity(isEqualL, okExprL, errorExprL);
 
     //比较auto，取出的值应该与local相同
     var isEqualAuto = new jsWorkFlow.Activities.IsEqualsActivity(getAuto, val3);
-    var okExprAuto = new jsWorkFlow.Activities.EvalExprActivity("test('testContextData_local_app_global_private_mix get auto value', function () { ok(true, 'Passed!'); });");
-    var errorExprAuto = new jsWorkFlow.Activities.EvalExprActivity("test('testContextData_local_app_global_private_mix get auto value', function () { ok(false, 'Passed!'); });");
+    var okExprAuto = new jsWorkFlow.Activities.EvalExprActivity("unitTestFW.test('testContextData_local_app_global_private_mix get auto value', function () { unitTestFW.ok(true, 'Passed!'); });");
+    var errorExprAuto = new jsWorkFlow.Activities.EvalExprActivity("unitTestFW.test('testContextData_local_app_global_private_mix get auto value', function () { unitTestFW.ok(false, 'Passed!'); });");
     var ifActAuto = new jsWorkFlow.Activities.IfElseActivity(isEqualAuto, okExprAuto, errorExprAuto);
 
     seq.addActivity(defGlobal);
@@ -234,4 +234,8 @@ function testContextData() {
     testContextData_app_public();
     testContextData_local_app_global_public_mix();
     testContextData_local_app_global_private_mix();
+}
+
+if (typeof (exports) !== 'undefined') {
+    exports.testContextData = testContextData;
 }

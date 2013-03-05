@@ -10,8 +10,8 @@
 
 //require namsepace
 //jsWorkFlow.Activities namespace registed at core
-jsoop.ns('jsWorkFlow.Activities', true);
-var jsWorkFlow = jsoop.ns('jsWorkFlow');
+jso.ns('jsWorkFlow.Activities', true);
+var jsWorkFlow = jso.ns('jsWorkFlow');
 
 
 //TODO;
@@ -27,15 +27,15 @@ jsWorkFlow.Activities.TryCatchActivity = function jsWorkFlow_Activities_TryCatch
     log.debug("jsWorkFlow.Activities.TryCatchActivity create!");
 
 
-    jsoop.initializeBase(jsWorkFlow.Activities.TryCatchActivity, this);
+    jso.initializeBase(jsWorkFlow.Activities.TryCatchActivity, this);
 
     this._tryActivity = tryActivity;
     this._catchActivity = catchActivity;
 
-    this._doEvalTryCompleteHandler = jsoop.createDelegate(this, this.doEvalTryCompleteHandler);
-    this._doEvalTryErrorHandler = jsoop.createDelegate(this, this.doEvalTryErrorHandler);
-    this._doEvalTryErrorCompleteHandler = jsoop.createDelegate(this, this.doEvalTryErrorCompleteHandler);
-    this._doEvalCatchCompleteHandler = jsoop.createDelegate(this, this.doEvalCatchCompleteHandler);
+    this._doEvalTryCompleteHandler = jso.createDelegate(this, this.doEvalTryCompleteHandler);
+    this._doEvalTryErrorHandler = jso.createDelegate(this, this.doEvalTryErrorHandler);
+    this._doEvalTryErrorCompleteHandler = jso.createDelegate(this, this.doEvalTryErrorCompleteHandler);
+    this._doEvalCatchCompleteHandler = jso.createDelegate(this, this.doEvalCatchCompleteHandler);
 
 };
 
@@ -43,7 +43,7 @@ function jsWorkFlow_Activities_TryCatchActivity$dispose() {
     var log = jwf$getLogger();
     log.debug("jsWorkFlow.Activities.TryCatchActivity dispose!");
 
-    jsoop.callBaseMethod(jsWorkFlow.Activities.TryCatchActivity, this, 'dispose');
+    jso.callBaseMethod(jsWorkFlow.Activities.TryCatchActivity, this, 'dispose');
 }
 
 
@@ -70,14 +70,14 @@ function jsWorkFlow_Activities_TryCatchActivity$loadSerializeContext(serializeCo
 
     //检查类型 ===> 这是规范
     if (serializeContext['_@_activityType'] !== 'jsWorkFlow.Activities.TryCatchActivity') {
-        throw jsoop.errorInvalidOperation("loadSerializeContext missmatch type!");
+        throw jso.errorInvalidOperation("loadSerializeContext missmatch type!");
     }
 
 
     //恢复base
     var baseSerializeContext = serializeContext['_@_base'];
 
-    jsoop.callBaseMethod(jsWorkFlow.Activities.TryCatchActivity, this, 'loadSerializeContext', [baseSerializeContext]);
+    jso.callBaseMethod(jsWorkFlow.Activities.TryCatchActivity, this, 'loadSerializeContext', [baseSerializeContext]);
 
     //恢复自身
     var tryActivitySC = serializeContext["tryActivity"];
@@ -104,7 +104,7 @@ function jsWorkFlow_Activities_TryCatchActivity$saveSerializeContext(serializeCo
     //保存base
     var baseSerializeContext = {};
 
-    jsoop.callBaseMethod(jsWorkFlow.Activities.TryCatchActivity, this, 'saveSerializeContext', [baseSerializeContext]);
+    jso.callBaseMethod(jsWorkFlow.Activities.TryCatchActivity, this, 'saveSerializeContext', [baseSerializeContext]);
 
     serializeContext['_@_base'] = baseSerializeContext;
 }
@@ -228,7 +228,7 @@ function jsWorkFlow_Activities_TryCatchActivity$execute(context) {
     var log = jwf$getLogger();
     log.debug("jsWorkFlow.Activities.TryCatchActivity execute!");
 
-    jsoop.callBaseMethod(jsWorkFlow.Activities.TryCatchActivity, this, 'execute', [context]);
+    jso.callBaseMethod(jsWorkFlow.Activities.TryCatchActivity, this, 'execute', [context]);
 
     this.doEvalTry(context);
 
@@ -259,8 +259,8 @@ jsWorkFlow.Activities.TryCatchActivity.prototype = {
     execute: jsWorkFlow_Activities_TryCatchActivity$execute
 };
 
-jsoop.registerClass(
-    jsoop.setTypeName(jsWorkFlow.Activities.TryCatchActivity, 'jsWorkFlow.Activities.TryCatchActivity'), 
+jso.registerClass(
+    jso.setTypeName(jsWorkFlow.Activities.TryCatchActivity, 'jsWorkFlow.Activities.TryCatchActivity'), 
     jsWorkFlow.Activity);
 
 

@@ -10,8 +10,8 @@
 
 //require namsepace
 //jsWorkFlow.Activities namespace registed at core
-jsoop.ns('jsWorkFlow.Activities', true);
-var jsWorkFlow = jsoop.ns('jsWorkFlow');
+jso.ns('jsWorkFlow.Activities', true);
+var jsWorkFlow = jso.ns('jsWorkFlow');
 
 
 
@@ -22,11 +22,11 @@ var jsWorkFlow = jsoop.ns('jsWorkFlow');
 //    根据activity的注册信息，展示activity的编辑器，并将编辑结果同步到文档。
 //
 jsWorkFlow.Designer.ActivityDesigner = function jsWorkFlow_Designer_ActivityDesigner() {
-    jsoop.initializeBase(jsWorkFlow.Designer.ActivityDesigner, this);
+    jso.initializeBase(jsWorkFlow.Designer.ActivityDesigner, this);
 };
 
 function jsWorkFlow_Designer_ActivityDesigner$dispose() {
-    jsoop.callBaseMethod(jsWorkFlow.Designer.ActivityDesigner, this, 'dispose');
+    jso.callBaseMethod(jsWorkFlow.Designer.ActivityDesigner, this, 'dispose');
 }
 
 //提供ActivityDesigner对应activity的名字，字符串类型
@@ -46,8 +46,8 @@ jsWorkFlow.Designer.ActivityDesigner.prototype = {
     set_activityTypeName: jsWorkFlow_Designer_ActivityDesigner$set_activityTypeName
 };
 
-jsoop.registerClass(
-    jsoop.setTypeName(jsWorkFlow.Designer.ActivityDesigner, 'jsWorkFlow.Designer.ActivityDesigner'), 
+jso.registerClass(
+    jso.setTypeName(jsWorkFlow.Designer.ActivityDesigner, 'jsWorkFlow.Designer.ActivityDesigner'), 
     jsWorkFlow.PropertyDesignerBase);
 
 ////////////////////////////////////////////////////////////////////////////

@@ -10,8 +10,8 @@
 
 //require namsepace
 //jsWorkFlow.Activities namespace registed at core
-jsoop.ns('jsWorkFlow.Activities', true);
-var jsWorkFlow = jsoop.ns('jsWorkFlow');
+jso.ns('jsWorkFlow.Activities', true);
+var jsWorkFlow = jso.ns('jsWorkFlow');
 
 
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -26,13 +26,13 @@ jsWorkFlow.Activities.WhileActivity = function jsWorkFlow_Activities_WhileActivi
     var log = jwf$getLogger();
     log.debug("jsWorkFlow.Activities.WhileActivity create!");
 
-    jsoop.initializeBase(jsWorkFlow.Activities.WhileActivity, this);
+    jso.initializeBase(jsWorkFlow.Activities.WhileActivity, this);
 
     this.set_conditionActivity(conditionActivity);
     this.set_bodyActivity(bodyActivity);
 
-    this._doEvalConditionCompleteHandler = jsoop.createDelegate(this, this.doEvalConditionCompleteHandler);
-    this._doExecuteBodyCompleteHandler = jsoop.createDelegate(this, this.doExecuteBodyCompleteHandler);
+    this._doEvalConditionCompleteHandler = jso.createDelegate(this, this.doEvalConditionCompleteHandler);
+    this._doExecuteBodyCompleteHandler = jso.createDelegate(this, this.doExecuteBodyCompleteHandler);
 
 };
 
@@ -40,7 +40,7 @@ function jsWorkFlow_Activities_WhileActivity$dispose() {
     var log = jwf$getLogger();
     log.debug("jsWorkFlow.Activities.WhileActivity dispose!");
 
-    jsoop.callBaseMethod(jsWorkFlow.Activities.WhileActivity, this, 'dispose');
+    jso.callBaseMethod(jsWorkFlow.Activities.WhileActivity, this, 'dispose');
 }
 
 function jsWorkFlow_Activities_WhileActivity$get_conditionActivity() {
@@ -66,13 +66,13 @@ function jsWorkFlow_Activities_WhileActivity$loadSerializeContext(serializeConte
 
     //检查类型 ===> 这是规范
     if (serializeContext['_@_activityType'] !== 'jsWorkFlow.Activities.WhileActivity') {
-        throw jsoop.errorInvalidOperation("loadSerializeContext missmatch type!");
+        throw jso.errorInvalidOperation("loadSerializeContext missmatch type!");
     }
 
     //恢复base
     var baseSerializeContext = serializeContext['_@_base'];
 
-    jsoop.callBaseMethod(jsWorkFlow.Activities.WhileActivity, this, 'loadSerializeContext', [baseSerializeContext]);
+    jso.callBaseMethod(jsWorkFlow.Activities.WhileActivity, this, 'loadSerializeContext', [baseSerializeContext]);
 
     //恢复自身
     this.set_conditionActivity($jwf.loadActivity(serializeContext['conditionActivity']));
@@ -95,7 +95,7 @@ function jsWorkFlow_Activities_WhileActivity$saveSerializeContext(serializeConte
     //保存base
     var baseSerializeContext = {};
 
-    jsoop.callBaseMethod(jsWorkFlow.Activities.WhileActivity, this, 'saveSerializeContext', [baseSerializeContext]);
+    jso.callBaseMethod(jsWorkFlow.Activities.WhileActivity, this, 'saveSerializeContext', [baseSerializeContext]);
 
     serializeContext['_@_base'] = baseSerializeContext;
 }
@@ -189,7 +189,7 @@ function jsWorkFlow_Activities_WhileActivity$execute(context) {
     var log = jwf$getLogger();
     log.debug("jsWorkFlow.Activities.WhileActivity execute!");
 
-    jsoop.callBaseMethod(jsWorkFlow.Activities.WhileActivity, this, 'execute', [context]);
+    jso.callBaseMethod(jsWorkFlow.Activities.WhileActivity, this, 'execute', [context]);
 
     //从条件检查开始执行
     this.doEvalCondition(context);
@@ -218,5 +218,5 @@ jsWorkFlow.Activities.WhileActivity.prototype = {
     execute: jsWorkFlow_Activities_WhileActivity$execute
 };
 
-jsoop.registerClass(jsoop.setTypeName(jsWorkFlow.Activities.WhileActivity, 'jsWorkFlow.Activities.WhileActivity'), jsWorkFlow.Activity);
+jso.registerClass(jso.setTypeName(jsWorkFlow.Activities.WhileActivity, 'jsWorkFlow.Activities.WhileActivity'), jsWorkFlow.Activity);
 

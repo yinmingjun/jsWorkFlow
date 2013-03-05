@@ -12,7 +12,7 @@ function testStateMachineEmpty() {
 
     var stateMachine = new jsWorkFlow.Activities.StateMachineActivity();
     stateMachine.add_end(function () {
-        test("testStateMachineEmpty", function () { ok(true, "Passed!"); });
+        unitTestFW.test("testStateMachineEmpty", function () { unitTestFW.ok(true, "Passed!"); });
     });
 
     testEngine(stateMachine);
@@ -26,7 +26,7 @@ function testStateMachineEnd() {
 
     var stateMachine = new jsWorkFlow.Activities.StateMachineActivity(smSeq);
     stateMachine.add_end(function () {
-        test("testStateMachineEnd", function () { ok(true, "Passed!"); });
+        unitTestFW.test("testStateMachineEnd", function () { unitTestFW.ok(true, "Passed!"); });
     });
 
     testEngine(stateMachine);
@@ -78,7 +78,7 @@ function testStateMachineFlow() {
 
     var stateMachine = new jsWorkFlow.Activities.StateMachineActivity(smSeq);
     stateMachine.add_end(function () {
-        test("testStateMachineFlow", function () { ok(true, "Passed!"); });
+        unitTestFW.test("testStateMachineFlow", function () { unitTestFW.ok(true, "Passed!"); });
     });
 
 
@@ -89,4 +89,8 @@ function testStateMachine() {
     testStateMachineEmpty();
     testStateMachineEnd();
     testStateMachineFlow();
+}
+
+if (typeof (exports) !== 'undefined') {
+    exports.testStateMachine = testStateMachine;
 }

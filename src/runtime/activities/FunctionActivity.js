@@ -10,8 +10,8 @@
 
 //require namsepace
 //jsWorkFlow.Activities namespace registed at core
-jsoop.ns('jsWorkFlow.Activities', true);
-var jsWorkFlow = jsoop.ns('jsWorkFlow');
+jso.ns('jsWorkFlow.Activities', true);
+var jsWorkFlow = jso.ns('jsWorkFlow');
 
 //////////////////////////////////////////////////////////////////////////////////////////
 //FunctionActivityEventArgs，提供jsWorkFlow的FunctionActivity的事件响应参数
@@ -19,11 +19,11 @@ var jsWorkFlow = jsoop.ns('jsWorkFlow');
 // TO 开发者：
 //
 jsWorkFlow.Activities.FunctionActivityEventArgs = function jsWorkFlow_Activities_FunctionActivityEventArgs(context, callbackData) {
-    jsoop.initializeBase(jsWorkFlow.Activities.FunctionActivityEventArgs, this, [context, callbackData]);
+    jso.initializeBase(jsWorkFlow.Activities.FunctionActivityEventArgs, this, [context, callbackData]);
 };
 
 function jsWorkFlow_Activities_FunctionActivityEventArgs$dispose() {
-    jsoop.callBaseMethod(jsWorkFlow.Activities.FunctionActivityEventArgs, this, 'dispose');
+    jso.callBaseMethod(jsWorkFlow.Activities.FunctionActivityEventArgs, this, 'dispose');
 }
 
 function jsWorkFlow_Activities_FunctionActivityEventArgs$get_callbackData() {
@@ -36,8 +36,8 @@ jsWorkFlow.Activities.FunctionActivityEventArgs.prototype = {
     get_callbackData: jsWorkFlow_Activities_FunctionActivityEventArgs$get_callbackData
 };
 
-jsoop.registerClass(
-    jsoop.setTypeName(jsWorkFlow.Activities.FunctionActivityEventArgs, 'jsWorkFlow.Activities.FunctionActivityEventArgs'), 
+jso.registerClass(
+    jso.setTypeName(jsWorkFlow.Activities.FunctionActivityEventArgs, 'jsWorkFlow.Activities.FunctionActivityEventArgs'), 
     jsWorkFlow.ActivityEventArgs);
 
 
@@ -54,14 +54,14 @@ jsWorkFlow.Activities.FunctionActivity = function jsWorkFlow_Activities_Function
 
     this._func = func;
     this._callbackData = callbackData;
-    jsoop.initializeBase(jsWorkFlow.Activities.FunctionActivity, this);
+    jso.initializeBase(jsWorkFlow.Activities.FunctionActivity, this);
 };
 
 function jsWorkFlow_Activities_FunctionActivity$dispose() {
     var log = jwf$getLogger();
     log.debug("jsWorkFlow.Activities.FunctionActivity dispose!");
 
-    jsoop.callBaseMethod(jsWorkFlow.Activities.FunctionActivity, this, 'dispose');
+    jso.callBaseMethod(jsWorkFlow.Activities.FunctionActivity, this, 'dispose');
 }
 
 function jsWorkFlow_Activities_FunctionActivity$get_func() {
@@ -80,13 +80,13 @@ function jsWorkFlow_Activities_FunctionActivity$loadSerializeContext(serializeCo
 
     //检查类型 ===> 这是规范
     if (serializeContext['_@_activityType'] !== 'jsWorkFlow.Activities.FunctionActivity') {
-        throw jsoop.errorInvalidOperation("loadSerializeContext missmatch type!");
+        throw jso.errorInvalidOperation("loadSerializeContext missmatch type!");
     }
 
     //恢复base
     var baseSerializeContext = serializeContext['_@_base'];
 
-    jsoop.callBaseMethod(jsWorkFlow.Activities.FunctionActivity, this, 'loadSerializeContext', [baseSerializeContext]);
+    jso.callBaseMethod(jsWorkFlow.Activities.FunctionActivity, this, 'loadSerializeContext', [baseSerializeContext]);
 
     //恢复自身
     this.set_func(eval(serializeContext['func']));
@@ -114,7 +114,7 @@ function jsWorkFlow_Activities_FunctionActivity$saveSerializeContext(serializeCo
     //保存base
     var baseSerializeContext = {};
 
-    jsoop.callBaseMethod(jsWorkFlow.Activities.FunctionActivity, this, 'saveSerializeContext', [baseSerializeContext]);
+    jso.callBaseMethod(jsWorkFlow.Activities.FunctionActivity, this, 'saveSerializeContext', [baseSerializeContext]);
 
     serializeContext['_@_base'] = baseSerializeContext;
 }
@@ -125,7 +125,7 @@ function jsWorkFlow_Activities_FunctionActivity$execute(context) {
     log.debug("jsWorkFlow.Activities.FunctionActivity execute!");
 
     //执行基类execute方法，会进入start状态
-    jsoop.callBaseMethod(jsWorkFlow.Activities.FunctionActivity, this, 'execute', [context]);
+    jso.callBaseMethod(jsWorkFlow.Activities.FunctionActivity, this, 'execute', [context]);
 
     //同步执行function
     var eventArgs = new jsWorkFlow.Activities.FunctionActivityEventArgs(context, this._callbackData);
@@ -152,8 +152,8 @@ jsWorkFlow.Activities.FunctionActivity.prototype = {
     execute: jsWorkFlow_Activities_FunctionActivity$execute
 };
 
-jsoop.registerClass(
-    jsoop.setTypeName(jsWorkFlow.Activities.FunctionActivity, 'jsWorkFlow.Activities.FunctionActivity'), 
+jso.registerClass(
+    jso.setTypeName(jsWorkFlow.Activities.FunctionActivity, 'jsWorkFlow.Activities.FunctionActivity'), 
     jsWorkFlow.Activity);
 
 

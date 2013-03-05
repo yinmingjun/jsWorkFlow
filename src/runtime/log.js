@@ -9,7 +9,7 @@
 */
 
 //require namsepace
-var jsWorkFlow = jsoop.registerNamespace('jsWorkFlow');
+var jsWorkFlow = jso.registerNamespace('jsWorkFlow');
 
 //////////////////////////////////////////////////////////////////////////////////////////
 //NullLogger，提供jsWorkFlow的默认的LOG
@@ -30,7 +30,48 @@ jsWorkFlow.NullLogger.prototype = {
     fatal: jsWorkFlow_NullLogger$dummy
 };
 
-jsoop.registerClass(jsoop.setTypeName(jsWorkFlow.NullLogger, 'jsWorkFlow.NullLogger'));
+jso.registerClass(jso.setTypeName(jsWorkFlow.NullLogger, 'jsWorkFlow.NullLogger'));
+
+//////////////////////////////////////////////////////////////////////////////////////////
+//ConsoleLogger，提供jsWorkFlow的默认的LOG
+//
+jsWorkFlow.ConsoleLogger = function jsWorkFlow_ConsoleLogger() {
+};
+
+function jsWorkFlow_ConsoleLogger$_log(level, message) {
+    console.log('[' + level + ']+%s', message);
+}
+
+function jsWorkFlow_ConsoleLogger$trace(message) {
+    this._log('trace', message);
+}
+function jsWorkFlow_ConsoleLogger$debug(message) {
+    this._log('debug', message);
+}
+function jsWorkFlow_ConsoleLogger$info(message) {
+    this._log('info', message);
+}
+function jsWorkFlow_ConsoleLogger$warn(message) {
+    this._log('warn', message);
+}
+function jsWorkFlow_ConsoleLogger$error(message) {
+    this._log('error', message);
+}
+function jsWorkFlow_ConsoleLogger$fatal(message) {
+    this._log('fatal', message);
+}
+
+jsWorkFlow.ConsoleLogger.prototype = {
+    _log: jsWorkFlow_ConsoleLogger$_log,
+    trace: jsWorkFlow_ConsoleLogger$trace,
+    debug: jsWorkFlow_ConsoleLogger$debug,
+    info: jsWorkFlow_ConsoleLogger$info,
+    warn: jsWorkFlow_ConsoleLogger$warn,
+    error: jsWorkFlow_ConsoleLogger$error,
+    fatal: jsWorkFlow_ConsoleLogger$fatal
+};
+
+jso.registerClass(jso.setTypeName(jsWorkFlow.ConsoleLogger, 'jsWorkFlow.ConsoleLogger'));
 
 
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -54,6 +95,9 @@ function _jwf$config_log() {
         log.addAppender(popUpAppender);
 
     }
+//    else if ((typeof (console) != 'undefined') && (typeof (console.log) != 'undefined')) {
+//        log = new jsWorkFlow.ConsoleLogger();
+//    }
     else {
         //如果没有log4javascript，使用NullLogger来替换
         log = new jsWorkFlow.NullLogger();

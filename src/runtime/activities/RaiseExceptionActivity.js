@@ -10,8 +10,8 @@
 
 //require namsepace
 //jsWorkFlow.Activities namespace registed at core
-jsoop.ns('jsWorkFlow.Activities', true);
-var jsWorkFlow = jsoop.ns('jsWorkFlow');
+jso.ns('jsWorkFlow.Activities', true);
+var jsWorkFlow = jso.ns('jsWorkFlow');
 
 
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -25,10 +25,10 @@ jsWorkFlow.Activities.RaiseExceptionActivity = function jsWorkFlow_Activities_Ra
     log.debug("jsWorkFlow.Activities.RaiseExceptionActivity create!");
 
 
-    jsoop.initializeBase(jsWorkFlow.Activities.RaiseExceptionActivity, this);
+    jso.initializeBase(jsWorkFlow.Activities.RaiseExceptionActivity, this);
 
     this._exceptionActivity = exceptionActivity;
-    this._doEvalExceptionActivityCompleteHandler = jsoop.createDelegate(this, this.doEvalExceptionActivityCompleteHandler);
+    this._doEvalExceptionActivityCompleteHandler = jso.createDelegate(this, this.doEvalExceptionActivityCompleteHandler);
 
 };
 
@@ -36,7 +36,7 @@ function jsWorkFlow_Activities_RaiseExceptionActivity$dispose() {
     var log = jwf$getLogger();
     log.debug("jsWorkFlow.Activities.RaiseExceptionActivity dispose!");
 
-    jsoop.callBaseMethod(jsWorkFlow.Activities.RaiseExceptionActivity, this, 'dispose');
+    jso.callBaseMethod(jsWorkFlow.Activities.RaiseExceptionActivity, this, 'dispose');
 }
 
 function jsWorkFlow_Activities_RaiseExceptionActivity$get_exceptionActivity() {
@@ -54,14 +54,14 @@ function jsWorkFlow_Activities_RaiseExceptionActivity$loadSerializeContext(seria
 
     //检查类型 ===> 这是规范
     if (serializeContext['_@_activityType'] !== 'jsWorkFlow.Activities.RaiseExceptionActivity') {
-        throw jsoop.errorInvalidOperation("loadSerializeContext missmatch type!");
+        throw jso.errorInvalidOperation("loadSerializeContext missmatch type!");
     }
 
 
     //恢复base
     var baseSerializeContext = serializeContext['_@_base'];
 
-    jsoop.callBaseMethod(jsWorkFlow.Activities.RaiseExceptionActivity, this, 'loadSerializeContext', [baseSerializeContext]);
+    jso.callBaseMethod(jsWorkFlow.Activities.RaiseExceptionActivity, this, 'loadSerializeContext', [baseSerializeContext]);
 
     //恢复自身
     var exceptionActivitySC = serializeContext["exceptionActivity"];
@@ -84,7 +84,7 @@ function jsWorkFlow_Activities_RaiseExceptionActivity$saveSerializeContext(seria
     //保存base
     var baseSerializeContext = {};
 
-    jsoop.callBaseMethod(jsWorkFlow.Activities.RaiseExceptionActivity, this, 'saveSerializeContext', [baseSerializeContext]);
+    jso.callBaseMethod(jsWorkFlow.Activities.RaiseExceptionActivity, this, 'saveSerializeContext', [baseSerializeContext]);
 
     serializeContext['_@_base'] = baseSerializeContext;
 }
@@ -141,7 +141,7 @@ function jsWorkFlow_Activities_RaiseExceptionActivity$execute(context) {
     var log = jwf$getLogger();
     log.debug("jsWorkFlow.Activities.RaiseExceptionActivity execute!");
 
-    jsoop.callBaseMethod(jsWorkFlow.Activities.RaiseExceptionActivity, this, 'execute', [context]);
+    jso.callBaseMethod(jsWorkFlow.Activities.RaiseExceptionActivity, this, 'execute', [context]);
 
     //获取异常信息，并抛出异常
     this.doEvalExceptionActivity(context);
@@ -165,7 +165,7 @@ jsWorkFlow.Activities.RaiseExceptionActivity.prototype = {
     execute: jsWorkFlow_Activities_RaiseExceptionActivity$execute
 };
 
-jsoop.registerClass(
-    jsoop.setTypeName(jsWorkFlow.Activities.RaiseExceptionActivity, 'jsWorkFlow.Activities.RaiseExceptionActivity'), 
+jso.registerClass(
+    jso.setTypeName(jsWorkFlow.Activities.RaiseExceptionActivity, 'jsWorkFlow.Activities.RaiseExceptionActivity'), 
     jsWorkFlow.Activity);
 

@@ -8,8 +8,8 @@ function testLogicalOpt_true_and_true() {
 
     //比较global
     var logicalAnd = new jsWorkFlow.Activities.LogicAndActivity(valTrue, valTrue);
-    var trueExpr = new jsWorkFlow.Activities.EvalExprActivity("test('testLogicalOpt_true_and_true', function () { ok(true, 'Passed!'); });");
-    var falseExpr = new jsWorkFlow.Activities.EvalExprActivity("test('testLogicalOpt_true_and_true', function () { ok(false, 'Passed!'); });");
+    var trueExpr = new jsWorkFlow.Activities.EvalExprActivity("unitTestFW.test('testLogicalOpt_true_and_true', function () { unitTestFW.ok(true, 'Passed!'); });");
+    var falseExpr = new jsWorkFlow.Activities.EvalExprActivity("unitTestFW.test('testLogicalOpt_true_and_true', function () { unitTestFW.ok(false, 'Passed!'); });");
     var ifAct = new jsWorkFlow.Activities.IfElseActivity(logicalAnd, trueExpr, falseExpr);
 
     testEngine(ifAct);
@@ -22,8 +22,8 @@ function testLogicalOpt_true_and_false() {
 
     //比较global
     var logicalAnd = new jsWorkFlow.Activities.LogicAndActivity(valTrue, valFalse);
-    var trueExpr = new jsWorkFlow.Activities.EvalExprActivity("test('testLogicalOpt_true_and_false', function () { ok(false, 'Passed!'); });");
-    var falseExpr = new jsWorkFlow.Activities.EvalExprActivity("test('testLogicalOpt_true_and_false', function () { ok(true, 'Passed!'); });");
+    var trueExpr = new jsWorkFlow.Activities.EvalExprActivity("unitTestFW.test('testLogicalOpt_true_and_false', function () { unitTestFW.ok(false, 'Passed!'); });");
+    var falseExpr = new jsWorkFlow.Activities.EvalExprActivity("unitTestFW.test('testLogicalOpt_true_and_false', function () { unitTestFW.ok(true, 'Passed!'); });");
     var ifAct = new jsWorkFlow.Activities.IfElseActivity(logicalAnd, trueExpr, falseExpr);
 
     testEngine(ifAct);
@@ -36,8 +36,8 @@ function testLogicalOpt_false_and_true() {
 
     //比较global
     var logicalAnd = new jsWorkFlow.Activities.LogicAndActivity(valFalse, valTrue);
-    var trueExpr = new jsWorkFlow.Activities.EvalExprActivity("test('testLogicalOpt_false_and_true', function () { ok(false, 'Passed!'); });");
-    var falseExpr = new jsWorkFlow.Activities.EvalExprActivity("test('testLogicalOpt_false_and_true', function () { ok(true, 'Passed!'); });");
+    var trueExpr = new jsWorkFlow.Activities.EvalExprActivity("unitTestFW.test('testLogicalOpt_false_and_true', function () { unitTestFW.ok(false, 'Passed!'); });");
+    var falseExpr = new jsWorkFlow.Activities.EvalExprActivity("unitTestFW.test('testLogicalOpt_false_and_true', function () { unitTestFW.ok(true, 'Passed!'); });");
     var ifAct = new jsWorkFlow.Activities.IfElseActivity(logicalAnd, trueExpr, falseExpr);
 
     testEngine(ifAct);
@@ -50,8 +50,8 @@ function testLogicalOpt_false_and_false() {
 
     //比较global
     var logicalAnd = new jsWorkFlow.Activities.LogicAndActivity(valFalse, valFalse);
-    var trueExpr = new jsWorkFlow.Activities.EvalExprActivity("test('testLogicalOpt_false_and_false', function () { ok(false, 'Passed!'); });");
-    var falseExpr = new jsWorkFlow.Activities.EvalExprActivity("test('testLogicalOpt_false_and_false', function () { ok(true, 'Passed!'); });");
+    var trueExpr = new jsWorkFlow.Activities.EvalExprActivity("unitTestFW.test('testLogicalOpt_false_and_false', function () { unitTestFW.ok(false, 'Passed!'); });");
+    var falseExpr = new jsWorkFlow.Activities.EvalExprActivity("unitTestFW.test('testLogicalOpt_false_and_false', function () { unitTestFW.ok(true, 'Passed!'); });");
     var ifAct = new jsWorkFlow.Activities.IfElseActivity(logicalAnd, trueExpr, falseExpr);
 
     testEngine(ifAct);
@@ -64,8 +64,8 @@ function testLogicalOpt_true_or_true() {
 
     //比较global
     var logicalOr = new jsWorkFlow.Activities.LogicOrActivity(valTrue, valTrue);
-    var trueExpr = new jsWorkFlow.Activities.EvalExprActivity("test('testLogicalOpt_true_or_true', function () { ok(true, 'Passed!'); });");
-    var falseExpr = new jsWorkFlow.Activities.EvalExprActivity("test('testLogicalOpt_true_or_true', function () { ok(false, 'Passed!'); });");
+    var trueExpr = new jsWorkFlow.Activities.EvalExprActivity("unitTestFW.test('testLogicalOpt_true_or_true', function () { unitTestFW.ok(true, 'Passed!'); });");
+    var falseExpr = new jsWorkFlow.Activities.EvalExprActivity("unitTestFW.test('testLogicalOpt_true_or_true', function () { unitTestFW.ok(false, 'Passed!'); });");
     var ifAct = new jsWorkFlow.Activities.IfElseActivity(logicalOr, trueExpr, falseExpr);
 
     testEngine(ifAct);
@@ -78,8 +78,8 @@ function testLogicalOpt_true_or_false() {
 
     //比较global
     var logicalOr = new jsWorkFlow.Activities.LogicOrActivity(valTrue, valFalse);
-    var trueExpr = new jsWorkFlow.Activities.EvalExprActivity("test('testLogicalOpt_true_or_false', function () { ok(true, 'Passed!'); });");
-    var falseExpr = new jsWorkFlow.Activities.EvalExprActivity("test('testLogicalOpt_true_or_false', function () { ok(false, 'Passed!'); });");
+    var trueExpr = new jsWorkFlow.Activities.EvalExprActivity("unitTestFW.test('testLogicalOpt_true_or_false', function () { unitTestFW.ok(true, 'Passed!'); });");
+    var falseExpr = new jsWorkFlow.Activities.EvalExprActivity("unitTestFW.test('testLogicalOpt_true_or_false', function () { unitTestFW.ok(false, 'Passed!'); });");
     var ifAct = new jsWorkFlow.Activities.IfElseActivity(logicalOr, trueExpr, falseExpr);
 
 
@@ -94,8 +94,8 @@ function testLogicalOpt_false_or_true() {
 
     //比较global
     var logicalOr = new jsWorkFlow.Activities.LogicOrActivity(valFalse, valTrue);
-    var trueExpr = new jsWorkFlow.Activities.EvalExprActivity("test('testLogicalOpt_true_or_false', function () { ok(true, 'Passed!'); });");
-    var falseExpr = new jsWorkFlow.Activities.EvalExprActivity("test('testLogicalOpt_true_or_false', function () { ok(false, 'Passed!'); });");
+    var trueExpr = new jsWorkFlow.Activities.EvalExprActivity("unitTestFW.test('testLogicalOpt_true_or_false', function () { unitTestFW.ok(true, 'Passed!'); });");
+    var falseExpr = new jsWorkFlow.Activities.EvalExprActivity("unitTestFW.test('testLogicalOpt_true_or_false', function () { unitTestFW.ok(false, 'Passed!'); });");
     var ifAct = new jsWorkFlow.Activities.IfElseActivity(logicalOr, trueExpr, falseExpr);
 
     testEngine(ifAct);
@@ -108,8 +108,8 @@ function testLogicalOpt_false_or_false() {
 
     //比较global
     var logicalOr = new jsWorkFlow.Activities.LogicOrActivity(valFalse, valFalse);
-    var trueExpr = new jsWorkFlow.Activities.EvalExprActivity("test('testLogicalOpt_false_or_false', function () { ok(false, 'Passed!'); });");
-    var falseExpr = new jsWorkFlow.Activities.EvalExprActivity("test('testLogicalOpt_false_or_false', function () { ok(true, 'Passed!'); });");
+    var trueExpr = new jsWorkFlow.Activities.EvalExprActivity("unitTestFW.test('testLogicalOpt_false_or_false', function () { unitTestFW.ok(false, 'Passed!'); });");
+    var falseExpr = new jsWorkFlow.Activities.EvalExprActivity("unitTestFW.test('testLogicalOpt_false_or_false', function () { unitTestFW.ok(true, 'Passed!'); });");
     var ifAct = new jsWorkFlow.Activities.IfElseActivity(logicalOr, trueExpr, falseExpr);
 
     testEngine(ifAct);
@@ -122,8 +122,8 @@ function testLogicalOpt_not_true() {
 
     //比较global
     var logicalNot = new jsWorkFlow.Activities.LogicNotActivity(valTrue);
-    var trueExpr = new jsWorkFlow.Activities.EvalExprActivity("test('testLogicalOpt_not_true', function () { ok(false, 'Passed!'); });");
-    var falseExpr = new jsWorkFlow.Activities.EvalExprActivity("test('testLogicalOpt_not_true', function () { ok(true, 'Passed!'); });");
+    var trueExpr = new jsWorkFlow.Activities.EvalExprActivity("unitTestFW.test('testLogicalOpt_not_true', function () { unitTestFW.ok(false, 'Passed!'); });");
+    var falseExpr = new jsWorkFlow.Activities.EvalExprActivity("unitTestFW.test('testLogicalOpt_not_true', function () { unitTestFW.ok(true, 'Passed!'); });");
     var ifAct = new jsWorkFlow.Activities.IfElseActivity(logicalNot, trueExpr, falseExpr);
 
     testEngine(ifAct);
@@ -136,8 +136,8 @@ function testLogicalOpt_not_false() {
 
     //比较global
     var logicalNot = new jsWorkFlow.Activities.LogicNotActivity(valFalse);
-    var trueExpr = new jsWorkFlow.Activities.EvalExprActivity("test('testLogicalOpt_not_false', function () { ok(true, 'Passed!'); });");
-    var falseExpr = new jsWorkFlow.Activities.EvalExprActivity("test('testLogicalOpt_not_false', function () { ok(false, 'Passed!'); });");
+    var trueExpr = new jsWorkFlow.Activities.EvalExprActivity("unitTestFW.test('testLogicalOpt_not_false', function () { unitTestFW.ok(true, 'Passed!'); });");
+    var falseExpr = new jsWorkFlow.Activities.EvalExprActivity("unitTestFW.test('testLogicalOpt_not_false', function () { unitTestFW.ok(false, 'Passed!'); });");
     var ifAct = new jsWorkFlow.Activities.IfElseActivity(logicalNot, trueExpr, falseExpr);
 
     testEngine(ifAct);
@@ -150,8 +150,8 @@ function testLogicalOpt_true_xor_true() {
 
     //比较global
     var logicalXor = new jsWorkFlow.Activities.LogicXorActivity(valTrue, valTrue);
-    var trueExpr = new jsWorkFlow.Activities.EvalExprActivity("test('testLogicalOpt_true_xor_true', function () { ok(false, 'Passed!'); });");
-    var falseExpr = new jsWorkFlow.Activities.EvalExprActivity("test('testLogicalOpt_true_xor_true', function () { ok(true, 'Passed!'); });");
+    var trueExpr = new jsWorkFlow.Activities.EvalExprActivity("unitTestFW.test('testLogicalOpt_true_xor_true', function () { unitTestFW.ok(false, 'Passed!'); });");
+    var falseExpr = new jsWorkFlow.Activities.EvalExprActivity("unitTestFW.test('testLogicalOpt_true_xor_true', function () { unitTestFW.ok(true, 'Passed!'); });");
     var ifAct = new jsWorkFlow.Activities.IfElseActivity(logicalXor, trueExpr, falseExpr);
 
     testEngine(ifAct);
@@ -164,8 +164,8 @@ function testLogicalOpt_true_xor_false() {
 
     //比较global
     var logicalXor = new jsWorkFlow.Activities.LogicXorActivity(valTrue, valFalse);
-    var trueExpr = new jsWorkFlow.Activities.EvalExprActivity("test('testLogicalOpt_true_xor_false', function () { ok(true, 'Passed!'); });");
-    var falseExpr = new jsWorkFlow.Activities.EvalExprActivity("test('testLogicalOpt_true_xor_false', function () { ok(false, 'Passed!'); });");
+    var trueExpr = new jsWorkFlow.Activities.EvalExprActivity("unitTestFW.test('testLogicalOpt_true_xor_false', function () { unitTestFW.ok(true, 'Passed!'); });");
+    var falseExpr = new jsWorkFlow.Activities.EvalExprActivity("unitTestFW.test('testLogicalOpt_true_xor_false', function () { unitTestFW.ok(false, 'Passed!'); });");
     var ifAct = new jsWorkFlow.Activities.IfElseActivity(logicalXor, trueExpr, falseExpr);
 
     testEngine(ifAct);
@@ -178,8 +178,8 @@ function testLogicalOpt_false_xor_true() {
 
     //比较global
     var logicalXor = new jsWorkFlow.Activities.LogicXorActivity(valFalse, valTrue);
-    var trueExpr = new jsWorkFlow.Activities.EvalExprActivity("test('testLogicalOpt_false_xor_true', function () { ok(true, 'Passed!'); });");
-    var falseExpr = new jsWorkFlow.Activities.EvalExprActivity("test('testLogicalOpt_false_xor_true', function () { ok(false, 'Passed!'); });");
+    var trueExpr = new jsWorkFlow.Activities.EvalExprActivity("unitTestFW.test('testLogicalOpt_false_xor_true', function () { unitTestFW.ok(true, 'Passed!'); });");
+    var falseExpr = new jsWorkFlow.Activities.EvalExprActivity("unitTestFW.test('testLogicalOpt_false_xor_true', function () { unitTestFW.ok(false, 'Passed!'); });");
     var ifAct = new jsWorkFlow.Activities.IfElseActivity(logicalXor, trueExpr, falseExpr);
 
     testEngine(ifAct);
@@ -192,8 +192,8 @@ function testLogicalOpt_false_xor_false() {
 
     //比较global
     var logicalXor = new jsWorkFlow.Activities.LogicXorActivity(valFalse, valFalse);
-    var trueExpr = new jsWorkFlow.Activities.EvalExprActivity("test('testLogicalOpt_false_xor_false', function () { ok(false, 'Passed!'); });");
-    var falseExpr = new jsWorkFlow.Activities.EvalExprActivity("test('testLogicalOpt_false_xor_false', function () { ok(true, 'Passed!'); });");
+    var trueExpr = new jsWorkFlow.Activities.EvalExprActivity("unitTestFW.test('testLogicalOpt_false_xor_false', function () { unitTestFW.ok(false, 'Passed!'); });");
+    var falseExpr = new jsWorkFlow.Activities.EvalExprActivity("unitTestFW.test('testLogicalOpt_false_xor_false', function () { unitTestFW.ok(true, 'Passed!'); });");
     var ifAct = new jsWorkFlow.Activities.IfElseActivity(logicalXor, trueExpr, falseExpr);
 
     testEngine(ifAct);
@@ -215,4 +215,7 @@ function testLogicalOpt() {
     testLogicalOpt_true_xor_false();
     testLogicalOpt_false_xor_true();
     testLogicalOpt_false_xor_false();
+}
+if (typeof (exports) !== 'undefined') {
+    exports.testLogicalOpt = testLogicalOpt;
 }

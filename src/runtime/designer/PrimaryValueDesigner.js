@@ -10,8 +10,8 @@
 
 //require namsepace
 //jsWorkFlow.Activities namespace registed at core
-jsoop.ns('jsWorkFlow.Activities', true);
-var jsWorkFlow = jsoop.ns('jsWorkFlow');
+jso.ns('jsWorkFlow.Activities', true);
+var jsWorkFlow = jso.ns('jsWorkFlow');
 
 
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -22,21 +22,21 @@ var jsWorkFlow = jsoop.ns('jsWorkFlow');
 //    包含：一个文本框
 //
 jsWorkFlow.Designer.PrimaryValueDesignerBase = function jsWorkFlow_Designer_PrimaryValueDesignerBase() {
-    jsoop.initializeBase(jsWorkFlow.Designer.PrimaryValueDesignerBase, this);
+    jso.initializeBase(jsWorkFlow.Designer.PrimaryValueDesignerBase, this);
 };
 
 function jsWorkFlow_Designer_PrimaryValueDesignerBase$dispose() {
-    jsoop.callBaseMethod(jsWorkFlow.Designer.PrimaryValueDesignerBase, this, 'dispose');
+    jso.callBaseMethod(jsWorkFlow.Designer.PrimaryValueDesignerBase, this, 'dispose');
 }
 
 function jsWorkFlow_Designer_PrimaryValueDesignerBase$add_valueChanged(handler) {
-    throw jsoop.errorNotImplemented();
+    throw jso.errorNotImplemented();
     //TODO:
     // add handler    
 }
 
 function jsWorkFlow_Designer_PrimaryValueDesignerBase$remove_valueChanged(handler) {
-    throw jsoop.errorNotImplemented();
+    throw jso.errorNotImplemented();
     //TODO:
     // remove handler    
 }
@@ -44,14 +44,14 @@ function jsWorkFlow_Designer_PrimaryValueDesignerBase$remove_valueChanged(handle
 
 //value property
 function jsWorkFlow_Designer_PrimaryValueDesignerBase$get_value() {
-    throw jsoop.errorNotImplemented();
+    throw jso.errorNotImplemented();
     //TODO:
     // get value
 }
 
 //value property
 function jsWorkFlow_Designer_PrimaryValueDesignerBase$set_value(value) {
-    throw jsoop.errorNotImplemented();
+    throw jso.errorNotImplemented();
     //TODO:
     // set value
 }
@@ -59,7 +59,7 @@ function jsWorkFlow_Designer_PrimaryValueDesignerBase$set_value(value) {
 
 //显示编辑页面，开始编辑值
 function jsWorkFlow_Designer_PrimaryValueDesignerBase$execute(serializeContext) {
-    throw jsoop.errorNotImplemented();
+    throw jso.errorNotImplemented();
 
     //serializeContext是传递给designer的文档，用于初始化可编辑的activity
     //最终serializeContext也可以传递给activity的构造器，可以创建出activity的活动树
@@ -83,8 +83,8 @@ jsWorkFlow.Designer.PrimaryValueDesignerBase.prototype = {
     //deactive: jsWorkFlow_PropertyDesignerBase$deactive
 };
 
-jsoop.registerClass(
-    jsoop.setTypeName(jsWorkFlow.Designer.PrimaryValueDesignerBase, 'jsWorkFlow.Designer.PrimaryValueDesignerBase'),
+jso.registerClass(
+    jso.setTypeName(jsWorkFlow.Designer.PrimaryValueDesignerBase, 'jsWorkFlow.Designer.PrimaryValueDesignerBase'),
     jsWorkFlow.PropertyDesignerBase);
 
 //////////////////////////////////////////////////////////////////////
