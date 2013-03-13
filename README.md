@@ -3,11 +3,19 @@
 It's a workflow engine write by javascript. Support both node and client side.
 
 ## Introduction
-Model-Driven Developement(MDD) is very important foundation tool to moden application 
-runtime environment. I want a workflow that can support business application. But
-I search the open-source javascript workflow engine, most of them like toys. So I
-write this jsWorkFlow, and support client side. I hope I can bring MDD that based 
-on workflow into node and client.
+There are all kinds of asynchronous operation in javascript. We offen provide
+closure to this situation. The weakness of it is we can't write code by function.
+Workflow can avoid this defect. If there are a designer's support, we can do
+things in order easily.
+
+Also, Model-Driven Developement(MDD) is very important foundation tool to moden 
+applications runtime environment. We need workflow engine that can support business 
+application. 
+
+I search the open-source javascript workflow engine, most of them like just toys. 
+I hope this one can be rigorous. Otherwise I prefer just eval some code directly.
+I write this jsWorkFlow support both client side and node. I hope jsWorkFlow can 
+become the foundation of javascript MDD.
 
 ## Features
   * Supports node.js
@@ -15,26 +23,102 @@ on workflow into node and client.
   * Depend on jsoop project
   * Event Driven Model.
 
-## How it work
 
-### About events & property
-Events of activities are designed to be used by activity's writer, and it's 
-content's (handler) will not be seralized by serialize context. So, all contents 
-used by end-user should build them workflow by activities. 
+## Goal of Design 
 
-### About serialize a running activity
-Activity serialize context dosn't support serialize a running activity. And this
-requirement will not be consider in the nearly future. End-user who have this requirements
-should consider how restart them activities by serialized data and activities. This meen
-jsWorkFlow would like use retry instead searialize a running activity.
+### Basic Description
+I design jsWorkFlow based on following key-feature:
+	State Machine
+    Event Driven
+	Context Aware
+
+One activity has finite state. Some activiy state is predefined by jsWorkFlow.
+    * jsWorkFlow.ActivityState.none
+	* jsWorkFlow.ActivityState.start
+	* jsWorkFlow.ActivityState.end
+	* jsWorkFlow.ActivityState.error
+	* jsWorkFlow.ActivityState.min_value
+
+jsWorkFlow.ActivityState.none is the initial state of activity, and state transition
+can transfer from none to other, and can't transfer to none.
+jsWorkFlow.ActivityState.start represent the activity is already running.
+jsWorkFlow.ActivityState.end represent the activity is already end.
+jsWorkFlow.ActivityState.error represent the activity is running into an error state.
+jsWorkFlow.ActivityState.min_value is the minimum value that can be used by user.
+
+When the activity state is changed, then trigger it event, and the following code
+is run.
+
+### How Write an Acrivity
+
+There are some key classes for activities writers.
+	* jsWorkFlow.Activity
+	* jsWorkFlow.ActivityExecutor
+	* jsWorkFlow.ActivityContext
 
 
-## Samples
-pending....  
+#### jsWorkFlow.Activity
 
-## licence
+jsWorkFlow.Activity is base class of all activities. It provide the main framework of
+activities.
 
-licence:
+One activity is running by jsWorkFlow.ActivityExecutor, executor will call it's execute
+method, and pass the ActivityContext as it's context parameter.
+
+An activity dosn't maintain any activity runtime data, and all it's runtime information
+is stored into ActivityContext.
+
+Activity is a main-frame of events. An instance of an activity can be used any times in
+a workflow application. 
+
+#### jsWorkFlow.ActivityExecutor
+
+ActivityExecutor wrapper a running activity into a job item, and schedule it into the job
+queue of application.
+
+ActivityExecutor create ActivityContext, and catch the runtime exception of running of
+activity, and watch the change of ActivityContext, trigger corresponding events.
+
+### jsWorkFlow.ActivityContext
+ActivityContext is the runtime data container of the running of activity. It represent the
+running instance of activity. We can find nearly all the information of the running activity.
+We also put user data into ActivityContext.
+
+All ActivityContext is maintion in a stack.
+
+When we run an activity, this activity is automatically transfer into 'start' state. When 
+this activity is finish, the activity writer should call '$jwf.endActivity(context);' finish
+it.
+
+### Example of Write Activity
+
+View the code in activies folder for detail intormation.
+
+
+## Using Samples
+
+### Run jsWorkFlow Application
+
+    var ins = new jsWorkFlow.Instance();
+	var rootActivity = new jsWorkFlow.Activities.NoopActivity();
+
+	//add complete event
+    ins.add_complete(function () {
+		alert('testEngine OK!');
+    });
+
+	//set root activity of instance
+    ins.set_rootActivity(rootActivity);
+
+    var app = new jsWorkFlow.Application(ins);
+
+    app.run();
+
+
+## About Licence
+
+Licence:
+=======
 Copyright 2012,  Yin MingJun - email: yinmingjuncn@gmail.com
 Dual licensed under the MIT or GPL Version 2 licenses.
 http://jquery.org/license

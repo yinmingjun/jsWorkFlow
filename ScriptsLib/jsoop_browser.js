@@ -99,6 +99,7 @@ Array.__typeName = 'Array';
 RegExp.__typeName = 'RegExp';
 Date.__typeName = 'Date';
 Error.__typeName = 'Error';
+Function.__typeName = 'Function';
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -608,8 +609,8 @@ jsoop.stringInsert = function jsoop$stringInsert(str, index, value) {
     if (!index) {
         return value + str;
     }
-    var s1 = this.substr(0, index);
-    var s2 = this.substr(index);
+    var s1 = str.substr(0, index);
+    var s2 = str.substr(index);
     return s1 + value + s2;
 };
 

@@ -15,9 +15,6 @@ function testEngine(rootActivity) {
         rootActivity = noop;
 
         ins.add_complete(function () {
-//            var log = jwf$getLogger();
-//            log.debug("test engine complete!");
-
             unitTestFW.test("testEngine", function () { unitTestFW.ok(true, "Passed!"); });
         });
 
