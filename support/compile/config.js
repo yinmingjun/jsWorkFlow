@@ -1,10 +1,10 @@
 ﻿
 var config = {
     destFile: './prebuild/jsworkflow_browser.js',
-    destModule: 'jsworkflowlib',
+    destModule: 'jsworkflowns',
     requireFiles: [{
         file: './prebuild/jsworkflow-debug.js',
-        mod: 'jsworkflowlib'
+        mod: 'jsworkflowns'
     }]
 };
 

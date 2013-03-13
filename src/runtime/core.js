@@ -39,7 +39,7 @@ jso.registerNamespace('jsWorkFlow.Designer');
 var jsWorkFlow = jso.registerNamespace('jsWorkFlow');
 
 //exports for nodes
-exports.nsroot = jsWorkFlow;
+exports.rootns = jsWorkFlow;
 
 //////////////////////////////////////////////////////////////////////////////////////////
 //

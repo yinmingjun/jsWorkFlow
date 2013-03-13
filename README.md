@@ -94,6 +94,12 @@ it.
 
 View the code in activies folder for detail intormation.
 
+## Running in Client Side
+	* Include the "jsoop.js" into html file. 
+	You can find it in npm 'jsoop' module.
+	* Include the "jsworkflow_browser.js" into html file.
+	* Access 'jsWorkFlow' namespace by 'jsoop.ns('jsWorkFlow')
+
 
 ## Using Samples
 
