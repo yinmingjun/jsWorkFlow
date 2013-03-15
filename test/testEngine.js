@@ -23,6 +23,8 @@ function testEngine(rootActivity) {
     ins.set_rootActivity(rootActivity);
     var app = new jsWorkFlow.Application(ins);
 
+    app.set_autoStop(true);
+
     app.run();
 }
 

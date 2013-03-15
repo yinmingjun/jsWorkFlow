@@ -51,13 +51,24 @@ function jsWorkFlow$setInterval(handler, interval) {
     return retval;
 }
 
+function jsWorkFlow$clearInterval(intervalID) {
+    clearInterval(intervalID);
+}
+
 function jsWorkFlow$setTimeout(handler, delay) {
     var retval = setTimeout(handler, delay);
     return retval;
 }
 
+function jsWorkFlow$clearTimeout(timeoutID) {
+    clearTimeout(timeoutID);
+}
+
+
 jsWorkFlow.setInterval = jsWorkFlow$setInterval;
+jsWorkFlow.clearInterval = jsWorkFlow$clearInterval;
 jsWorkFlow.setTimeout = jsWorkFlow$setTimeout;
+jsWorkFlow.clearTimeout = jsWorkFlow$clearTimeout;
 
 //////////////////////////////////////////////////////////////////////////////////////////
 //ActivityState，表示一个jsWorkFlow活动的运行状态
@@ -155,6 +166,11 @@ jsWorkFlow.Application = function jsWorkFlow_Application(instance, dataContext) 
 
     //调度器属于APP的固定组成部分，activity只是使用者之一，一直可用
     this._scheduler = new jsWorkFlow.Scheduler();
+
+    this._scheduler_stop_handler = jso.createDelegate(this, this.scheduler_stop_handler);
+
+    //accept scheduler's stop event
+    this._scheduler.add_stop(this._scheduler_stop_handler);
 };
 
 function jsWorkFlow_Application$get_scheduler() {
@@ -180,6 +196,14 @@ function jsWorkFlow_Application$get_currentContext() {
     var context = contextStack[contextStack.length - 1];
 
     return context;
+}
+
+function jsWorkFlow_Application$get_autoStop() {
+    return this._autoStop;
+}
+
+function jsWorkFlow_Application$set_autoStop(value) {
+    this._autoStop = value;
 }
 
 function jsWorkFlow_Application$run() {
@@ -208,33 +232,22 @@ function jsWorkFlow_Application$run() {
     //启动scheduler
     this._scheduler.start();
 
+    //触发停止事件
+    this._events.raiseEvent('start', jso.EventArgs.Empty);
+
     //通过instance的execute开始执行
     this._instance.execute(this);
+
+    //如果是自动停止，在调度作业后设置stopPendding标志
+    if (this.get_autoStop()) {
+        //scheduler would stop when queue is empty
+        this._scheduler.stop();
+    }
 }
 
-//强制停止
-function jsWorkFlow_Application$forceStop() {
-    var log = jwf$getLogger();
-    log.debug("Application forceStop!");
-    //forceStop
-    //clean all jobs.
-    var jobQueue = this._jobQueue;
 
-    for (var i = 0, ilen = jobQueue.length; i < ilen; i++) {
-
-        var job = jobQueue.shift();
-
-        try {
-            //释放job
-            job.dispose();
-        } catch (e) {
-            log.error("app catch exception in forceStop!", e);
-        }
-    }
-
-    //设置运行状态为stop
-    this._isRunning = false;
-
+function jsWorkFlow_Application$scheduler_stop_handler() {
+    //触发停止事件
     this._events.raiseEvent('stop', jso.EventArgs.Empty);
 
 }
@@ -253,6 +266,8 @@ function jsWorkFlow_Application$dispose() {
     this._scheduler = null;
     this._appContext = null;
     this._contextStack = null;
+    this._scheduler_stop_handler = null;
+
 }
 
 
@@ -350,6 +365,21 @@ function jsWorkFlow_Application$setData(key, value, localContextIndex) {
     context.setData(key, value);
 }
 
+function jsWorkFlow_Application$add_start(handler) {
+    this._events.addHandler('start', handler);
+}
+
+function jsWorkFlow_Application$remove_start(handler) {
+    this._events.removeHandler('start', handler);
+}
+
+function jsWorkFlow_Application$add_stop(handler) {
+    this._events.addHandler('stop', handler);
+}
+
+function jsWorkFlow_Application$remove_stop(handler) {
+    this._events.removeHandler('stop', handler);
+}
 
 jsWorkFlow.Application.prototype = {
     _instance: null,
@@ -358,16 +388,20 @@ jsWorkFlow.Application.prototype = {
     _contextStack: null,
     _events: null,
     _scheduler: null,
+    _autoStop: false,
+    _scheduler_stop_handler: null,
     //property
     get_scheduler: jsWorkFlow_Application$get_scheduler,
     get_globalContext: jsWorkFlow_Application$get_globalContext,
     get_appContext: jsWorkFlow_Application$get_appContext,
     get_instance: jsWorkFlow_Application$get_instance,
     get_currentContext: jsWorkFlow_Application$get_currentContext,
+    get_autoStop: jsWorkFlow_Application$get_autoStop,
+    set_autoStop: jsWorkFlow_Application$set_autoStop,
 
     //method
     run: jsWorkFlow_Application$run,
-    forceStop: jsWorkFlow_Application$forceStop,
+    scheduler_stop_handler: jsWorkFlow_Application$scheduler_stop_handler,
     dispose: jsWorkFlow_Application$dispose,
     //ActivityContext栈维护
     pushContextStack: jsWorkFlow_Application$pushContextStack,
@@ -376,7 +410,13 @@ jsWorkFlow.Application.prototype = {
     //APP级别的数据维护接口
     getDataItem: jsWorkFlow_Application$getDataItem,
     getData: jsWorkFlow_Application$getData,
-    setData: jsWorkFlow_Application$setData
+    setData: jsWorkFlow_Application$setData,
+
+    //events
+    add_start: jsWorkFlow_Application$add_start,
+    remove_start: jsWorkFlow_Application$remove_start,
+    add_stop: jsWorkFlow_Application$add_stop,
+    remove_stop: jsWorkFlow_Application$remove_stop
 };
 
 jso.registerClass(jso.setTypeName(jsWorkFlow.Application, 'jsWorkFlow.Application'));
@@ -1982,16 +2022,20 @@ function jsWorkFlow_Scheduler$dispose() {
 function jsWorkFlow_Scheduler$scheduleJob(job) {
     //Job必须是jsWorkFlow.Job类型
 
-    //运行状态（含pausing）下可以将job加入到执行队列
-    if (!this._isRunning || this._isStopPending) {
-        throw jso.errorInvalidOperation("Scheduler not running!");
-    }
+//    //运行状态（含pausing）下可以将job加入到执行队列
+//    if (!this._isRunning || this._isStopPending) {
+//        throw jso.errorInvalidOperation("Scheduler not running!");
+//    }
 
     jso.arrayAdd(this._jobQueue, job);
 }
 
 //run job的时间片的执行函数
 function jsWorkFlow_Scheduler$doExecJobInterval() {
+    if (!this._isRunning) {
+        return;
+    }
+
     if (this._isPausing) {
         return;
     }
@@ -2108,6 +2152,36 @@ function jsWorkFlow_Scheduler$stop(forceStopNow) {
 
 }
 
+function jsWorkFlow_Scheduler$forceStop() {
+    var log = jwf$getLogger();
+    log.debug("Scheduler forceStop!");
+    //forceStop
+    //clean all jobs.
+    var jobQueue = this._jobQueue;
+
+    for (var i = 0, ilen = jobQueue.length; i < ilen; i++) {
+
+        var job = jobQueue.shift();
+
+        try {
+            //释放job
+            job.dispose();
+        } catch (e) {
+            log.error("app catch exception in forceStop!", e);
+        }
+    }
+
+    //设置运行状态为stop
+    this._isRunning = false;
+
+    //stop scheduler engine
+    jsWorkFlow.clearInterval(this._intervalID);
+    this._intervalID = -1;
+
+    this._events.raiseEvent('stop', jso.EventArgs.Empty);
+
+}
+
 //events
 function jsWorkFlow_Scheduler$add_start(handler) {
     this._events.addHandler('start', handler);
@@ -2162,6 +2236,7 @@ jsWorkFlow.Scheduler.prototype = {
     pause: jsWorkFlow_Scheduler$pause,
     resume: jsWorkFlow_Scheduler$resume,
     stop: jsWorkFlow_Scheduler$stop,
+    forceStop: jsWorkFlow_Scheduler$forceStop,
     //event
     add_start: jsWorkFlow_Scheduler$add_start,
     remove_start: jsWorkFlow_Scheduler$remove_start,

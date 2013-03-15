@@ -90,9 +90,10 @@ function jsWorkFlow_Activities_DelayActivity$execute(context) {
     jso.callBaseMethod(jsWorkFlow.Activities.DelayActivity, this, 'execute', [context]);
 
     //通过lamda设置回调
-    jsWorkFlow.setTimeout(function () {
+    context._timeoutID = jsWorkFlow.setTimeout(function () {
         //LOG 
         $jwf.endActivity(context);
+        jsWorkFlow.clearTimeout(context._timeoutID);
     }, this._delayTime);
 }
 

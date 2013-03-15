@@ -64,8 +64,8 @@ function jsWorkFlow_Activities_StateMachineActivity$notifyStateChanged(context, 
     //先执行基类的notifyStateChanged
     jso.callBaseMethod(jsWorkFlow.Activities.StateMachineActivity, this, 'notifyStateChanged', [context, oldState, curState]);
 
-    //如果状态不是end，通知状态变更，执行executeActivity
-    if (jsWorkFlow.ActivityState.end === curState) {
+    //如果状态不是end or error，通知状态变更，执行executeActivity
+    if ((jsWorkFlow.ActivityState.end === curState) || (jsWorkFlow.ActivityState.error === curState)) {
         return;
     }
 

@@ -4,6 +4,7 @@
   <file name="test\testEngine.js" path="" />
   <file name="test\testSequence.js" path="" />
   <target name="test" file="$output\test.js" debug="True" shorthand="False" shorthand-list="YAHOO.util.Dom.setStyle&#xD;&#xA;YAHOO.util.Dom.getStyle&#xD;&#xA;YAHOO.util.Dom.getRegion&#xD;&#xA;YAHOO.util.Dom.getViewportHeight&#xD;&#xA;YAHOO.util.Dom.getViewportWidth&#xD;&#xA;YAHOO.util.Dom.get&#xD;&#xA;YAHOO.util.Dom.getXY&#xD;&#xA;YAHOO.util.Dom.setXY&#xD;&#xA;YAHOO.util.CustomEvent&#xD;&#xA;YAHOO.util.Event.addListener&#xD;&#xA;YAHOO.util.Event.getEvent&#xD;&#xA;YAHOO.util.Event.getTarget&#xD;&#xA;YAHOO.util.Event.preventDefault&#xD;&#xA;YAHOO.util.Event.stopEvent&#xD;&#xA;YAHOO.util.Event.stopPropagation&#xD;&#xA;YAHOO.util.Event.stopEvent&#xD;&#xA;YAHOO.util.Anim&#xD;&#xA;YAHOO.util.Motion&#xD;&#xA;YAHOO.util.Connect.asyncRequest&#xD;&#xA;YAHOO.util.Connect.setForm&#xD;&#xA;YAHOO.util.Dom&#xD;&#xA;YAHOO.util.Event">
+    <include name="test\unitTestFW.js" />
     <include name="test\testEngine.js" />
     <include name="test\testSequence.js" />
     <include name="test\testIfElse.js" />
@@ -31,4 +32,5 @@
   <file name="test\testLogicalOpt.js" path="" />
   <file name="test\testTryCatch.js" path="" />
   <file name="test\testGetTypeName.js" path="" />
+  <file name="test\unitTestFW.js" path="" />
 </project>

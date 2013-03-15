@@ -28,12 +28,12 @@ become the foundation of javascript MDD.
 
 ### Basic Description
 I design jsWorkFlow based on following key-feature:
-	State Machine
-    Event Driven
-	Context Aware
+	* State Machine
+    * Event Driven
+	* Context Aware
 
 One activity has finite state. Some activiy state is predefined by jsWorkFlow.
-    * jsWorkFlow.ActivityState.none
+	* jsWorkFlow.ActivityState.none
 	* jsWorkFlow.ActivityState.start
 	* jsWorkFlow.ActivityState.end
 	* jsWorkFlow.ActivityState.error

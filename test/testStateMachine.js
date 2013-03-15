@@ -33,33 +33,34 @@ function testStateMachineEnd() {
 }
 
 //定义状态
-var S1 = jsWorkFlow.ActivityState.min_value + 1;
-var S2 = jsWorkFlow.ActivityState.min_value + 2;
-var S3 = jsWorkFlow.ActivityState.min_value + 3;
 
 function _sm$buildSwitchActivity() {
+    var S1 = jsWorkFlow.ActivityState.min_value + 1;
+    var S2 = jsWorkFlow.ActivityState.min_value + 2;
+    var S3 = jsWorkFlow.ActivityState.min_value + 3;
+
     //build switch
     var cAct = new jsWorkFlow.Activities.GetStateMachineStateActivity();
     var eAct = null;
     var allCase = [
         //start -> S1
         {
-        key: new jsWorkFlow.Activities.EvalExprActivity("jsWorkFlow.ActivityState.start;"),
-        value: new jsWorkFlow.Activities.SetStateMachineStateActivity(new jsWorkFlow.Activities.EvalExprActivity("S1;"))
+        key: new jsWorkFlow.Activities.ConstActivity(jsWorkFlow.ActivityState.start),
+        value: new jsWorkFlow.Activities.SetStateMachineStateActivity(new jsWorkFlow.Activities.ConstActivity(S1))
         },
         //S1 -> S2
         {
-        key: new jsWorkFlow.Activities.EvalExprActivity("S1;"),
-        value: new jsWorkFlow.Activities.SetStateMachineStateActivity(new jsWorkFlow.Activities.EvalExprActivity("S2;"))
+        key: new jsWorkFlow.Activities.ConstActivity(S1),
+        value: new jsWorkFlow.Activities.SetStateMachineStateActivity(new jsWorkFlow.Activities.ConstActivity(S2))
         },
         //S2 -> S3
         {
-        key: new jsWorkFlow.Activities.EvalExprActivity("S2;"),
-        value: new jsWorkFlow.Activities.SetStateMachineStateActivity(new jsWorkFlow.Activities.EvalExprActivity("S3;"))
+        key: new jsWorkFlow.Activities.ConstActivity(S2),
+        value: new jsWorkFlow.Activities.SetStateMachineStateActivity(new jsWorkFlow.Activities.ConstActivity(S3))
         },
         //S3 -> end
         {
-        key: new jsWorkFlow.Activities.EvalExprActivity("S3;"),
+        key: new jsWorkFlow.Activities.ConstActivity(S3),
         value: new jsWorkFlow.Activities.EndStateMachineActivity()
         }];
 
