@@ -40,11 +40,11 @@ One activity has finite state. Some activiy state is predefined by jsWorkFlow.
   * jsWorkFlow.ActivityState.min_value
 
 jsWorkFlow.ActivityState.none is the initial state of activity, and state transition
-can transfer from none to other, and can't transfer to none.
-  1.jsWorkFlow.ActivityState.start represent the activity is already running.
-  2.jsWorkFlow.ActivityState.end represent the activity is already end.
-  3.jsWorkFlow.ActivityState.error represent the activity is running into an error state.
-  4.jsWorkFlow.ActivityState.min_value is the minimum value that can be used by user.
+can transfer from none to other, and can't transfer to none.  
+  1.jsWorkFlow.ActivityState.start represent the activity is already running.  
+  2.jsWorkFlow.ActivityState.end represent the activity is already end.  
+  3.jsWorkFlow.ActivityState.error represent the activity is running into an error state.  
+  4.jsWorkFlow.ActivityState.min_value is the minimum value that can be used by user.  
 
 When the activity state is changed, then trigger it event, and the following code
 is run.
@@ -95,9 +95,9 @@ it.
 View the code in activies folder for detail intormation.
 
 ## Running in Client Side
-	* Include the "jsoop.js" into html file. 
-	* Include the "jsworkflow_browser.js" into html file.
-	* Access 'jsWorkFlow' namespace by 'jsoop.ns('jsWorkFlow')
+  * Include the "jsoop.js" into html file. 
+  * Include the "jsworkflow_browser.js" into html file.
+  * Access 'jsWorkFlow' namespace by 'jsoop.ns('jsWorkFlow')
 
 You can find "jsoop.js" file in npm 'jsoop' module.
 
