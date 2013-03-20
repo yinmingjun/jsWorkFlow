@@ -1,8 +1,12 @@
 
 # jsWorkFlow
-It's a workflow engine write by javascript. Support both node and client side.
+============
+
+It's a workflow engine write by javascript. jsWorkFlow let you execute javascript
+code in order. jsWorkFlow Support both node and client side.
 
 ## Introduction
+---------------
 There are all kinds of asynchronous operation in javascript. We offen provide
 closure to this situation. The weakness of it is we can't write code by function.
 Workflow can avoid this defect. If there are a designer's support, we can do
