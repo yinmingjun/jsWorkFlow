@@ -131,8 +131,8 @@ You can find "jsoop.js" file in npm 'jsoop' module.
 ## About Licence
 ----------------
 
-**Licence:**
-Copyright 2012,  Yin MingJun - email: yinmingjuncn@gmail.com
-Dual licensed under the MIT or GPL Version 2 licenses.
-http://jquery.org/license
+**Licence:**  
+Copyright 2012,  Yin MingJun - email: yinmingjuncn@gmail.com  
+Dual licensed under the MIT or GPL Version 2 licenses.  
+http://jquery.org/license  
 
