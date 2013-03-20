@@ -22,6 +22,7 @@ I write this jsWorkFlow support both client side and node. I hope jsWorkFlow can
 become the foundation of javascript MDD.
 
 ## Features
+-----------
   * Supports node.js
   * Supports client side
   * Depend on jsoop project
@@ -29,6 +30,7 @@ become the foundation of javascript MDD.
 
 
 ## Goal of Design 
+-----------------
 
 ### Basic Description
 I design jsWorkFlow based on following key-feature:
@@ -106,6 +108,7 @@ View the code in activies folder for detail intormation.
 You can find "jsoop.js" file in npm 'jsoop' module.
 
 ## Using Samples
+----------------
 
 ### Run jsWorkFlow Application
 
@@ -126,9 +129,9 @@ You can find "jsoop.js" file in npm 'jsoop' module.
 
 
 ## About Licence
+----------------
 
-Licence:
-=======
+**Licence:**
 Copyright 2012,  Yin MingJun - email: yinmingjuncn@gmail.com
 Dual licensed under the MIT or GPL Version 2 licenses.
 http://jquery.org/license
