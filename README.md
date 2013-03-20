@@ -28,23 +28,23 @@ become the foundation of javascript MDD.
 
 ### Basic Description
 I design jsWorkFlow based on following key-feature:
-	* State Machine
-    * Event Driven
-	* Context Aware
+  * State Machine
+  * Event Driven
+  * Context Aware
 
 One activity has finite state. Some activiy state is predefined by jsWorkFlow.
-	* jsWorkFlow.ActivityState.none
-	* jsWorkFlow.ActivityState.start
-	* jsWorkFlow.ActivityState.end
-	* jsWorkFlow.ActivityState.error
-	* jsWorkFlow.ActivityState.min_value
+  * jsWorkFlow.ActivityState.none
+  * jsWorkFlow.ActivityState.start
+  * jsWorkFlow.ActivityState.end
+  * jsWorkFlow.ActivityState.error
+  * jsWorkFlow.ActivityState.min_value
 
 jsWorkFlow.ActivityState.none is the initial state of activity, and state transition
 can transfer from none to other, and can't transfer to none.
-jsWorkFlow.ActivityState.start represent the activity is already running.
-jsWorkFlow.ActivityState.end represent the activity is already end.
-jsWorkFlow.ActivityState.error represent the activity is running into an error state.
-jsWorkFlow.ActivityState.min_value is the minimum value that can be used by user.
+  1.jsWorkFlow.ActivityState.start represent the activity is already running.
+  2.jsWorkFlow.ActivityState.end represent the activity is already end.
+  3.jsWorkFlow.ActivityState.error represent the activity is running into an error state.
+  4.jsWorkFlow.ActivityState.min_value is the minimum value that can be used by user.
 
 When the activity state is changed, then trigger it event, and the following code
 is run.
@@ -52,9 +52,9 @@ is run.
 ### How Write an Acrivity
 
 There are some key classes for activities writers.
-	* jsWorkFlow.Activity
-	* jsWorkFlow.ActivityExecutor
-	* jsWorkFlow.ActivityContext
+  * jsWorkFlow.Activity
+  * jsWorkFlow.ActivityExecutor
+  * jsWorkFlow.ActivityContext
 
 
 #### jsWorkFlow.Activity
