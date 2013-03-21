@@ -33,7 +33,6 @@ else {
 //register core namespace
 jso.registerNamespace('jsWorkFlow');
 jso.registerNamespace('jsWorkFlow.Activities');
-jso.registerNamespace('jsWorkFlow.Designer');
 
 //require namsepace
 var jsWorkFlow = jso.registerNamespace('jsWorkFlow');
@@ -198,15 +197,7 @@ function jsWorkFlow_Application$get_currentContext() {
     return context;
 }
 
-function jsWorkFlow_Application$get_autoStop() {
-    return this._autoStop;
-}
-
-function jsWorkFlow_Application$set_autoStop(value) {
-    this._autoStop = value;
-}
-
-function jsWorkFlow_Application$run() {
+function jsWorkFlow_Application$run(keepRunning) {
     var log = jwf$getLogger();
     log.debug("Application run!");
 
@@ -239,7 +230,7 @@ function jsWorkFlow_Application$run() {
     this._instance.execute(this);
 
     //如果是自动停止，在调度作业后设置stopPendding标志
-    if (this.get_autoStop()) {
+    if (!keepRunning) {
         //scheduler would stop when queue is empty
         this._scheduler.stop();
     }
@@ -388,7 +379,6 @@ jsWorkFlow.Application.prototype = {
     _contextStack: null,
     _events: null,
     _scheduler: null,
-    _autoStop: false,
     _scheduler_stop_handler: null,
     //property
     get_scheduler: jsWorkFlow_Application$get_scheduler,
@@ -396,8 +386,6 @@ jsWorkFlow.Application.prototype = {
     get_appContext: jsWorkFlow_Application$get_appContext,
     get_instance: jsWorkFlow_Application$get_instance,
     get_currentContext: jsWorkFlow_Application$get_currentContext,
-    get_autoStop: jsWorkFlow_Application$get_autoStop,
-    set_autoStop: jsWorkFlow_Application$set_autoStop,
 
     //method
     run: jsWorkFlow_Application$run,
@@ -822,7 +810,7 @@ jsWorkFlow.ActivityHelper.loadActivity = function jsWorkFlow_ActivityHelper$load
     var activity = null;
 
     if (serializeContext) {
-        var activityType = eval(serializeContext['_@_activityType']);
+        var activityType = jso.getType(serializeContext['_@_activityType']);
 
         //
         activity = new activityType();
@@ -844,49 +832,6 @@ jsWorkFlow.ActivityHelper.saveActivity = function jsWorkFlow_ActivityHelper$save
     return serializeContext;
 }
 
-//activity的注册数据库
-jsWorkFlow.ActivityHelper._activityRegistry = {};
-
-//register activity，其参数如下。
-//activityType, activity的类型（function type）
-//activityInfo，activity信息，是一个字典，其成员如下：
-//       .catalog           -->  activity在设计器中对应的分类
-//       .description       -->  对应的描述
-//       .supportInstance   -->  是否允许实例化
-//       .designerRuntimeProps  -->  传递给activity设计器的运行期属性设置，是key-value的map
-//propertyInfoList，activity的属性设计信息列表，是一个数组，其每个元素是一个字典，结构如下：
-//       .propName          --> 属性名称
-//       .propDesignerName  --> 对应的属性设计器的名称
-//       .description       -->  对应的描述
-//       .designerRuntimeProps  --> 传递给属性设计器附加的属性值（构造之后设置）,是key-value的map
-
-jsWorkFlow.ActivityHelper.registerActivity = function jsWorkFlow_ActivityHelper$registerActivity(activityType, activityInfo, propertyInfoList) {
-    var activityRegistry = {
-        activityInfo: activityInfo,
-        propertyInfoList: propertyInfoList
-    };
-
-    jsWorkFlow.ActivityHelper._activityRegistry[activityType] = activityRegistry;
-
-    return activityRegistry;
-};
-
-
-//获取activity的设计器信息
-jsWorkFlow.ActivityHelper.loadActivityRegistry = function jsWorkFlow_ActivityHelper$loadActivityRegistry(activityType) {
-    var activityRegistry = jsWorkFlow.ActivityHelper._activityRegistry[activityType];
-
-    return activityRegistry;
-};
-
-//设计器使用的API，获取合并后的activity的注册信息的完整集合，包含继承链上的所有注册。
-//为了保持javascript的动态的特性，buildActivityRegistry会动态的计算其注册信息，保证任何的动态更新都能在第一时间获取到。
-jsWorkFlow.ActivityHelper.buildActivityRegistry = function jsWorkFlow_ActivityHelper$buildActivityRegistry(activityType) {
-    //TODO: 获得activity的继承链，并按从父到子的次序合并设计器信息
-    var activityRegistry = null;
-    return activityRegistry;
-};
-
 jso.registerClass(jso.setTypeName(jsWorkFlow.ActivityHelper, 'jsWorkFlow.ActivityHelper'));
 
 //make a shortcut for ActivityHelper
@@ -896,9 +841,6 @@ var $jwf = jsWorkFlow.ActivityHelper;
 //Activity，表示一个jsWorkFlow活动
 //每个activity都是一个状态机，通过变更状态来驱动事件，通过事件来驱动状态变更。
 // 
-// TODO:
-//    Add support of designer.
-//
 // to 开发者：
 //    activity的是一个装配装置，和我们书写一个函数类似，装配是描述一个activity提供的功能。
 //activity中的事件也是为这个目标服务，对activity的事件的设置可以看成是一个装配的过程，装配
@@ -1083,143 +1025,6 @@ jsWorkFlow.Activity.prototype = {
 };
 
 jso.registerClass(jso.setTypeName(jsWorkFlow.Activity, 'jsWorkFlow.Activity'));
-
-//////////////////////////////////////////////////////////////////////////////////////////
-//DesignerSiteInfo，表示一个designer的设计器于展示相关的信息
-//
-// To 开发者：
-//    designer是抽象模型是基于div的输出模式，div提供客户端的呈现的客户端的尺寸，designer在div提供的呈现空间
-//内交互，我们将客户端的呈现相关的信息称为：DesignerSiteInfo
-//
-jsWorkFlow.DesignerSiteInfo = function jsWorkFlow_DesignerSiteInfo(site) {
-    this._site = site;
-};
-
-function jsWorkFlow_DesignerSiteInfo$dispose() {
-    this._site = null;
-}
-
-//site尺寸发生变化的事件
-function jsWorkFlow_DesignerSiteInfo$add_resized(handler) {
-}
-
-function jsWorkFlow_DesignerSiteInfo$remove_resized(handler) {
-}
-
-//clicl事件
-function jsWorkFlow_DesignerSiteInfo$add_click(handler) {
-}
-
-function jsWorkFlow_DesignerSiteInfo$remove_click(handler) {
-}
-
-
-//提供designer所在的div
-function jsWorkFlow_DesignerSiteInfo$get_site() {
-    return this._site;
-}
-
-jsWorkFlow.DesignerSiteInfo.prototype = {
-    _indent: 0, //缩进
-    _seperateLine: 0, //分割行
-    _site: null,
-    dispose: jsWorkFlow_DesignerSiteInfo$dispose,
-    //event
-    //resized
-    add_resized: jsWorkFlow_DesignerSiteInfo$add_resized,
-    remove_resized: jsWorkFlow_DesignerSiteInfo$remove_resized,
-    //click
-    add_click: jsWorkFlow_DesignerSiteInfo$add_click,
-    remove_click: jsWorkFlow_DesignerSiteInfo$remove_click,
-    //property
-    get_site: jsWorkFlow_DesignerSiteInfo$get_site
-
-};
-
-jso.registerClass(jso.setTypeName(jsWorkFlow.DesignerSiteInfo, 'jsWorkFlow.DesignerSiteInfo'));
-
-//缩进为20px
-jsWorkFlow.DesignerSiteInfo.indentWidth = 20;
-//行高
-jsWorkFlow.DesignerSiteInfo.rowHeight = 20;
-
-//////////////////////////////////////////////////////////////////////////////////////////
-//PropertyDesignerBase，表示一个jsWorkFlow的编辑器中的一个属性的基类
-//
-// To 开发者：
-//    PropertyDesignerBase是所有designer的抽象基类，用于提供activity的状态和设计期，输出结果到JSON对象。
-//    designer是抽象模型是基于div的输出模式，div提供客户端的呈现的客户端的尺寸，designer在div提供的呈现空间
-//内交互，我们将客户端的呈现相关的信息称为：siteInfo
-//    一个designer通过active来激活；通过deactive来关闭；通过document来打开或保存记录的信息。
-//  
-//    activity设计器UI
-//     ------------------------------------------
-//    |>>| Activity    | IfActivity(if1)       |A|  显示activity的类型和名称（如果有），重新选择activity置空内部的文档
-//    |  |---------------------------------------   \
-//    |  |  | Name     |  if1                |str|   |
-//    |  |---------------------------------------   /
-//    |  |>>| IfCond   | ExprActivity(expr1)   |A|
-//    |     |------------------------------------
-//    |[id] |  | Name  | expr1               |str|
-//    |     |------------------------------------
-//    |     |  | Expr  | xxxx                |str|
-//    |     |------------------------------------
-//    |  |>>| IfBody   | ExprActivity(expr2)   |A|
-//    |     |------------------------------------
-//    |     |  | Name  | expr2               |str|
-//    |     |------------------------------------
-//    |     |  | Expr  | xxxx                |str|
-//    |     |-------------------------------------
-//    |  |>>| ElseBody | ExprActivity(expr3)   |A|
-//    |     |------------------------------------
-//    |     |  | Name  | expr3               |str|
-//    |     |------------------------------------
-//    |     |  | Expr  | xxxx                |str|
-//     ------------------------------------------
-//    ^     ^          ^                         ^end line, can be moved.
-//    |     |          |seperate line, can be moved.
-//    |     |indent start
-//    |site left side             site right side^
-//
-
-jsWorkFlow.PropertyDesignerBase = function jsWorkFlow_PropertyDesignerBase() {
-};
-
-function jsWorkFlow_PropertyDesignerBase$dispose() {
-}
-
-//提供PropertyDesignerBase对应的类型名
-function jsWorkFlow_PropertyDesignerBase$get_siteInfo() {
-    throw jso.errorNotImplemented();
-}
-
-//显示编辑页面，开始编辑activity
-function jsWorkFlow_PropertyDesignerBase$active(siteInfo, document) {
-    //siteInfo是designer的工作场所，
-    //document是传递给designer的文档，用于存储activity的编辑结果
-    this._siteInfo = siteInfo;
-    this._document = document;
-}
-
-function jsWorkFlow_PropertyDesignerBase$deactive() {
-    this._siteInfo = null;
-    this._document = null;
-}
-
-jsWorkFlow.PropertyDesignerBase.prototype = {
-    _siteInfo: null,
-    _document: null,
-    dispose: jsWorkFlow_PropertyDesignerBase$dispose,
-    //property
-    get_siteInfo: jsWorkFlow_PropertyDesignerBase$get_siteInfo,
-    //method
-    active: jsWorkFlow_PropertyDesignerBase$active,
-    deactive: jsWorkFlow_PropertyDesignerBase$deactive
-};
-
-jso.registerClass(jso.setTypeName(jsWorkFlow.PropertyDesignerBase, 'jsWorkFlow.PropertyDesignerBase'));
-
-
 
 //////////////////////////////////////////////////////////////////////////////////////////
 //ContextBase，context的基础类，提供一致的数据管理方法

@@ -1,7 +1,5 @@
 ﻿
 var jsoop = require('jsoop');
-global.jsoop = jsoop;
-
 var wf = require('../../build/jsworkflow');
 var testLib = require('../../prebuild/test-debug');
 

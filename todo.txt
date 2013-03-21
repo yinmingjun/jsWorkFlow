@@ -11,9 +11,9 @@
 8. 寻找javascript对象创建&对象属性赋值的支持   ==> OK
 9. 支持基于serializeContext的序列化和恢复      ==> OK
 
-10. 提供基础的LogAdapter，并提供基于字符串的log实现；
-11. 寻找第三方的LOG库，并尝试集成；
+10. 提供基础的LogAdapter，并提供基于字符串的log实现； ==> OK
+11. 寻找第三方的LOG库，并尝试集成；  ==> OK
 12. 实现activity的designer的HTML版本；
 13. 提供designer的结果的XML规格；
-14. 支持node.js；
+14. 支持node.js； ==> OK
  
