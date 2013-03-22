@@ -30,12 +30,11 @@ else {
     jso = jsoop;
 }
 
-//register core namespace
+//register core namespace, force create new one when exists
 jso.registerNamespace('jsWorkFlow');
 jso.registerNamespace('jsWorkFlow.Activities');
 
-//require namsepace
-var jsWorkFlow = jso.registerNamespace('jsWorkFlow');
+var jsWorkFlow = jso.ns('jsWorkFlow');
 
 //exports for nodes
 exports.rootns = jsWorkFlow;

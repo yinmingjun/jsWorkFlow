@@ -8,7 +8,7 @@ var packagedesc = { dst: './build/jsWorkFlow/package.json',
   '  "keywords": ["javascript", "jsworkflow", "workflow"],\n' +
   '  "main": "./lib/jsworkflow.js",\n' +
   '  "dependencies": {\n' +
-  '     "jsoop": ">= 0.3.0" \n' +
+  '     "jsoop": ">= 0.3.2" \n' +
   '  }, \n'+
   '  "repository": {"type": "git", "url": "git://github.com/yinmingjun/jsWorkFlow"}\n' +
 '}'

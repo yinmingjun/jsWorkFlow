@@ -9,7 +9,7 @@
 */
 
 //require namsepace
-var jsWorkFlow = jso.registerNamespace('jsWorkFlow');
+var jsWorkFlow = jso.ns('jsWorkFlow');
 
 //////////////////////////////////////////////////////////////////////////////////////////
 //NullLogger，提供jsWorkFlow的默认的LOG
