@@ -19,6 +19,7 @@
     <include name="test\testContextData.js" />
     <include name="test\testTryCatch.js" />
     <include name="test\testGetTypeName.js" />
+    <include name="test\testActivityFactory.js" />
   </target>
   <file name="test\testIfElse.js" path="" />
   <file name="test\testDelay.js" path="" />
@@ -33,4 +34,5 @@
   <file name="test\testTryCatch.js" path="" />
   <file name="test\testGetTypeName.js" path="" />
   <file name="test\unitTestFW.js" path="" />
+  <file name="test\testActivityFactory.js" path="" />
 </project>

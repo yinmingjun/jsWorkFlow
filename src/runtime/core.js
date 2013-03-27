@@ -9,16 +9,6 @@
  *
  */
 
- /*
-  * Depends on M$ AJAX javascripts lib's feature list:
-  *    1. class inheritance(register class, interface, enum) ==> into a  js oop library?
-  *    2. Function.createDelegate
-  *    3. Sys.EventHandlerList
-  *    4. Error.notImplemented() and Error.invalidOperation()
-  *    5. Array.add
-  *    
-  */
-
 //use jso as jsoop's alias
 var jso = null;
 

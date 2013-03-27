@@ -100,6 +100,14 @@ it.
 
 View the code in activies folder for detail intormation.
 
+## About Activity Factory
+
+jsWorkFlow support register and management activity instance by using jsWorkFlow.ActivityFactory
+class.  
+
+See the following document:
+https://github.com/yinmingjun/jsWorkFlow/blob/master/document/activityJsDoc.md
+
 ## Running in Client Side
   * Include the "jsoop.js" into html file. 
   * Include the "jsworkflow_browser.js" into html file.

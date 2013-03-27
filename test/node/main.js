@@ -17,3 +17,4 @@ testLib.testLogicalOpt();
 testLib.testStateMachine();
 testLib.testTryCatch();
 testLib.testGetTypeName();
+testLib.testActivityFactory();
