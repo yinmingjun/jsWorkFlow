@@ -107,13 +107,15 @@ as the real value of this value descriptor, and no longer walk through it's inne
 
 ### Value Descriptor Samples
 
-Sample1: Reference to activity1
+Sample1: Reference to activity1  
+
 	{
 		'__v': true,
 		'ref': 'activity1'
 	}
 
-Sample2: With value of object descriptor
+Sample2: With value of object descriptor  
+
 	{
 		'__v': true,
 		'val': {'__v':true, 'ref': 'activity1'}
